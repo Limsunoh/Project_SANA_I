@@ -48,6 +48,7 @@ class UserSerializer(serializers.ModelSerializer):
         if data["password"] != data["checkpassword"]:
             raise serializers.ValidationError("똑같은 비밀번호를 입력하세요.")
         return data
+    
 
     def create(self, validated_data):
         # checkpassword 필드는 사용하지 않으므로 제거해야함.
