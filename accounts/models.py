@@ -5,7 +5,7 @@ from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
     first_name = None
     last_name = None
-    Nickname = models.CharField(max_length=50)
+    nickname = models.CharField(max_length=50)
     name = models.CharField(max_length=50)
     address = models.CharField(max_length=255)
     birth = models.DateField()

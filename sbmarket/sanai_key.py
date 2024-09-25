@@ -1,0 +1,1 @@
+SANAI_KEY = "django-insecure-r*v5de97najhc4^g-wvy2afr+eu$p=$o4n8zorql+5%m1#vfkq"
