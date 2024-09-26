@@ -46,7 +46,7 @@ class ProductDetailAPIView(UpdateAPIView):
 
     def perform_update(self, serializer):
         images_data = self.request.FILES.getlist("images")
-        instance = serializer.instance  # 현재 수정 중인 기사 객체
+        instance = serializer.instance  # 현재 수정 중인 객체
 
         # 요청에 이미지가 포함된 경우
         if images_data:
