@@ -29,7 +29,7 @@ class Product(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=50,choices=CHOICE_PRODUCT)
     hits = models.PositiveIntegerField(blank=True, default=0)
-    # like = models.ManyToManyField(get_user_model(), related_name='like_article', blank=True)
+    # likes = models.ManyToManyField(get_user_model(), related_name='like_article', blank=True)
     # 해시태그 사용
     tags = models.ManyToManyField(Hashtag, related_name="products", blank=True)
     
