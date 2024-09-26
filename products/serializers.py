@@ -1,13 +1,22 @@
 from rest_framework import serializers
 
 from accounts.models import User
-from .models import Product, Image
+from .models import Product, Image, Hashtag
 
 
 class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ""
+
+
+class HashtagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hashtag
+        fields = (
+            "id",
+            "name",
+            )
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -28,11 +37,11 @@ class ProductListSerializer(serializers.ModelSerializer):
         model = Product
         fields = (
             "id", 
+            "preview_image",
             "title",
-            "content",
             "price",
             "status",
-            "preview_image",
+            "hits",
         )
     
     # PK가 가장 낮은 이미지를 가져오는 로직
@@ -45,6 +54,7 @@ class ProductListSerializer(serializers.ModelSerializer):
 
 class ProductCreateSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField(read_only=True)
+    hashtag = serializers.CharField(required=False)
 
     class Meta:
         model = Product
@@ -54,6 +64,7 @@ class ProductCreateSerializer(serializers.ModelSerializer):
             "content",
             "price",
             "status",
+            "hashtag",
             "images",
         )
         write_only_fields = ("content",)
@@ -68,6 +79,7 @@ class ProductCreateSerializer(serializers.ModelSerializer):
 
 class ProductDetailSerializer(serializers.ModelSerializer):
     images = ImageSerializer(many=True, read_only=True)
+    hashtag = HashtagSerializer(many=True, source='tags', required=False)
 
     class Meta:
         model = Product
@@ -78,6 +90,14 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             "content",
             "price",
             "status",
+            "hashtag",
+            "hits",
             "created_at",
             "updated_at",
         )
+
+        # 조회수 증가 로직
+    def to_representation(self, instance):
+        instance.hits += 1
+        instance.save(update_fields=["hits"])
+        return super().to_representation(instance)
