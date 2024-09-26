@@ -34,7 +34,6 @@ class UserCreateView(generics.CreateAPIView):
 def activate_user(request, pk, token):
     try:
         # pk를 디코딩(암호화된걸 복호화하는느낌)하여 사용자 ID 얻기
-        
         pk = force_str(urlsafe_base64_decode(pk))
         user = User.objects.get(pk=pk)
         print(pk)
@@ -85,3 +84,16 @@ class ChangePasswordView(APIView):
             return Response({"message": "success"}, status=200)
 
         return Response(serializer.errors, status=400)
+    
+    
+class FollowView(APIView):
+    def post(self, request, username):
+        target_user = get_object_or_404(User, username=username)
+        current_user = request.user
+        if current_user in target_user.followers.all():
+            target_user.followers.remove(current_user)
+            return Response("unfollow했습니다.", status=200)
+        else:
+            target_user.followers.add(current_user)
+            return Response("follow했습니다.", status=200)
+    
