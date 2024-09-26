@@ -6,8 +6,9 @@ from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes, force_str
 from django.conf import settings  
-# from_email 사용을 위해 settings 임포트
 from rest_framework_simplejwt.tokens import RefreshToken
+from .validata import passwordValidation
+
 
 
 # JWT 토큰 생성하는 함수
@@ -95,6 +96,66 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = User
-        fields = "__all__"
+        fields = (
+            "name",
+            "nickname",
+            "birth",
+            "email",
+            "address",
+            "image",
+            "introduce",
+            "created_at",
+        )
+
+
+class UserChangeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = (
+            "username",
+            "nickname",
+            "name",
+            "address",
+            "birth",
+            "email",
+            "image",
+        )
+        read_only_fields = ("username",)
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    current_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+    password_check = serializers.CharField(required=True)
+
+    def validate_current_password(self, value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError('현재 비밀번호가 올바르지 않습니다.')
+        return value
+
+    def validate(self, data):
+        new_password = data['new_password']
+        password_check = data['password_check']
+
+        # 새 비밀번호와 새 비밀번호 확인이 일치하는지 확인
+        if new_password != password_check:
+            raise serializers.ValidationError("새 비밀번호가 일치하지 않습니다.")
+        
+        # 비밀번호 검증 로직 추가
+        if not passwordValidation(new_password):
+            raise serializers.ValidationError(
+                "비밀번호는 8자 이상이어야 하며, 숫자와 특수 문자를 포함해야 합니다."
+            )
+        
+        return data
+
+    def update(self, instance, validated_data):
+        # 새로운 비밀번호 설정
+        instance.set_password(validated_data['new_password'])
+        instance.save()
+        return instance

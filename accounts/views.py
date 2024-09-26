@@ -4,22 +4,25 @@ from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User
-from .validators import validate_user_data
 from django.shortcuts import render, redirect, HttpResponse
-from .serializers import UserSerializer
+from .serializers import UserSerializer, UserProfileSerializer, UserChangeSerializer, ChangePasswordSerializer
 from rest_framework import generics
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import AllowAny
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
 from django.shortcuts import render, redirect
 from rest_framework_simplejwt.tokens import AccessToken
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from .permissions import IsOwnerOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+
 
 
 class UserCreateView(generics.CreateAPIView):
@@ -54,3 +57,31 @@ def activate_user(request, pk, token):
 
     except Exception as e:
         return HttpResponse(f"에러 발생: {e}", status=400)
+
+
+    # 유저 프로필 확인 및 수정, 삭제
+class UserProfileView(RetrieveUpdateDestroyAPIView):
+    queryset = User.objects.all()
+    lookup_field = "username"
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return UserProfileSerializer
+        elif self.request.method in ["PATCH", "PUT"]:
+            return UserChangeSerializer
+        return super().get_serializer_class()
+
+    # 유저 비밀번호 변경
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+
+    def patch(self, request, username):
+        user = get_object_or_404(User, username=username)
+        serializer = ChangePasswordSerializer(data=request.data, context={'request': request})
+
+        if serializer.is_valid():
+            serializer.update(request.user, serializer.validated_data)
+            return Response({"message": "success"}, status=200)
+
+        return Response(serializer.errors, status=400)
