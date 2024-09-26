@@ -1,34 +1,23 @@
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.contrib.auth import authenticate
-from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User
-from django.shortcuts import render, redirect, HttpResponse
+from django.shortcuts import HttpResponse, get_object_or_404
 from .serializers import UserSerializer, UserProfileSerializer, UserChangeSerializer, ChangePasswordSerializer
-from rest_framework import generics
-from django.contrib.auth.hashers import check_password
-from django.contrib.auth import get_user_model
-from django.contrib.sites.shortcuts import get_current_site
-from django.template.loader import render_to_string
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.http import urlsafe_base64_decode
 from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
-from rest_framework.permissions import AllowAny
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
-from django.shortcuts import render, redirect
 from rest_framework_simplejwt.tokens import AccessToken
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
 from .permissions import IsOwnerOrReadOnly
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 
 
 
-class UserCreateView(generics.CreateAPIView):
+class UserCreateView(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permissons_classes = [AllowAny]
+    permisson_classes = [AllowAny]
 
 
 def activate_user(request, pk, token):
