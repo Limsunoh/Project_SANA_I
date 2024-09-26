@@ -25,9 +25,9 @@ class UserSerializer(serializers.ModelSerializer):
         write_only=True, required=True, validators=[validate_password]
     )
     checkpassword = serializers.CharField(write_only=True, required=True)
-    postcord = serializers.CharField()
-    mainaddress = serializers.CharField()
-    subaddress = serializers.CharField()
+    # postcord = serializers.CharField()
+    # mainaddress = serializers.CharField()
+    # subaddress = serializers.CharField()
 
     class Meta:
         model = User
@@ -40,9 +40,10 @@ class UserSerializer(serializers.ModelSerializer):
             "nickname",
             "birth",
             "email",
-            "postcord",
-            "mainaddress",
-            "subaddress",
+            # "postcord",
+            # "mainaddress",
+            # "subaddress",
+            "address",
             "image",
             "introduce",
             "created_at",
@@ -66,7 +67,8 @@ class UserSerializer(serializers.ModelSerializer):
             name=validated_data.get('name', ''),
             nickname=validated_data.get('nickname', ''),
             birth=validated_data.get('birth', None),
-            address=validated_data.get('postcord', '')+validated_data.get('mainaddress') + validated_data.get('subaddress'),
+            # address=validated_data.get('postcord', '')+validated_data.get('mainaddress') + validated_data.get('subaddress'),
+            address=validated_data.get('address', None),
             image=validated_data.get('image', None),
             introduce=validated_data.get('introduce', ''),
         )

@@ -7,7 +7,23 @@ from .models import Product, Image, Hashtag
 class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ""
+        fields = (
+            "nickname"
+        )
+
+
+# class ProductLikeSerializer(serializers.ModelSerializer):
+#     user = serializers.SerializerMethodField()
+#     likes = serializers.String
+#     class Meta:
+#         model = Product
+#         fields = (
+#             "id",
+#             "title",
+#             "author",
+#             "image",
+#             "price",
+#         )
 
 
 class HashtagSerializer(serializers.ModelSerializer):

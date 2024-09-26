@@ -4,7 +4,9 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import ListCreateAPIView, UpdateAPIView
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 
+from accounts.permissions import IsOwnerOrReadOnly
 from .models import Product, Image, Hashtag
 from .serializers import (
     ProductListSerializer,
@@ -17,6 +19,7 @@ from .pagnations import ProductPagnation
 class ProductListAPIView(ListCreateAPIView):
     pagination_class = ProductPagnation
     serializer_class = ProductListSerializer
+    # permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         search = self.request.query_params.get("search")
@@ -67,6 +70,7 @@ class ProductListAPIView(ListCreateAPIView):
 class ProductDetailAPIView(UpdateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductDetailSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly,IsOwnerOrReadOnly]
 
     def get(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
@@ -100,14 +104,24 @@ class ProductDetailAPIView(UpdateAPIView):
         return Response(status=204)
 
 
-# class LikeAPIView(APIView):
+class LikeAPIView(ListCreateAPIView):
+    serializer_class = ProductListSerializer
+    permission_classes = [IsAuthenticated]
 
-#     def post(self, request, pk):
-#         product = get_object_or_404(Product, pk=pk)
+    # 유저가 찜한 제품 리스트 반환
+    def get_queryset(self):
+        return Product.objects.filter(likes=self.request.user)
 
-#         if request.user in product.likes.all():
-#             product.like.remove(request.user)
-#             return Response("찜하기 취소했습니다.", status=200)
+    # 찜하기 기능 처리
+    def post(self, request, *args, **kwargs):
+        pk = request.data.get("product_id")  # 요청으로부터 제품 ID 받기
+        product = get_object_or_404(Product, pk=pk)
 
-#         product.likes.add(request.user)
-#         return Response("찜하기 했습니다.", status=200)
+        # 이미 찜한 제품이면 찜하기 취소
+        if request.user in product.likes.all():
+            product.likes.remove(request.user)
+            return Response({"message": "찜하기 취소했습니다."}, status=200)
+
+        # 찜하기 추가
+        product.likes.add(request.user)
+        return Response({"message": "찜하기 했습니다."}, status=200)

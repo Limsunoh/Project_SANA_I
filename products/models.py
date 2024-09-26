@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from accounts.models import User
 
 # 해시태그
 class Hashtag(models.Model):
@@ -21,7 +22,7 @@ class Product(models.Model):
         ("reservation","예약중"),
         ("complete","판매완료"),
     ]
-    # author = models.ForeignKey(get_user_model(),on_delete=models.CASCADE, related_name="author_product")
+    author = models.ForeignKey(User,on_delete=models.CASCADE, related_name="author_product")
     title = models.CharField(max_length=50)
     content = models.TextField()
     price = models.CharField(max_length=100)
@@ -29,7 +30,7 @@ class Product(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=50,choices=CHOICE_PRODUCT)
     hits = models.PositiveIntegerField(blank=True, default=0)
-    # likes = models.ManyToManyField(get_user_model(), related_name='like_article', blank=True)
+    likes = models.ManyToManyField(User, related_name='like_article', blank=True)
     # 해시태그 사용
     tags = models.ManyToManyField(Hashtag, related_name="products", blank=True)
     

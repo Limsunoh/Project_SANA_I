@@ -28,7 +28,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticate
 class UserCreateView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permissons_classes = [AllowAny]
+    permisson_classes = [AllowAny]
 
 
 def activate_user(request, pk, token):
