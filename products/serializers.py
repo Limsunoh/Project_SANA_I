@@ -8,7 +8,7 @@ class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            "nickname"
+            "nickname",
         )
 
 
@@ -48,6 +48,8 @@ class ImageSerializer(serializers.ModelSerializer):
 
 class ProductListSerializer(serializers.ModelSerializer):
     preview_image = serializers.SerializerMethodField(read_only=True)
+    author = serializers.StringRelatedField(read_only=True)
+    likes_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -55,10 +57,16 @@ class ProductListSerializer(serializers.ModelSerializer):
             "id", 
             "preview_image",
             "title",
+            "author",
             "price",
             "status",
             "hits",
+            "likes_count",
         )
+    
+    # 좋아요 수 카운팅
+    def get_likes_count(self, obj):
+        return obj.likes.count()
     
     # PK가 가장 낮은 이미지를 가져오는 로직
     def get_preview_image(self, instance):
@@ -71,6 +79,7 @@ class ProductListSerializer(serializers.ModelSerializer):
 class ProductCreateSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField(read_only=True)
     hashtag = serializers.CharField(required=False)
+    author = serializers.StringRelatedField()
 
     class Meta:
         model = Product
@@ -78,6 +87,7 @@ class ProductCreateSerializer(serializers.ModelSerializer):
             "id",
             "title",
             "content",
+            "author",
             "price",
             "status",
             "hashtag",
@@ -96,6 +106,8 @@ class ProductCreateSerializer(serializers.ModelSerializer):
 class ProductDetailSerializer(serializers.ModelSerializer):
     images = ImageSerializer(many=True, read_only=True)
     hashtag = HashtagSerializer(many=True, source='tags', required=False)
+    author = serializers.StringRelatedField()
+    likes_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -104,15 +116,21 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             "images",
             "title",
             "content",
+            "author",
             "price",
             "status",
             "hashtag",
             "hits",
             "created_at",
             "updated_at",
+            "likes_count",
         )
+    
+    # 좋아요 수 카운팅
+    def get_likes_count(self, obj):
+        return obj.likes.count()
 
-        # 조회수 증가 로직
+    # 조회수 증가 로직
     def to_representation(self, instance):
         instance.hits += 1
         instance.save(update_fields=["hits"])

@@ -15,6 +15,6 @@ urlpatterns = [
     path("logout/", TokenBlacklistView.as_view(), name='logout'),
     path('<str:username>/', views.UserProfileView.as_view()),
     path('<str:username>/password/', views.ChangePasswordView.as_view(),),
-    # path('<str:username>/review/',)
+    # path('<str:username>/like/',)
     path('follow/<str:username>/', views.FollowView.as_view(), name='follow_view'),
 ]
