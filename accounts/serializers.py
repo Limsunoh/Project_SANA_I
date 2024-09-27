@@ -7,6 +7,8 @@ from django.utils.http import urlsafe_base64_encode
 from django.conf import settings
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import serializers
+from products.models import Product
+from products.serializers import ProductListSerializer
 from .validata import passwordValidation
 from .models import User
 
@@ -29,7 +31,7 @@ class UserSerializer(serializers.ModelSerializer):
     mainaddress = serializers.CharField()
     subaddress = serializers.CharField()
     profile_image = serializers.SerializerMethodField()
-    
+
     class Meta:
         model = User
         fields = (
@@ -49,9 +51,8 @@ class UserSerializer(serializers.ModelSerializer):
             "introduce",
             "created_at",
         )
-        read_only_fields = ("id", )
-        write_only_fields = ("image", )
-    
+        read_only_fields = ("id",)
+        write_only_fields = ("image",)
 
     def validate(self, data):
         # 비밀번호 두개가 일치하는지 확인
@@ -61,7 +62,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_profile_image(self, obj):
         return obj.get_profile_image_url()
-    
+
     def create(self, validated_data):
         # checkpassword 필드는 사용하지 않으므로 제거해야함.
         validated_data.pop("checkpassword")
@@ -109,11 +110,23 @@ class UserSerializer(serializers.ModelSerializer):
         email.send()
 
         return user
-    
-    
+
+
+class UserFollowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            "id",
+            "nickname",
+            "image",
+        )
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
+    products = serializers.SerializerMethodField()
+    like_products = serializers.SerializerMethodField()
+    followings = serializers.SerializerMethodField()
+    followers = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -127,7 +140,27 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "image",
             "introduce",
             "created_at",
+            "products",
+            "like_products",
+            "followings",
+            "followers",
         )
+
+    def get_products(self, obj):
+        products = Product.objects.filter(author=obj)
+        return ProductListSerializer(products, many=True).data
+
+    def get_like_products(self, obj):
+        like_products = obj.like_products.all()
+        return ProductListSerializer(like_products, many=True).data
+
+    def get_followings(self, obj):
+        followings = obj.followings.all()
+        return UserFollowSerializer(followings, many=True).data
+
+    def get_followers(self, obj):
+        follwers = obj.followers.all()
+        return UserFollowSerializer(follwers, many=True).data
 
 
 class UserChangeSerializer(serializers.ModelSerializer):
