@@ -28,7 +28,8 @@ class UserSerializer(serializers.ModelSerializer):
     postcode = serializers.CharField()
     mainaddress = serializers.CharField()
     subaddress = serializers.CharField()
-
+    profile_image = serializers.SerializerMethodField()
+    
     class Meta:
         model = User
         fields = (
@@ -44,10 +45,12 @@ class UserSerializer(serializers.ModelSerializer):
             "mainaddress",
             "subaddress",
             "image",
+            "profile_image",
             "introduce",
             "created_at",
         )
-        read_only_fields = ("id",)
+        read_only_fields = ("id", )
+        write_only_fields = ("image", )
     
 
     def validate(self, data):
@@ -56,6 +59,9 @@ class UserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("똑같은 비밀번호를 입력하세요.")
         return data
 
+    def get_profile_image(self, obj):
+        return obj.get_profile_image_url()
+    
     def create(self, validated_data):
         # checkpassword 필드는 사용하지 않으므로 제거해야함.
         validated_data.pop("checkpassword")
@@ -69,7 +75,7 @@ class UserSerializer(serializers.ModelSerializer):
             postcode=validated_data.get("postcode", ""),
             mainaddress=validated_data.get("mainaddress"),
             subaddress=validated_data.get("subaddress"),
-            image=validated_data.get("image", None),
+            image=validated_data.get("image"),
             introduce=validated_data.get("introduce", ""),
         )
 
