@@ -19,7 +19,7 @@ from .pagnations import ProductPagnation
 class ProductListAPIView(ListCreateAPIView):
     pagination_class = ProductPagnation
     serializer_class = ProductListSerializer
-    # permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         search = self.request.query_params.get("search")
@@ -56,7 +56,7 @@ class ProductListAPIView(ListCreateAPIView):
 
         images = self.request.FILES.getlist("images")
         tags = self.request.data.getlist("tags")
-        product = serializer.save()
+        product = serializer.save(author=self.request.user)
         for image in images:
             Image.objects.create(product=product, image_url=image)
         for tag in tags:
@@ -104,17 +104,16 @@ class ProductDetailAPIView(UpdateAPIView):
         return Response(status=204)
 
 
-class LikeAPIView(ListCreateAPIView):
+class LikeAPIView(APIView):
     serializer_class = ProductListSerializer
     permission_classes = [IsAuthenticated]
 
     # 유저가 찜한 제품 리스트 반환
-    def get_queryset(self):
+    def get(self):
         return Product.objects.filter(likes=self.request.user)
 
     # 찜하기 기능 처리
-    def post(self, request, *args, **kwargs):
-        pk = request.data.get("product_id")  # 요청으로부터 제품 ID 받기
+    def post(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
 
         # 이미 찜한 제품이면 찜하기 취소
