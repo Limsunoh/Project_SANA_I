@@ -30,7 +30,7 @@ class Product(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=50,choices=CHOICE_PRODUCT)
     hits = models.PositiveIntegerField(blank=True, default=0)
-    likes = models.ManyToManyField(User, related_name='like_article', blank=True)
+    likes = models.ManyToManyField(User, related_name='like_products', blank=True)
     # 해시태그 사용
     tags = models.ManyToManyField(Hashtag, related_name="products", blank=True)
     

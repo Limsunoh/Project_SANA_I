@@ -88,6 +88,7 @@ class ChangePasswordView(APIView):
 
 
 class FollowView(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request, username):
         target_user = get_object_or_404(User, username=username)
         current_user = request.user
