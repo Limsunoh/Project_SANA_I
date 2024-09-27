@@ -7,23 +7,7 @@ from .models import Product, Image, Hashtag
 class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = (
-            "nickname",
-        )
-
-
-# class ProductLikeSerializer(serializers.ModelSerializer):
-#     user = serializers.SerializerMethodField()
-#     likes = serializers.String
-#     class Meta:
-#         model = Product
-#         fields = (
-#             "id",
-#             "title",
-#             "author",
-#             "image",
-#             "price",
-#         )
+        fields = ("nickname",)
 
 
 class HashtagSerializer(serializers.ModelSerializer):
@@ -32,7 +16,7 @@ class HashtagSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "name",
-            )
+        )
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -54,7 +38,7 @@ class ProductListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = (
-            "id", 
+            "id",
             "preview_image",
             "title",
             "author",
@@ -63,11 +47,11 @@ class ProductListSerializer(serializers.ModelSerializer):
             "hits",
             "likes_count",
         )
-    
+
     # 좋아요 수 카운팅
     def get_likes_count(self, obj):
         return obj.likes.count()
-    
+
     # PK가 가장 낮은 이미지를 가져오는 로직
     def get_preview_image(self, instance):
         if instance.images.exists():
@@ -105,7 +89,7 @@ class ProductCreateSerializer(serializers.ModelSerializer):
 
 class ProductDetailSerializer(serializers.ModelSerializer):
     images = ImageSerializer(many=True, read_only=True)
-    hashtag = HashtagSerializer(many=True, source='tags', required=False)
+    hashtag = HashtagSerializer(many=True, source="tags", required=False)
     author = serializers.StringRelatedField()
     likes_count = serializers.SerializerMethodField()
 
@@ -125,7 +109,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             "updated_at",
             "likes_count",
         )
-    
+
     # 좋아요 수 카운팅
     def get_likes_count(self, obj):
         return obj.likes.count()
