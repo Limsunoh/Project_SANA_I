@@ -6,12 +6,13 @@ from rest_framework.response import Response
 from rest_framework.generics import ListCreateAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 
-from accounts.permissions import IsOwnerOrReadOnly
-from .models import Product, Image, Hashtag
+from accounts.permissions import IsOwnerOrReadOnly, SenderorReceiverOnly
+from .models import Product, Image, Hashtag, PrivateComment
 from .serializers import (
     ProductListSerializer,
     ProductCreateSerializer,
     ProductDetailSerializer,
+    PrivateCommentSerializer
 )
 from .pagnations import ProductPagnation
 
@@ -124,3 +125,26 @@ class LikeAPIView(APIView):
         # 찜하기 추가
         product.likes.add(request.user)
         return Response({"message": "찜하기 했습니다."}, status=200)
+
+
+class PrivateCommentAPIView(ListCreateAPIView):
+    permission_classes = [IsAuthenticated, SenderorReceiverOnly]
+    
+    def get(self, request, *args, **kwargs):
+        """
+        현재 사용자와 관련된 모든 1:1 비밀댓글을 조회
+        """
+        user = request.user
+        comments = PrivateComment.objects.filter(Q(sender=user) | Q(receiver=user))
+        serializer = PrivateCommentSerializer(comments, many=True, context={'request': request})
+        return Response(serializer.data, status=200)
+    
+    def post(self, request, *args, **kwargs):
+        """
+        새로운 1:1 비밀댓글 생성
+        """
+        serializer = PrivateCommentSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save(sender=request.user)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)

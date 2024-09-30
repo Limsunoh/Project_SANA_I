@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from accounts.models import User
-from .models import Product, Image, Hashtag
+from .models import Product, Image, Hashtag, PrivateComment
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -119,3 +119,23 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         instance.hits += 1
         instance.save(update_fields=["hits"])
         return super().to_representation(instance)
+    
+    
+
+
+class PrivateCommentSerializer(serializers.ModelSerializer):
+    sender_username = serializers.ReadOnlyField(source='sender.username')
+    receiver_username = serializers.ReadOnlyField(source='receiver.username')
+
+    class Meta:
+        model = PrivateComment
+        fields = ['id', 
+                'product', 
+                'sender', 
+                'receiver', 
+                'sender_username', 
+                'receiver_username', 
+                'content', 
+                'created_at', 
+                'is_sold'
+                ]
