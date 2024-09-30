@@ -126,16 +126,18 @@ class ProductDetailSerializer(serializers.ModelSerializer):
 class PrivateCommentSerializer(serializers.ModelSerializer):
     sender_username = serializers.ReadOnlyField(source='sender.username')
     receiver_username = serializers.ReadOnlyField(source='receiver.username')
+    product = serializers.StringRelatedField()
+
 
     class Meta:
         model = PrivateComment
         fields = ['id', 
                 'product', 
-                'sender', 
-                'receiver', 
                 'sender_username', 
                 'receiver_username', 
                 'content', 
                 'created_at', 
                 'is_sold'
                 ]
+        read_only_fields = ['product']
+    

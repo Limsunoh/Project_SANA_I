@@ -127,24 +127,44 @@ class LikeAPIView(APIView):
         return Response({"message": "찜하기 했습니다."}, status=200)
 
 
-class PrivateCommentAPIView(ListCreateAPIView):
-    permission_classes = [IsAuthenticated, SenderorReceiverOnly]
+# class PrivateCommentAPIView(ListCreateAPIView):
+#     permission_classes = [IsAuthenticated, SenderorReceiverOnly]
+#     # queryset = PrivateComment.objects.all().order_by("-pk")
+    
+#     def get(self, request, *args, **kwargs):
+#         """
+#         현재 사용자와 관련된 모든 1:1 비밀댓글을 조회
+#         """
+#         user = request.user
+#         comments = PrivateComment.objects.filter(Q(sender=user) | Q(receiver=user))
+#         serializer = PrivateCommentSerializer(comments, many=True, context={'request': request})
+#         return Response(serializer.data, status=200)
+    
+#     def post(self, request, *args, **kwargs):
+#         """
+#         새로운 1:1 비밀댓글 생성
+#         """
+#         serializer = PrivateCommentSerializer(data=request.data, context={'request': request})
+#         if serializer.is_valid():
+#             serializer.save(sender=request.user)
+#             return Response(serializer.data, status=201)
+#         return Response(serializer.errors, status=400)
+
+
+class CommentListCreateView(ListCreateAPIView):
+    permission_classes = [SenderorReceiverOnly]
+    queryset = PrivateComment.objects.all().order_by("-pk")
+    serializer_class = PrivateCommentSerializer
     
     def get(self, request, *args, **kwargs):
-        """
-        현재 사용자와 관련된 모든 1:1 비밀댓글을 조회
-        """
         user = request.user
         comments = PrivateComment.objects.filter(Q(sender=user) | Q(receiver=user))
         serializer = PrivateCommentSerializer(comments, many=True, context={'request': request})
         return Response(serializer.data, status=200)
-    
-    def post(self, request, *args, **kwargs):
-        """
-        새로운 1:1 비밀댓글 생성
-        """
-        serializer = PrivateCommentSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            serializer.save(sender=request.user)
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+
+
+    def perform_create(self, serializer):
+        product = get_object_or_404(Product, pk=self.kwargs["pk"])
+        sender = self.request.user
+        receiver = product.author
+        serializer.save(sender=sender, product=product, receiver=receiver)
