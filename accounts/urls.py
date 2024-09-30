@@ -17,4 +17,5 @@ urlpatterns = [
     path('<str:username>/password/', views.ChangePasswordView.as_view(),),
     # path('<str:username>/like/',)
     path('follow/<str:username>/', views.FollowView.as_view(), name='follow_view'),
+    
 ]
