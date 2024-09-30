@@ -11,8 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-from .sanai_key import SANAI_KEY
-from .sanai_password import SANAI_PASSWORD
+from .config import SANAI_KEY
+from .config import SANAI_PASSWORD
 from datetime import timedelta
 
 
