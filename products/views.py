@@ -5,17 +5,27 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import ListCreateAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+import time
 
 from accounts.permissions import IsOwnerOrReadOnly, SenderorReceiverOnly
-from .models import Product, Image, Hashtag, PrivateComment
+from .models import (Product,
+                    Image, 
+                    Hashtag, 
+                    PrivateComment, 
+                    ChatMessage, 
+                    ChatRoom, 
+                    TransactionStatus,
+                    )
 from .serializers import (
     ProductListSerializer,
     ProductCreateSerializer,
     ProductDetailSerializer,
-    PrivateCommentSerializer
+    PrivateCommentSerializer,
+    ChatMessageSerializer,
+    TransactionStatusSerializer,
+    ChatRoomSerializer
 )
 from .pagnations import ProductPagnation
-
 
 class ProductListAPIView(ListCreateAPIView):
     pagination_class = ProductPagnation
@@ -127,30 +137,6 @@ class LikeAPIView(APIView):
         return Response({"message": "찜하기 했습니다."}, status=200)
 
 
-# class PrivateCommentAPIView(ListCreateAPIView):
-#     permission_classes = [IsAuthenticated, SenderorReceiverOnly]
-#     # queryset = PrivateComment.objects.all().order_by("-pk")
-    
-#     def get(self, request, *args, **kwargs):
-#         """
-#         현재 사용자와 관련된 모든 1:1 비밀댓글을 조회
-#         """
-#         user = request.user
-#         comments = PrivateComment.objects.filter(Q(sender=user) | Q(receiver=user))
-#         serializer = PrivateCommentSerializer(comments, many=True, context={'request': request})
-#         return Response(serializer.data, status=200)
-    
-#     def post(self, request, *args, **kwargs):
-#         """
-#         새로운 1:1 비밀댓글 생성
-#         """
-#         serializer = PrivateCommentSerializer(data=request.data, context={'request': request})
-#         if serializer.is_valid():
-#             serializer.save(sender=request.user)
-#             return Response(serializer.data, status=201)
-#         return Response(serializer.errors, status=400)
-
-
 class CommentListCreateView(ListCreateAPIView):
     permission_classes = [SenderorReceiverOnly]
     queryset = PrivateComment.objects.all().order_by("-pk")
@@ -168,3 +154,97 @@ class CommentListCreateView(ListCreateAPIView):
         sender = self.request.user
         receiver = product.author
         serializer.save(sender=sender, product=product, receiver=receiver)
+
+
+class ChatRoomCreateAPIView(APIView):
+    """
+    새로운 채팅방을 생성하는 API View
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, product_id, *args, **kwargs):
+        """
+        POST 요청을 처리하여 새로운 채팅방을 생성
+        - product_id: 특정 상품에 대해 채팅방을 생성
+        - seller: 현재 상품의 판매자
+        - buyer: 요청을 보낸 사용자 (구매자)
+        """
+        # 상품을 조회
+        product = get_object_or_404(Product, id=product_id)
+
+        # 이미 채팅방이 존재하는지 확인 (동일한 판매자와 구매자 간)
+        existing_room = ChatRoom.objects.filter(product=product, seller=product.author, buyer=request.user).first()
+        if existing_room:
+            return Response({"detail": "해당 상품에 대한 채팅방이 이미 존재합니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 새로운 채팅방 생성
+        chat_room = ChatRoom.objects.create(
+            product=product,
+            seller=product.author,  # 상품의 판매자
+            buyer=request.user  # 요청을 보낸 사용자 (구매자)
+        )
+
+        # 생성된 채팅방을 시리얼라이즈하여 반환
+        serializer = ChatRoomSerializer(chat_room)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+# 롱 폴링 방식으로 새로운 채팅 메시지가 있을 때까지 대기
+class LongPollingChatAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, room_id, *args, **kwargs):
+        user = request.user
+        last_message_id = request.query_params.get('last_message_id', None)
+        room = get_object_or_404(ChatRoom.objects.filter(Q(seller=user) | Q(buyer=user)), id=room_id)
+        new_messages = []
+
+        # 롱 폴링 대기 시간 (최대 30초)
+        timeout = 30
+        start_time = time.time()
+
+        while (time.time() - start_time) < timeout:
+            # 새 메시지 확인
+            if last_message_id:
+                new_messages = ChatMessage.objects.filter(room=room, id__gt=last_message_id)
+            else:
+                new_messages = ChatMessage.objects.filter(room=room)
+
+            if new_messages.exists():
+                break  # 새 메시지가 있으면 반복 종료
+
+            time.sleep(2)  # 2초마다 새 메시지 확인
+
+        serializer = ChatMessageSerializer(new_messages, many=True)
+        return Response(serializer.data)
+
+# 새로운 채팅 메시지 생성
+class ChatMessageCreateAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, room_id, *args, **kwargs):
+        room = get_object_or_404(ChatRoom, id=room_id)
+        serializer = ChatMessageSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(sender=request.user, room=room)
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+# 거래 상태를 업데이트하는 API
+class TransactionStatusUpdateAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, room_id, *args, **kwargs):
+        room = get_object_or_404(ChatRoom, id=room_id)
+        status = get_object_or_404(TransactionStatus, room=room)
+
+        # 판매 완료 및 구매 완료 상태 업데이트
+        if request.data.get('is_sold') is not None:
+            status.is_sold = request.data.get('is_sold')
+        if request.data.get('is_completed') is not None:
+            status.is_completed = request.data.get('is_completed')
+
+        status.save()
+        serializer = TransactionStatusSerializer(status)
+        return Response(serializer.data)
+

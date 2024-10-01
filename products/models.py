@@ -57,5 +57,39 @@ class PrivateComment(models.Model):
         return f"1:1 비밀댓글 - {self.sender} -> {self.receiver}"
 
 
+# 각 채팅방을 관리하는 모델
+class ChatRoom(models.Model):
+    seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chatrooms_as_seller')
+    buyer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chatrooms_as_buyer')
+    product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name='chatrooms')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"채팅방: 상품: {self.product.title} (판매자: {self.seller.username}, 구매자: {self.buyer.username})"
+
+
+# 채팅 메시지 모델: 각 메시지의 내용을 관리
+class ChatMessage(models.Model):
+    room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages')
+    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)  # 메시지를 읽었는지 여부
+
+    def __str__(self):
+        return f"[{self.room.id}] {self.sender.username}: {self.content[:30]}"
+
+
+# 거래 상태 모델: '판매 완료', '구매 완료' 등 상태를 관리
+class TransactionStatus(models.Model):
+    room = models.OneToOneField(ChatRoom, on_delete=models.CASCADE, related_name='status')
+    is_sold = models.BooleanField(default=False)  # 판매 완료 여부
+    is_completed = models.BooleanField(default=False)  # 구매 완료 여부
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"거래 상태 - 판매 완료: {self.is_sold}, 구매 완료: {self.is_completed}"
+
+
 
 
