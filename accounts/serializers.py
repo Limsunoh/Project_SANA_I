@@ -92,7 +92,7 @@ class UserSerializer(serializers.ModelSerializer):
             "accounts/accounts_activate_email.html",
             {
                 "user": user,
-                "domain": "localhost:8000",  # 실제 배포할때는 도메인 변경해야함 필수!
+                "domain": "sbmarket.kro.kr",  # 실제 배포할때는 도메인 변경해야함 필수!
                 "pk": force_str(urlsafe_base64_encode(force_bytes(user.pk))),
                 "token": tokens["access"],
             },
