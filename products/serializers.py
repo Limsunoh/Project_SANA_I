@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from accounts.models import User
-from .models import Product, Image, Hashtag, PrivateComment
+from .models import Product, Image, Hashtag, PrivateComment, ChatRoom, ChatMessage, TransactionStatus
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -141,3 +141,29 @@ class PrivateCommentSerializer(serializers.ModelSerializer):
                 ]
         read_only_fields = ['product']
     
+    
+
+class ChatMessageSerializer(serializers.ModelSerializer):
+    sender_username = serializers.ReadOnlyField(source='sender.username')
+    room = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = ChatMessage
+        fields = ['id', 'room', 'sender', 'sender_username', 'content', 'created_at', 'is_read']
+        read_only_fields = ['id', 'sender', 'created_at', 'is_read', 'room']
+
+
+class ChatRoomSerializer(serializers.ModelSerializer):
+    seller_username = serializers.ReadOnlyField(source='seller.username')
+    buyer_username = serializers.ReadOnlyField(source='buyer.username')
+    product_title = serializers.ReadOnlyField(source='product.title')
+
+    class Meta:
+        model = ChatRoom
+        fields = ['id', 'product_title', 'seller', 'buyer', 'seller_username', 'buyer_username', 'created_at']
+
+
+class TransactionStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TransactionStatus
+        fields = ['id', 'room', 'is_sold', 'is_completed', 'updated_at']
