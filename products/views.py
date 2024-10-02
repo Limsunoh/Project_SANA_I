@@ -216,6 +216,11 @@ class ChatMessageCreateAPIView(APIView):
                 break 
 
             time.sleep(2)  # 2초마다 새 메시지 확인
+            
+        for message in new_messages:
+            if message.sender != user and not message.is_read:
+                message.is_read = True
+                message.save(update_fields=['is_read'])
 
         serializer = ChatMessageSerializer(new_messages, many=True)
         return Response(serializer.data)
