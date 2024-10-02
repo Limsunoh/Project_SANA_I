@@ -35,7 +35,7 @@ class Product(models.Model):
     tags = models.ManyToManyField(Hashtag, related_name="products", blank=True)
     
     def __str__(self):
-        return self.name
+        return self.title
 
 
 class Image(models.Model):

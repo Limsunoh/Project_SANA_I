@@ -16,7 +16,7 @@ class User(AbstractUser):
     created_at = models.TimeField(auto_now_add=True)  
     image = models.ImageField(upload_to="images/", blank=True, default='images/default_profile.jpg')
     introduce = models.TextField(max_length=255)  
-    followings = models.ManyToManyField('self', symmetrical=False, related_name="followers")  
+    followings = models.ManyToManyField('self', symmetrical=False, related_name="followers", blank = True)  
     
     def get_profile_image_url(self):
         if self.image:
