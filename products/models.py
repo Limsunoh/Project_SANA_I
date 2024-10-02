@@ -1,11 +1,11 @@
 from django.db import models
-from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from accounts.models import User
+from reviews.models import Review
 
 # 해시태그
 class Hashtag(models.Model):
-    name = models.TextField(unique=True)
+    name= models.TextField(unique=True)
     
     def __str__(self):
         return self.name
@@ -32,10 +32,11 @@ class Product(models.Model):
     hits = models.PositiveIntegerField(blank=True, default=0)
     likes = models.ManyToManyField(User, related_name='like_products', blank=True)
     # 해시태그 사용
-    tags = models.ManyToManyField(Hashtag, related_name="products", blank=True)
+    tags = models.ManyToManyField(Hashtag, related_name= "products", blank=True)
+    review = models.OneToOneField(Review, related_name= "reviews", blank= True)
     
     def __str__(self):
-        return self.name
+            return f"User:{self.name} (Status:{self.status})"
 
 
 class Image(models.Model):
@@ -43,7 +44,3 @@ class Image(models.Model):
         Product, on_delete=models.CASCADE, related_name="images"
     )
     image_url = models.ImageField(upload_to="images/")
-
-
-
-
