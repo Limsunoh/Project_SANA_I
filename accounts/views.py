@@ -19,6 +19,7 @@ from .serializers import (
 )
 from .models import User
 from .permissions import IsOwnerOrReadOnly
+from django.shortcuts import render
 
 
 class UserCreateView(CreateAPIView):
@@ -52,9 +53,20 @@ def activate_user(request, pk, token):
 
     except Exception as e:
         return HttpResponse(f"에러 발생: {e}", status=400)
+    
+class EmailVerifyView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get("email")
+        # 이메일 인증 로직을 여기서 처리합니다. (예: 인증 이메일 전송)
+        # 이 부분은 실제 로직에 맞게 수정하세요.
+        return Response({"message": "인증 이메일이 전송되었습니다."}, status=200)
 
     # 유저 프로필 확인 및 수정, 삭제
 
+def signup_view(request):
+    return render(request, 'signup.html')
 
 class UserProfileView(RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
