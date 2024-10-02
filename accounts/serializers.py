@@ -92,7 +92,7 @@ class UserSerializer(serializers.ModelSerializer):
             "accounts/accounts_activate_email.html",
             {
                 "user": user,
-                "domain": "localhost:8000",  # 실제 배포할때는 도메인 변경해야함 필수!
+                "domain": "127.0.0.1:8000",  # 실제 배포할때는 도메인 변경해야함 필수!
                 "pk": force_str(urlsafe_base64_encode(force_bytes(user.pk))),
                 "token": tokens["access"],
             },
@@ -127,6 +127,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     like_products = serializers.SerializerMethodField()
     followings = serializers.SerializerMethodField()
     followers = serializers.SerializerMethodField()
+    profile_image = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -137,7 +138,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "email",
             "mainaddress",
             "subaddress",
-            "image",
+            "profile_image",
             "introduce",
             "created_at",
             "products",
@@ -145,6 +146,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "followings",
             "followers",
         )
+        
+    def get_profile_image(self, obj):
+        return obj.get_profile_image_url()
 
     def get_products(self, obj):
         products = Product.objects.filter(author=obj)
@@ -164,6 +168,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class UserChangeSerializer(serializers.ModelSerializer):
+    profile_image = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -176,8 +181,12 @@ class UserChangeSerializer(serializers.ModelSerializer):
             "birth",
             "email",
             "image",
+            "profile_image",
         )
         read_only_fields = ("username",)
+        
+    def get_profile_image(self, obj):
+        return obj.get_profile_image_url()
 
 
 class ChangePasswordSerializer(serializers.Serializer):
