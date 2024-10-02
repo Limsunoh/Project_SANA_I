@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import ListCreateAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import AllowAny
 
 from accounts.permissions import IsOwnerOrReadOnly
 from .models import Product, Image, Hashtag
@@ -15,6 +16,18 @@ from .serializers import (
 )
 from .pagnations import ProductPagnation
 
+# AI 관련 임포트
+import openai
+import json
+import logging
+import re
+from openai import AuthenticationError, RateLimitError, OpenAIError
+
+# config 안의 Open AI Key
+from sbmarket.config import OPENAI_API_KEY
+
+# 로깅 설정
+logger = logging.getLogger(__name__)
 
 class ProductListAPIView(ListCreateAPIView):
     pagination_class = ProductPagnation
@@ -124,3 +137,88 @@ class LikeAPIView(APIView):
         # 찜하기 추가
         product.likes.add(request.user)
         return Response({"message": "찜하기 했습니다."}, status=200)
+
+#------------------------------------------------------------------------------
+# aisearch 기능 구현
+# 목적: 사용자가 원하는 '요청'에 부합하는 물건 중 적합한 것 5개를 상품 목록에서 찾아 나열해주는 AI 상품 추천 서비스
+# 검색 범위를 너무 넓히지 않기 위해 최근 생성된 20개의 상품만 상품 목록에 넣을 것
+
+class AISearchAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        query = request.data.get('query', '')
+
+        if not query:
+            return Response({"error": "요구사항을 입력해주세요"}, status=400)
+
+        # OpenAI API 키 설정
+        openai.api_key = OPENAI_API_KEY
+
+        # 가장 최근에 생성된 40개의 상품을 조회
+        products = Product.objects.filter(status__in=['sell', 'reservation']).order_by('-created_at')[:40]
+
+        product_list = []
+
+        # 각 상품의 정보를 딕셔너리 형태로 리스트에 추가
+        for product in products:
+            product_info = {
+                'id': product.id,
+                'title': product.title,
+                'price': str(product.price),
+                'tags': [tag.name for tag in product.tags.all()]
+            }
+            product_list.append(product_info)
+
+        # 프롬프트 생성
+        prompt = f"""
+당신은 사용자의 요청에 따라 제품을 추천해주는 AI 추천 서비스입니다.
+아래의 사용자의 요청에 따라, 제품 목록에서 최대 5개의 제품을 추천해주세요.
+추천 시 추천할 상품의 링크와 author 을 나열해줘야합니다. 링크는 http://127.0.0.1:8000/api/products/id 형태를 띕니다.
+tags와 title 및 description이 사용자의 요청과 관련 없는 상품도 추천 목록에 포함시키지 마세요.
+개인 사업자 또는 개인간 거래가 아니라 기업이 등록한 글처럼 보일 경우 추천 목록에 포함시키지 마세요.
+음식류의 경우 얻게 된 경로를 언급한 상품 중에서 추천하세요.
+음식류 중 신선제품을 요구할 경우 description 뿐만 아니라 created_at 도 참고해 신선도를 유추하세요.
+
+사용자 요청: "{query}"
+
+제품 목록:
+{product_list}
+
+양식:
+제목 / 가격 / [링크] \n 다음상품...
+"""
+
+        # OpenAI API 호출
+        try:
+            response = openai.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": "당신은 제품 추천을 도와주는 AI 어시스턴트입니다."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.2,
+            )
+        except AuthenticationError as e:
+            logger.error(f"인증 오류 발생: {e}")
+            return Response({"error": "OpenAI API 인증 오류가 발생했습니다."}, status=500)
+        except RateLimitError as e:
+            logger.error(f"요청 제한 초과: {e}")
+            return Response({"error": "OpenAI API 요청 제한을 초과했습니다."}, status=500)
+        except OpenAIError as e:
+            logger.error(f"OpenAI API 오류 발생: {e}")
+            return Response({"error": "AI 서비스 호출 중 오류가 발생했습니다."}, status=500)
+        except Exception as e:
+            logger.error(f"예상치 못한 오류 발생: {e}", exc_info=True)
+            return Response({"error": "서버 내부 오류가 발생했습니다."}, status=500)
+
+        try:
+            ai_response = response.choices[0].message.content.strip()
+            logger.debug(f"AI 응답 원본: {ai_response}")
+
+        except (KeyError, IndexError) as e:
+            logger.error(f"AI 응답 처리 중 오류 발생: {e}")
+            return Response({"error": "AI 응답 처리 중 오류가 발생했습니다."}, status=500)
+
+        # AI의 응답을 그대로 반환
+        return Response({"response": ai_response}, status=200)

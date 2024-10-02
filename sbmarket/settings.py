@@ -38,6 +38,11 @@ ALLOWED_HOSTS = ["localhost",
 # Application definition
 
 INSTALLED_APPS = [
+
+    # Local
+    "accounts",
+    "products",  
+
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -52,9 +57,6 @@ INSTALLED_APPS = [
     'django_seed',
     'django_filters',
 
-    # Local
-    "accounts",
-    "products",  
 ]
 
 MIDDLEWARE = [
@@ -110,7 +112,7 @@ DATABASES = {
     }
 }
 
-AUTH_USER_MODEL = "accounts.user"
+AUTH_USER_MODEL = "accounts.User"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
