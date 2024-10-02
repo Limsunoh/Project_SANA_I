@@ -149,8 +149,17 @@ class ChatMessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ChatMessage
-        fields = ['id', 'room', 'sender', 'sender_username', 'content', 'created_at', 'is_read']
-        read_only_fields = ['id', 'sender', 'created_at', 'is_read', 'room']
+        fields = ['id', 'room', 'sender', 'sender_username', 'content', 'image', 'created_at', 'is_read']
+        read_only_fields = ['id', 'sender', 'sender_image', 'created_at', 'is_read', 'room']
+        
+    
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        
+        sender = instance.sender
+        rep['sender_image'] = sender.get_profile_image_url()
+        
+        return rep
 
 
 class ChatRoomSerializer(serializers.ModelSerializer):
@@ -161,6 +170,17 @@ class ChatRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChatRoom
         fields = ['id', 'product_title', 'seller', 'buyer', 'seller_username', 'buyer_username', 'created_at']
+    
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        
+        seller = instance.seller
+        buyer = instance.buyer
+        rep['seller_image'] = seller.get_profile_image_url()
+        rep['buyer_image'] = buyer.get_profile_image_url()
+        
+        return rep
+        
 
 
 class TransactionStatusSerializer(serializers.ModelSerializer):
