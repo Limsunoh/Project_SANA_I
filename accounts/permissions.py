@@ -19,4 +19,11 @@ class SenderorReceiverOnly(BasePermission):
     def has_object_permission(self, request, view, obj):
         user = request.user
         # obj가 PrivateComment 객체일 때, sender 또는 receiver가 현재 사용자와 일치하는지 확인
-        return obj.sender == user or obj.receiver == user
+        return obj.sender == user or obj.receiver == user 
+    
+    
+class SellerorBuyerOnly(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        user = request.user
+        # obj가 PrivateComment 객체일 때, sender 또는 receiver가 현재 사용자와 일치하는지 확인
+        return obj.seller == user or obj.buyer == user

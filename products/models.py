@@ -72,6 +72,7 @@ class ChatRoom(models.Model):
 class ChatMessage(models.Model):
     room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages')
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
+    image = models.ImageField(upload_to="images/", blank=True, null=True)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)  # 메시지를 읽었는지 여부
@@ -82,7 +83,7 @@ class ChatMessage(models.Model):
 
 # 거래 상태 모델: '판매 완료', '구매 완료' 등 상태를 관리
 class TransactionStatus(models.Model):
-    room = models.OneToOneField(ChatRoom, on_delete=models.CASCADE, related_name='status')
+    room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='status')
     is_sold = models.BooleanField(default=False)  # 판매 완료 여부
     is_completed = models.BooleanField(default=False)  # 구매 완료 여부
     updated_at = models.DateTimeField(auto_now=True)
