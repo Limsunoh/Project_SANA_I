@@ -29,10 +29,12 @@ SECRET_KEY = SANAI_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost",
-                 "54.180.134.131",
-                 "127.0.0.1",
-                 "sbmarket.kro.kr",]
+ALLOWED_HOSTS = [
+    "localhost",
+    "54.180.134.131",
+    "127.0.0.1",
+    "sbmarket.kro.kr",
+    ]
 
 
 # Application definition
@@ -54,7 +56,8 @@ INSTALLED_APPS = [
 
     # Local
     "accounts",
-    "products",  
+    "products",
+    "reviews",
 ]
 
 MIDDLEWARE = [

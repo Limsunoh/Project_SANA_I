@@ -1,7 +1,7 @@
 from rest_framework import serializers
-
 from accounts.models import User
 from .models import Product, Image, Hashtag
+from reviews.serializers import ReviewSerializer
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -93,6 +93,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField()
     likes_count = serializers.SerializerMethodField()
 
+
     class Meta:
         model = Product
         fields = (
@@ -109,6 +110,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             "updated_at",
             "likes_count",
         )
+    reviews= ReviewSerializer(read_only= True)
 
     # 좋아요 수 카운팅
     def get_likes_count(self, obj):
