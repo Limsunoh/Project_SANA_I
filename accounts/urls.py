@@ -20,7 +20,8 @@ urlpatterns = [
     
     # 프론트(화면구성) 주소
     path('signup-page/', views.SignupPageView.as_view(), name='signup-page'),
-    path('login-page/', views.LoginPageView.as_view(), name='login-page'),
+    path("login-page/", views.LoginPageView.as_view(), name="token_obtain_pair"),
+    
     
     
 ]
