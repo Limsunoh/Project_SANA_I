@@ -19,13 +19,25 @@ from .serializers import (
 )
 from .models import User
 from .permissions import IsOwnerOrReadOnly
-from django.shortcuts import render
+from django.views.generic import TemplateView
 
 
 class UserCreateView(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permisson_classes = [AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        print("요청 데이터:", request.data)  # 요청 데이터 확인
+
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            print("데이터 검증 오류:", serializer.errors)  # 데이터 검증 오류 확인
+            return Response(serializer.errors, status=400)
+
+        # 데이터가 유효하면 사용자 생성
+        self.perform_create(serializer)
+        return Response({"message": "success"}, status=201)
 
 
 def activate_user(request, pk, token):
@@ -53,20 +65,7 @@ def activate_user(request, pk, token):
 
     except Exception as e:
         return HttpResponse(f"에러 발생: {e}", status=400)
-    
-class EmailVerifyView(APIView):
-    permission_classes = [AllowAny]
 
-    def post(self, request):
-        email = request.data.get("email")
-        # 이메일 인증 로직을 여기서 처리합니다. (예: 인증 이메일 전송)
-        # 이 부분은 실제 로직에 맞게 수정하세요.
-        return Response({"message": "인증 이메일이 전송되었습니다."}, status=200)
-
-    # 유저 프로필 확인 및 수정, 삭제
-
-def signup_view(request):
-    return render(request, 'signup.html')
 
 class UserProfileView(RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
@@ -79,6 +78,22 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
         elif self.request.method in ["PATCH", "PUT"]:
             return UserChangeSerializer
         return super().get_serializer_class()
+
+    def destroy(self, request, *args, **kwargs):
+        # `lookup_field`를 사용하여 해당 사용자를 찾기
+        user = get_object_or_404(User, username=kwargs.get("username"))
+
+        # 요청자가 해당 사용자인지 확인
+        if user == request.user:
+            # is_active 속성을 False로 설정
+            user.is_active = False
+            user.save()
+
+            # 성공적으로 업데이트된 응답 반환
+            return Response({"message": "삭제처리가 완료되었습니다."}, status=200)
+        else:
+            # 권한이 없을 때 응답
+            return Response({"message": "삭제처리할 권한이 없습니다."}, status=403)
 
     # 유저 비밀번호 변경
 
@@ -101,6 +116,7 @@ class ChangePasswordView(APIView):
 
 class FollowView(APIView):
     permission_classes = [IsAuthenticated]
+
     def post(self, request, username):
         target_user = get_object_or_404(User, username=username)
         current_user = request.user
@@ -110,3 +126,12 @@ class FollowView(APIView):
         else:
             target_user.followers.add(current_user)
             return Response("follow했습니다.", status=200)
+
+
+# HTML 파일 보여주는 class
+class SignupPageView(TemplateView):
+    template_name = "signup.html"
+
+
+class LoginPageView(TemplateView):
+    template_name = "login.html"
