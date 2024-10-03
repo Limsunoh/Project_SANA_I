@@ -46,6 +46,7 @@ class UserSerializer(serializers.ModelSerializer):
             "postcode",
             "mainaddress",
             "subaddress",
+            "extraaddress",
             "image",
             "profile_image",
             "introduce",
@@ -55,6 +56,8 @@ class UserSerializer(serializers.ModelSerializer):
         write_only_fields = ("image",)
 
     def validate(self, data):
+        if 'email' not in data or not data['email']:
+            raise serializers.ValidationError("이메일을 입력해주세요.")
         # 비밀번호 두개가 일치하는지 확인
         if data["password"] != data["checkpassword"]:
             raise serializers.ValidationError("똑같은 비밀번호를 입력하세요.")
