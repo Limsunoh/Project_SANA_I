@@ -56,12 +56,13 @@ class ProductListAPIView(ListCreateAPIView):
     def get_queryset(self):
         search = self.request.query_params.get("search")
         order_by = self.request.query_params.get("order_by")
+        print("받은 order_by 파라미터:", order_by)  # 파라미터 값 출력 (디버그용)
         queryset = Product.objects.all()
 
         # 검색
         if search:
             queryset = queryset.filter(
-                Q(title__icontains=search) | Q(content__icontains=search)
+                Q(title__icontains=search) | Q(content__icontains=search) | Q(tags__icontains=search)
             )
 
         # 정렬
@@ -69,9 +70,13 @@ class ProductListAPIView(ListCreateAPIView):
             queryset = queryset.annotate(likes_count=Count("likes")).order_by(
                 "-likes_count"
             )
+        elif order_by == "hits":
+            queryset = queryset.order_by("-hits")
         else:  # 기본값은 최신순
             queryset = queryset.order_by("-created_at")
 
+        # 쿼리셋 확인을 위해 로그 출력
+        print("쿼리셋 결과:", queryset.query)  # 쿼리셋 결과를 출력
         return queryset
 
     def get(self, request, *args, **kwargs):
@@ -294,7 +299,7 @@ class AISearchAPIView(APIView):
         openai.api_key = OPENAI_API_KEY
 
         # 가장 최근에 생성된 40개의 상품을 조회
-        products = Product.objects.filter(status__in=['sell', 'reservation']).order_by('-created_at')[:40]
+        products = Product.objects.filter(status__in=['sell', 'reservation']).order_by('-created_at')[:200]
 
         product_list = []
 
@@ -304,6 +309,7 @@ class AISearchAPIView(APIView):
                 'id': product.id,
                 'title': product.title,
                 'price': str(product.price),
+                'image': product.image,
                 'tags': [tag.name for tag in product.tags.all()]
             }
             product_list.append(product_info)
@@ -311,7 +317,7 @@ class AISearchAPIView(APIView):
         # 프롬프트 생성
         prompt = f"""
 당신은 사용자의 요청에 따라 제품을 추천해주는 AI 추천 서비스입니다.
-아래의 사용자의 요청에 따라, 제품 목록에서 최대 5개의 제품을 추천해주세요.
+아래의 사용자의 요청에 따라, 제품 목록에서 최대 12개의 제품을 추천해주세요.
 추천 시 추천할 상품의 링크와 author 을 나열해줘야합니다. 링크는 http://127.0.0.1:8000/api/products/id 형태를 띕니다.
 tags와 title 및 description이 사용자의 요청과 관련 없는 상품도 추천 목록에 포함시키지 마세요.
 개인 사업자 또는 개인간 거래가 아니라 기업이 등록한 글처럼 보일 경우 추천 목록에 포함시키지 마세요.
@@ -366,3 +372,10 @@ tags와 title 및 description이 사용자의 요청과 관련 없는 상품도 
 
         # AI의 응답을 그대로 반환
         return Response({"response": ai_response}, status=200)
+    
+    
+    
+    
+# HTML 파일 보여주는 class
+class HomePageView(TemplateView):
+    template_name = "home.html"
