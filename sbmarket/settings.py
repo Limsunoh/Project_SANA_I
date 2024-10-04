@@ -41,7 +41,8 @@ INSTALLED_APPS = [
 
     # Local
     "accounts",
-    "products",  
+    "products",
+    "manager",  
 
     "django.contrib.admin",
     "django.contrib.auth",
