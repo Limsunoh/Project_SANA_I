@@ -8,4 +8,6 @@ from rest_framework.permissions import IsAuthenticated
 class ReviewViewSet(ModelViewSet):
     queryset= Review.objects.all()
     serializer_class= ReviewSerializer
-    permission_classes= [IsAuthenticated]
+    permission_classes= [IsAuthenticated] 
+    
+    http_method_names= ['get', 'post', 'delete']
