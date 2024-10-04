@@ -13,4 +13,5 @@ urlpatterns = [
     path('<int:pk>/chatrooms/<int:room_id>/messages/', views.ChatMessageCreateAPIView.as_view(), name='create-message'),
     path('<int:pk>/chatrooms/<int:room_id>/transaction-status/', views.TransactionStatusUpdateAPIView.as_view(), name='update-transaction-status'),
     path('<int:product_id>/chatrooms/<int:room_id>/html/', views.ChatRoomHTMLView.as_view(), name='chat-room-html'),
+    path("aisearch/", views.AISearchAPIView.as_view(), name="ai_search"),  # AI 추천 기능
 ]
