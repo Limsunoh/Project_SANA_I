@@ -1,49 +1,31 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+
+{% block title %}로그인 - 딸기 마켓{% endblock %}
+
+{% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
-</head>
+{% endblock %}
 
-<body>
-    <header>
-        <div class="header-content">
-            <h1>딸기 마켓</h1>
-            <nav>
-                <ul>
-                    <li><a href="#">내 상점</a></li>
-                    <li><a href="#">1:1 채팅</a></li>
-                </ul>
-            </nav>
-            <button class="signup-button" onclick="location.href='/api/accounts/signup-page/'">회원가입</button>
-        </div>
-    </header>
-
-    <div class="container">
-        <h2>Login</h2>
-        <form id="login-form">
-            <div class="input-group">
-                <label for="username">ID</label>
-                <input type="text" id="username" name="username" placeholder="아이디를 입력하세요" required>
-            </div>
-            <div class="input-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" required>
-            </div>
-            <button type="submit">로그인</button>
-        </form>
-        <p id="message"></p>
+{% block content %}
+<h2>로그인</h2>
+<form id="login-form">
+    {% csrf_token %}
+    <div class="input-group">
+        <label for="username">ID</label>
+        <input type="text" id="username" name="username" required>
     </div>
+    <div class="input-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+    </div>
+    <button type="submit">로그인</button>
+    <div id="message"></div>
+</form>
 
-    <footer>
-        <p>&copy; 2024 딸기 마켓. All rights reserved.</p>
-    </footer>
+{% block scripts %}
+<script src="{% static 'js/login.js' %}"></script>
+{% endblock %}
 
-    <script src="{% static 'js/login.js' %}"></script>
-</body>
-
-</html>
+{% endblock %}

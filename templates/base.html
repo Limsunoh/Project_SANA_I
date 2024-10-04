@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}딸기 마켓{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block extra_css %}
+    {% endblock %}
+</head>
+
+<body>
+    <header>
+        <div class="header-content">
+            <img src="{% static 'images/logo.png' %}" alt="로고" style="height: 50px; cursor:pointer;"
+                onclick="javascript:location.href='/home/'">
+            <nav>
+                <ul>
+                    <li class="mypage-link" style="display:none;">
+                        <a href="/api/accounts/profile/">내 상점</a>
+                    </li>
+                    <li class="login-link">
+                        <a href="/api/accounts/login-page/">내 상점</a>
+                    </li>
+                    <li class="chat-link" style="display:none;">
+                        <a href="/1on1-chat/">1:1 채팅</a>
+                    </li>
+                    <li class="login-link">
+                        <a href="/api/accounts/login-page/">1:1 채팅</a>
+                    </li>
+                </ul>
+            </nav>
+    
+            <div class="navbar-collapse">
+                <ul class="navbar-nav">
+                    <li class="signup-link">
+                        <a href="/api/accounts/signup-page/">회원가입</a>
+                    </li>
+                    <li class="login-link">
+                        <a href="/api/accounts/login-page/">로그인</a>
+                    </li>
+                    <li class="mypage-link" style="display:none;">
+                        <form action="/api/accounts/logout/" method="POST" class="logout-form" style="display:none;">
+                            <input type="submit" value="로그아웃" class="btn btn-link p-0 text-decoration-none" />
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <script src="{% static 'js/base.js' %}"></script>
+    
+    <!-- 각 페이지별 내용이 들어갈 위치 -->
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- 공통 푸터 -->
+    <footer>
+        <p>&copy; 2024 딸기 마켓. All rights reserved.</p>
+    </footer>
+
+    <!-- 각 템플릿에서 추가할 수 있는 자바스크립트 -->
+    {% block scripts %}
+    {% endblock %}
+</body>
+
+</html>

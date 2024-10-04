@@ -166,7 +166,6 @@ class ChatRoomSerializer(serializers.ModelSerializer):
     buyer_username = serializers.ReadOnlyField(source='buyer.username')
     product_title = serializers.ReadOnlyField(source='product.title')
     last_message = serializers.SerializerMethodField(read_only=True)
-    
 
     class Meta:
         model = ChatRoom
@@ -180,13 +179,14 @@ class ChatRoomSerializer(serializers.ModelSerializer):
         rep['seller_image'] = seller.get_profile_image_url()
         rep['buyer_image'] = buyer.get_profile_image_url()
         return rep
-    
+
     def get_last_message(self, instance):
         if instance.messages.exists():
             last_message = instance.messages.order_by("id").last()
             return last_message.content  # 마지막 내용을 반환
         return None 
         
+
 
 
 class TransactionStatusSerializer(serializers.ModelSerializer):

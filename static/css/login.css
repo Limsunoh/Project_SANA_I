@@ -5,60 +5,10 @@ body {
     background-color: #f8f9fa;
 }
 
-/* Header */
-.header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 40px;
-    background-color: #fff;
-    border-bottom: 1px solid #ddd;
-}
-
-.header-content h1 {
-    margin: 0;
-    font-size: 24px;
-}
-
-.header-content nav ul {
-    list-style: none;
-    display: flex;
-    margin: 0;
-    padding: 0;
-}
-
-.header-content nav ul li {
-    margin: 0 15px;
-}
-
-.header-content nav ul li a {
-    text-decoration: none;
-    font-weight: 500;
-    color: #333;
-    font-size: 18px;
-}
-
-.header-content nav ul li a:hover {
-    color: #ff5722;
-}
-
-.signup-button {
-    padding: 10px 20px;
-    background-color: #2c2c2c;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-.signup-button:hover {
-    background-color: #1e1e1e;
-}
-
 /* Container */
 .container {
     max-width: 500px;
-    margin: 80px auto;
+    margin: 100px auto; /* 상단 공간 조정 */
     padding: 40px;
     background-color: #fff;
     border: 1px solid #ddd;
@@ -74,6 +24,7 @@ body {
     margin-bottom: 20px;
 }
 
+/* Input Group Styling */
 .input-group {
     margin-bottom: 20px;
     text-align: left;
@@ -102,7 +53,7 @@ body {
 button[type="submit"] {
     width: 100%;
     padding: 15px;
-    background-color: #ff5722;
+    background-color: #b88e2f; /* signup 버튼 색상과 일치 */
     border: none;
     color: #fff;
     cursor: pointer;
@@ -112,7 +63,7 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-    background-color: #e64a19;
+    background-color: #99751f; /* hover 스타일도 signup과 동일하게 */
 }
 
 #message {
@@ -120,6 +71,7 @@ button[type="submit"]:hover {
     color: red;
 }
 
+/* Footer 스타일 */
 footer {
     text-align: center;
     padding: 40px;

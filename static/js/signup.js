@@ -49,46 +49,27 @@ function sample6_execDaumPostcode() {
     }).open();
 }
 
-document.getElementById('signup-form').onsubmit = function(event) {
+
+document.getElementById('signup-form').onsubmit = async function (event) {
     event.preventDefault();
 
     const formData = new FormData(event.target);
-    const csrfToken = getCookie('csrftoken');
+    const formDataObj = Object.fromEntries(formData.entries());
 
-    // FormData 객체를 자바스크립트 객체로 변환
-    const formDataObj = {};
-    formData.forEach((value, key) => {
-        formDataObj[key] = value;  // 각 필드를 자바스크립트 객체에 추가
-    });
-
-    console.log("폼 데이터 객체:", formDataObj);  // 변환된 객체를 콘솔에 출력
-
-    // 서버로 JSON 데이터 전송 (백엔드와 연동)
-    fetch('/api/accounts/signup/', {
+    const response = await fetch('/api/accounts/signup/', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',  // JSON 형식으로 전송
-            'X-CSRFToken': csrfToken,
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
         },
-        body: JSON.stringify(formDataObj),  // 자바스크립트 객체를 JSON 문자열로 변환하여 전송
-    })
-    .then(response => {
-        console.log("서버 응답:", response);  // 응답 상태 확인
-        if (!response.ok) {
-            return response.text().then(text => { throw new Error(text); });
-        }
-        return response.json();  // 성공적인 응답만 JSON으로 파싱
-    })
-    .then((data) => {
-        console.log("서버로부터 받은 데이터:", data);  // 응답 데이터 확인
-        if (data.message === 'success') {
-            alert('회원가입이 완료되었습니다! 이메일인증을 완료하셔야 로그인이 가능합니다!!!');
-        } else {
-            alert('오류가 발생했습니다: ' + JSON.stringify(data));
-        }
-    })
-    .catch(error => {
-        console.error('에러 발생:', error);
-        alert('오류가 발생했습니다: ' + error.message);  // 에러 메시지 출력
+        body: JSON.stringify(formDataObj),
     });
+
+    if (response.ok) {
+        alert('회원가입이 완료되었습니다. 이메일 인증을 진행해주세요.');
+        window.location.href = '/api/accounts/login-page/';  // 회원가입 후 로그인 페이지로 이동
+    } else {
+        const errorData = await response.json();
+        alert('회원가입 실패: ' + JSON.stringify(errorData));
+    }
 };
