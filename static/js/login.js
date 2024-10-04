@@ -15,7 +15,7 @@ document.getElementById("login-form").onsubmit = async function (event) {
         setAccessToken(data.access);
         setRefreshToken(data.refresh);
         alert("로그인이 되었습니다.");
-        window.location.href = "/home/";  // 로그인 성공 후 홈 페이지로 이동
+        window.location.href = "/api/products/home-page/";  // 로그인 성공 후 홈 페이지로 이동
     } else {
         const errorData = await response.json();
         document.getElementById("message").innerText = "아이디 혹은 비밀번호를 확인하세요";

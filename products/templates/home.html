@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}딸기 마켓 - 홈{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- 배너 이미지 영역 -->
+<!-- <div class="banner">
+    <img src="{% static 'images/scandinavian-interior-mockup-wall-decal-background.jpg' %}" alt="배너 이미지">
+</div> -->
+
+<!-- AI 추천 섹션 -->
+<div class="ai-recommendation">
+    <h2>AI 추천</h2>
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="물품명을 검색해보세요">
+        <button id="search-clear">X</button>
+    </div>
+</div>
+
+<!-- 상품 목록 섹션 -->
+<div class="product-list-section">
+    <div class="section-header">
+        <h2>상품 목록</h2>
+            <div class="d-flex">
+                <div class="dropdown me-1">
+                    <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown"
+                        aria-expanded="false" data-bs-offset="10,20">
+                        정렬
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">인기순</a></li>
+                        <li><a class="dropdown-item" href="#">조회순</a></li>
+                        <li><a class="dropdown-item" href="#">최신순</a></li>
+                    </ul>
+                </div>
+            </div>
+    </div>
+    <div class="product-grid" id="product-list-grid">
+        <!-- 상품 목록이 동적으로 채워질 예정 -->
+    </div>
+</div>
+
+<!-- 페이지네이션 버튼 영역 -->
+<div id="pagination-container">
+    <div id="pagination-controls" class="pagination-controls">
+        <button id="prev-page" class="pagination-button">이전</button>
+        <span id="page-info" class="page-info"></span>
+        <button id="next-page" class="pagination-button">다음</button>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/home.js' %}"></script>
+{% endblock %}

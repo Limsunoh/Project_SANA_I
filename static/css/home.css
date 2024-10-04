@@ -1,0 +1,172 @@
+/* 기본 설정 */
+body {
+    font-family: 'Poppins', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+}
+
+/* 배너 섹션 */
+.banner {
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
+}
+
+.banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* AI 추천 섹션 */
+.ai-recommendation {
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 20px;
+}
+
+.ai-recommendation h2 {
+    text-align: center;
+    font-weight: bold;
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.search-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+#search-input {
+    width: 300px;
+    padding: 12px;
+    border: 1px solid #D9D9D9;
+    border-radius: 9999px;
+    font-size: 16px;
+}
+
+#search-clear {
+    background: none;
+    border: none;
+    margin-left: -35px;
+    cursor: pointer;
+    color: #666;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+}
+
+.product-item {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #fff;
+    transition: transform 0.2s ease;
+}
+
+.product-item:hover {
+    transform: translateY(-5px);
+}
+
+.product-image img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.product-info {
+    padding: 15px;
+}
+
+.product-info h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.product-info p {
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.product-price {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* 상품 목록 섹션 */
+.product-list-section {
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 20px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section-header h2 {
+    font-weight: bold;
+    font-size: 48px;
+}
+
+.filter {
+    display: flex;
+    align-items: center;
+}
+
+.filter span {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.filter-button {
+    background-color: #2C2C2C;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+.filter-button:hover {
+    background-color: #1E1E1E;
+}
+
+/* 페이지네이션 컨트롤 */
+#pagination-container {
+    display: flex;
+    justify-content: center; /* 가운데 정렬 */
+    margin-top: 20px; /* 여백 추가 */
+}
+
+.pagination-controls {
+    display: flex;
+    justify-content: center; /* 가운데 정렬 */
+    align-items: center;
+    gap: 10px; /* 버튼 간격 */
+}
+
+.pagination-button {
+    padding: 5px 10px;
+    background-color: #b88e2f; /* 버튼 색상 */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.pagination-button:hover {
+    background-color: #e0a800; /* 호버 색상 */
+}
+
+.page-info {
+    font-size: 16px;
+    font-weight: bold;
+}
