@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from .views import ReviewViewSet
 
 app_name= "reviews"
 
@@ -7,7 +7,7 @@ app_name= "reviews"
 # router.register(r'reviews', views.ReviewViewSet)
 
 urlpatterns = [
-    path("detail/", views.ReviewViewSet, name= "product_review"),
-    path("all/", views.ReviewViewSet, name= "user_reviews"),
-    path("create/", views.ReviewViewSet, name= "review_create"),
+    path("detail/", ReviewViewSet.as_view({'get' : 'retrieve'}), name= "product_review"),
+    path("all/", ReviewViewSet.as_view({'get' : 'list'}), name= "user_reviews"),
+    path("create/", ReviewViewSet.as_view({'post' : 'create'}), name= "review_create"),
 ]

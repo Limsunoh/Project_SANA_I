@@ -92,6 +92,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     hashtag = HashtagSerializer(many=True, source="tags", required=False)
     author = serializers.StringRelatedField()
     likes_count = serializers.SerializerMethodField()
+    reviews = ReviewSerializer(read_only=True)
 
 
     class Meta:
@@ -109,8 +110,8 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
             "likes_count",
+            "reviews",
         )
-    reviews= ReviewSerializer(read_only= True)
 
     # 좋아요 수 카운팅
     def get_likes_count(self, obj):
