@@ -1,59 +1,26 @@
-from rest_framework.serializers import ModelSerializer
 from rest_framework import serializers
 from .models import Review
-from products.models import Product
     
 
-# class ReviewScoreSerializer(serializers.ModelSerializer):
-
-
-    # class Meta:
-    #     model= ReviewScore
-    #     fields= ['score']
-
-
-class ReviewSerializer(ModelSerializer):
-    # total_score= serializers.SerializerMethodField()
-
+class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model= Review
-        fields= [
-            'id', 'user', 
-            'cheecklist_1', 'cheecklist_2', 'cheecklist_3', 
-            'cheecklist_4', 'cheecklist_5', 'cheecklist_6', 
-            'cheecklist_7', 'cheecklist_8', 'cheecklist_9',
-            'cheecklist_10', 'written_feedback', 'created_at', 
-        ]
-        read_only_fields= ['id', 'created_at', 'user', 'checked_items']
+        fields= ['id', 'user', 'checklist', 'additional_comments', 'created_at', 'score']
+        read_only_fields= ['author', 'created_at', 'score'] # 작성자는 자동으로 설정되며, 점수는 서버에서 계산됨.
 
-# def get_total_score(self, obj):
-#     return obj.total_score()
 
-# def get_checked_items(self, obj): 
-#     # 체된 항목 필터링(자세히 보기)
-#     checklist= {
-#         'checklist_1': obj.checklist_1, 
-#         'checklist_2': obj.checklist_2, 
-#         'checklist_3': obj.checklist_3, 
-#         'checklist_4': obj.checklist_4, 
-#         'checklist_5': obj.checklist_5, 
-#         'checklist_6': obj.checklist_6, 
-#         'checklist_7': obj.checklist_7, 
-#         'checklist_8': obj.checklist_8, 
-#         'checklist_9': obj.checklist_9, 
-#         'checklist_10': obj.checklist_10, 
-#     }
-#     # 체크된 항목만 반환 (True 값만 반환)
-#     return [key for key, value in checklist.items() if value]
-
-# class ReviewCreateSerializer(serializers.ModelSerializer):
+    def create(self, validated_data):
+        checklist= validated_data.get('checklist',{})
+        score= self.calculate_score(checklist) # 선택한 항목들의 점수 계산
+        review= Review.objects.create(
+            author= self.context['request'].user,
+            score= score,
+            **validated_data
+        )
+        return review
     
-#     class Meta:
-#         pass
-
-
-# class ReviewDeleteSerializer(serializers.ModelSerializer):
-    
-#     class Meta:
-#         pass
-
+    def calculate_score(self, checklist):
+        score= 0
+        for key, value in checklist.items():
+            score += value # 예: 체크 항목의 점수 합산
+        return score
