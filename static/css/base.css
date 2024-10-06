@@ -11,108 +11,108 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 30px;
+    padding: 20px 40px;
     background-color: #fff;
     border-bottom: 1px solid #ddd;
 }
 
+/* 로고 스타일 */
 .logo {
     height: 50px;
     cursor: pointer;
 }
 
 /* 네비게이션 메뉴 스타일 */
-.header-content nav ul {
-    list-style: none;
-    display: flex;
-    align-items: center;
-    margin: 0;
-}
-
-.header-content nav ul li {
-    margin: 0 15px;
-}
-
-.header-content nav ul li a {
-    text-decoration: none;
+.nav-link {
+    font-size: 18px;
     font-weight: 500;
     color: #333;
-    font-size: 18px;
 }
 
-.header-content nav ul li a:hover {
+.nav-link:hover {
     color: #ff5722;
+}
+
+/* '내 상점'과 '1:1 채팅' 스타일 */
+.mypage-link .nav-link,
+.chat-link .nav-link {
+    font-size: 20px;  /* 폰트 크기 조금 키움 */
+    font-weight: 600; /* 글씨 굵게 */
+    color: #333;
+}
+
+.mypage-link .nav-link:hover,
+.chat-link .nav-link:hover {
+    color: #ff5722;  /* hover 시 색상 */
+}
+
+/* 회원가입, 로그인, 상품등록 버튼 스타일 */
+.btn-primary  {
+    background-color: #b88e2f; /* 금색 계열 */
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #99751f;  /* Hover 시 더 어두운 금색 */
+}
+
+.btn-secondary {
+    background-color: #6c757d; /* 회색 계열 */
+    border: none;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268; /* Hover 시 더 어두운 회색 */
+}
+
+.btn-outline-dark {
+    color: #333;
+    border: 2px solid #333; 
+}
+
+.btn-outline-dark:hover {
+    color: #fff;
+    background-color: #333; /* Hover 시 배경색을 검정색으로 */
+}
+
+/* '상품 등록' 버튼 스타일 */
+.btn-danger {
+    background-color: #333; /* 검정색 계열 */
+    border: none;
+}
+
+.btn-danger:hover {
+    background-color: #000; /* Hover 시 더 어두운 검정색 */
 }
 
 /* 검색창 스타일 */
 .search-container {
     display: flex;
-    justify-content: center;
     align-items: center;
-    margin-right: auto; /* 네비게이션과 회원가입/로그인 사이에 공간 생성 */
+    justify-content: center; /* 검색창을 전체적으로 가운데 정렬 */
+    margin-left: 50px;
 }
 
 #search-input {
-    padding: 8px 16px;
+    padding: 10px 16px;
     border: 1px solid #ddd;
-    border-radius: 20px;
-    width: 250px;
+    border-radius: 30px;
+    width: 300px;
     margin-right: 8px;
 }
 
 #search-button {
-    padding: 8px 16px;
+    padding: 10px 16px;
     background-color: #f06292;
     border: none;
-    border-radius: 20px;
+    border-radius: 30px;
     color: white;
     cursor: pointer;
-    font-weight: bold;
-}
-
-/* 회원가입 및 로그인 버튼 그룹 */
-.navbar-collapse {
-    display: flex;
-    align-items: center;
-}
-
-.nav-item {
-    margin-left: 10px;
-}
-
-.nav-item a, .product-register-btn {
-    padding: 8px 16px;
-    border-radius: 20px;
-    text-decoration: none;
-    font-weight: bold;
-    color: white;
-    background-color: #2c2c2c;
     transition: background-color 0.3s ease;
 }
 
-.nav-item a:hover, .product-register-btn:hover {
-    background-color: #1e1e1e;
-}
-
-/* 회원가입과 로그인 버튼 스타일 */
-.signup-link a, .login-link a {
-    background-color: #3498db;
-    margin-right: 10px;
-}
-
-.signup-link a:hover, .login-link a:hover {
-    background-color: #2980b9;
-}
-
-/* 상품 등록 버튼 스타일 */
-.product-register-btn {
-    margin-left: 10px; /* 버튼 간격 조정 */
-    background-color: #e74c3c;
-    color: white;
-}
-
-.product-register-btn:hover {
-    background-color: #c0392b;
+#search-button:hover {
+    background-color: #ec407a;
 }
 
 /* Container 공통 스타일 */
@@ -140,19 +140,4 @@ footer {
 footer p {
     margin: 0;
     color: #9f9f9f;
-}
-
-/* 버튼 스타일 통일 */
-button, .login-button {
-    padding: 10px 20px;
-    background-color: #b88e2f;
-    color: #fff;
-    border: none;
-    margin-left: 5px;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-button:hover, .login-button:hover {
-    background-color: #1e1e1e;
 }
