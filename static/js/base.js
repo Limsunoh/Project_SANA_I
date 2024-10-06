@@ -60,3 +60,48 @@ async function fetchWithAuth(url, options = {}) {
 
     return response;
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('search-input');
+    const searchButton = document.getElementById('search-button');
+    const productRegisterButton = document.getElementById('product-register-button');
+
+    // 검색 기능 구현
+    if (searchButton && searchInput) {
+        searchButton.addEventListener('click', function () {
+            const query = searchInput.value.trim();
+            if (query) {
+                // 검색어가 있을 때만 URL을 변경하고 `history.pushState`로 브라우저 URL을 업데이트
+                const newUrl = `/api/products/home-page/?search=${query}`;
+                window.history.pushState({ path: newUrl }, '', newUrl);
+                
+                // `loadProductList` 함수를 직접 호출하여 검색 결과를 표시 (home.js에서 함수가 전역으로 노출되어 있어야 함)
+                if (typeof loadProductList === 'function') {
+                    loadProductList('created_at', query);  // 기본 정렬 기준을 유지하면서 검색
+                }
+            }
+        });
+
+        // 엔터 키로도 검색 가능하게 설정
+        searchInput.addEventListener('keypress', function (event) {
+            if (event.key === 'Enter') {
+                const query = searchInput.value.trim();
+                if (query) {
+                    const newUrl = `/home-page/?search=${query}`;
+                    window.history.pushState({ path: newUrl }, '', newUrl);
+
+                    if (typeof loadProductList === 'function') {
+                        loadProductList('created_at', query);
+                    }
+                }
+            }
+        });
+    }
+
+    // 상품 등록 버튼 클릭 이벤트
+    if (productRegisterButton) {
+        productRegisterButton.addEventListener('click', function () {
+            window.location.href = "/api/products/create/"; // 상품 등록 페이지로 이동
+        });
+    }
+});
