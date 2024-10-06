@@ -28,8 +28,6 @@ class UserCreateView(CreateAPIView):
     permisson_classes = [AllowAny]
 
     def create(self, request, *args, **kwargs):
-        print("요청 데이터:", request.data)  # 요청 데이터 확인
-
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
             print("데이터 검증 오류:", serializer.errors)  # 데이터 검증 오류 확인
@@ -135,3 +133,8 @@ class SignupPageView(TemplateView):
 
 class LoginPageView(TemplateView):
     template_name = "login.html"
+    
+    
+class Profile_editView(TemplateView):
+    template_name = "profile_edit.html"
+    

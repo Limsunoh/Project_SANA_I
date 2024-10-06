@@ -15,13 +15,11 @@ urlpatterns = [
     path("login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("logout/", TokenBlacklistView.as_view(), name="logout"),
     path("profile/<str:username>/", views.UserProfileView.as_view()),
-    path(
-        "profile/<str:username>/password/",
-        views.ChangePasswordView.as_view(),
-    ),
+    path("profile/<str:username>/password/",views.ChangePasswordView.as_view()),
     path("follow/<str:username>/", views.FollowView.as_view(), name="follow_view"),
-    
     # 프론트(화면구성) 주소
     path("signup-page/", views.SignupPageView.as_view(), name="signup-page"),
     path("login-page/", views.LoginPageView.as_view(), name="token_obtain_pair"),
+    path("profile_edit-page/<str:username>", views.Profile_editView.as_view(), name="profile_edit"),
+    
 ]

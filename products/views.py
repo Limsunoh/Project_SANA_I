@@ -5,25 +5,26 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import ListCreateAPIView, UpdateAPIView
-from rest_framework.permissions import (IsAuthenticated, 
-                                        IsAuthenticatedOrReadOnly, 
-                                        AllowAny,
-                                        )
+from rest_framework.permissions import (
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
+    AllowAny,
+)
 
 from accounts.permissions import (
-                                IsOwnerOrReadOnly,
-                                SenderorReceiverOnly,
-                                SellerorBuyerOnly
-                                )
+    IsOwnerOrReadOnly,
+    SenderorReceiverOnly,
+    SellerorBuyerOnly,
+)
 from .models import (
-                    Product,
-                    Image, 
-                    Hashtag, 
-                    PrivateComment, 
-                    ChatMessage, 
-                    ChatRoom, 
-                    TransactionStatus,
-                    )
+    Product,
+    Image,
+    Hashtag,
+    PrivateComment,
+    ChatMessage,
+    ChatRoom,
+    TransactionStatus,
+)
 from .serializers import (
     ProductListSerializer,
     ProductCreateSerializer,
@@ -31,10 +32,11 @@ from .serializers import (
     PrivateCommentSerializer,
     ChatMessageSerializer,
     TransactionStatusSerializer,
-    ChatRoomSerializer
+    ChatRoomSerializer,
 )
 from .pagnations import ProductPagnation
 from django.views.generic import TemplateView
+
 # AI 관련 임포트
 import openai
 import json
@@ -48,6 +50,7 @@ from sbmarket.config import OPENAI_API_KEY
 # 로깅 설정
 logger = logging.getLogger(__name__)
 
+
 class ProductListAPIView(ListCreateAPIView):
     pagination_class = ProductPagnation
     serializer_class = ProductListSerializer
@@ -57,15 +60,14 @@ class ProductListAPIView(ListCreateAPIView):
         search = self.request.query_params.get("search")
         order_by = self.request.query_params.get("order_by")
         queryset = Product.objects.all()
-        
-
 
         # 검색
         if search:
             queryset = queryset.filter(
-                Q(title__icontains=search) | Q(content__icontains=search) | Q(tags__name__icontains=search)
+                Q(title__icontains=search)
+                | Q(content__icontains=search)
+                | Q(tags__name__icontains=search)
             )
-
 
         # 정렬
         if order_by == "likes":
@@ -106,7 +108,7 @@ class ProductListAPIView(ListCreateAPIView):
 class ProductDetailAPIView(UpdateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductDetailSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly,IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def get(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
@@ -166,13 +168,14 @@ class CommentListCreateView(ListCreateAPIView):
     permission_classes = [SenderorReceiverOnly]
     queryset = PrivateComment.objects.all().order_by("-pk")
     serializer_class = PrivateCommentSerializer
-    
+
     def get(self, request, *args, **kwargs):
         user = request.user
         comments = PrivateComment.objects.filter(Q(sender=user) | Q(receiver=user))
-        serializer = PrivateCommentSerializer(comments, many=True, context={'request': request})
+        serializer = PrivateCommentSerializer(
+            comments, many=True, context={"request": request}
+        )
         return Response(serializer.data, status=200)
-
 
     def perform_create(self, serializer):
         product = get_object_or_404(Product, pk=self.kwargs["pk"])
@@ -183,21 +186,26 @@ class CommentListCreateView(ListCreateAPIView):
 
 # 새로운 채팅방 만들기
 class ChatRoomCreateAPIView(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly,SellerorBuyerOnly]
-    
+    permission_classes = [IsAuthenticatedOrReadOnly, SellerorBuyerOnly]
+
     def get(self, request, *args, **kwargs):
         user = request.user
         chat_rooms = ChatRoom.objects.filter(Q(seller=user) | Q(buyer=user))
         serializer = ChatRoomSerializer(chat_rooms, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
     def post(self, request, product_id, *args, **kwargs):
         product = get_object_or_404(Product, id=product_id)
 
         # 이미 채팅방이 존재하는지 확인 (동일한 판매자와 구매자 간)
-        existing_room = ChatRoom.objects.filter(product=product, seller=product.author, buyer=request.user).first()
+        existing_room = ChatRoom.objects.filter(
+            product=product, seller=product.author, buyer=request.user
+        ).first()
         if existing_room:
-            return Response({"detail": "해당 상품에 대한 채팅방이 이미 존재합니다."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "해당 상품에 대한 채팅방이 이미 존재합니다."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # 새로운 채팅방 생성
         chat_room = ChatRoom.objects.create(
@@ -213,11 +221,13 @@ class ChatRoomCreateAPIView(APIView):
 # 새로운 채팅 메시지 생성
 class ChatMessageCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request, room_id, *args, **kwargs):
         user = request.user
-        last_message_id = request.query_params.get('last_message_id', None)
-        room = get_object_or_404(ChatRoom.objects.filter(Q(seller=user) | Q(buyer=user)), id=room_id)
+        last_message_id = request.query_params.get("last_message_id", None)
+        room = get_object_or_404(
+            ChatRoom.objects.filter(Q(seller=user) | Q(buyer=user)), id=room_id
+        )
         new_messages = []
 
         # 롱 폴링 대기 시간 (최대 30초)
@@ -227,23 +237,24 @@ class ChatMessageCreateAPIView(APIView):
         while (time.time() - start_time) < timeout:
             # 새 메시지 확인
             if last_message_id:
-                new_messages = ChatMessage.objects.filter(room=room, id__gt=last_message_id)
+                new_messages = ChatMessage.objects.filter(
+                    room=room, id__gt=last_message_id
+                )
             else:
                 new_messages = ChatMessage.objects.filter(room=room)
 
             if new_messages.exists():
-                break 
+                break
 
             time.sleep(2)  # 2초마다 새 메시지 확인
-            
+
         for message in new_messages:
             if message.sender != user and not message.is_read:
                 message.is_read = True
-                message.save(update_fields=['is_read'])
+                message.save(update_fields=["is_read"])
 
         serializer = ChatMessageSerializer(new_messages, many=True)
         return Response(serializer.data)
-    
 
     def post(self, request, room_id, *args, **kwargs):
         room = get_object_or_404(ChatRoom, id=room_id)
@@ -252,6 +263,7 @@ class ChatMessageCreateAPIView(APIView):
             serializer.save(sender=request.user, room=room)
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
+
 
 # 거래 상태를 업데이트하는 API
 class TransactionStatusUpdateAPIView(APIView):
@@ -262,14 +274,15 @@ class TransactionStatusUpdateAPIView(APIView):
         status = get_object_or_404(TransactionStatus, room=room)
 
         # 판매 완료 및 구매 완료 상태 업데이트
-        if request.data.get('is_sold') is not None:
-            status.is_sold = request.data.get('is_sold')
-        if request.data.get('is_completed') is not None:
-            status.is_completed = request.data.get('is_completed')
+        if request.data.get("is_sold") is not None:
+            status.is_sold = request.data.get("is_sold")
+        if request.data.get("is_completed") is not None:
+            status.is_completed = request.data.get("is_completed")
 
         status.save()
         serializer = TransactionStatusSerializer(status)
         return Response(serializer.data)
+
 
 # 채팅방 HTML 페이지를 보내주는 View
 class ChatRoomHTMLView(TemplateView):
@@ -277,19 +290,24 @@ class ChatRoomHTMLView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['room_id'] = self.kwargs['room_id']  # URL에서 room_id를 가져와서 전달
-        context['product_id'] = self.kwargs['product_id']  # URL에서 product_id를 가져와서 전달
+        context["room_id"] = self.kwargs["room_id"]  # URL에서 room_id를 가져와서 전달
+        context["product_id"] = self.kwargs[
+            "product_id"
+        ]  # URL에서 product_id를 가져와서 전달
         return context
-#------------------------------------------------------------------------------
+
+
+# ------------------------------------------------------------------------------
 # aisearch 기능 구현
 # 목적: 사용자가 원하는 '요청'에 부합하는 물건 중 적합한 것 5개를 상품 목록에서 찾아 나열해주는 AI 상품 추천 서비스
 # 검색 범위를 너무 넓히지 않기 위해 최근 생성된 20개의 상품만 상품 목록에 넣을 것
+
 
 class AISearchAPIView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        query = request.data.get('query', '')
+        query = request.data.get("query", "")
 
         if not query:
             return Response({"error": "요구사항을 입력해주세요"}, status=400)
@@ -298,18 +316,20 @@ class AISearchAPIView(APIView):
         openai.api_key = OPENAI_API_KEY
 
         # 가장 최근에 생성된 40개의 상품을 조회
-        products = Product.objects.filter(status__in=['sell', 'reservation']).order_by('-created_at')[:200]
+        products = Product.objects.filter(status__in=["sell", "reservation"]).order_by(
+            "-created_at"
+        )[:200]
 
         product_list = []
 
         # 각 상품의 정보를 딕셔너리 형태로 리스트에 추가
         for product in products:
             product_info = {
-                'id': product.id,
-                'title': product.title,
-                'price': str(product.price),
-                'image': product.image,
-                'tags': [tag.name for tag in product.tags.all()]
+                "id": product.id,
+                "title": product.title,
+                "price": str(product.price),
+                "image": product.image,
+                "tags": [tag.name for tag in product.tags.all()],
             }
             product_list.append(product_info)
 
@@ -341,8 +361,11 @@ tags와 title 및 description이 사용자의 요청과 관련 없는 상품도 
             response = openai.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[
-                    {"role": "system", "content": "당신은 제품 추천을 도와주는 AI 어시스턴트입니다."},
-                    {"role": "user", "content": prompt}
+                    {
+                        "role": "system",
+                        "content": "당신은 제품 추천을 도와주는 AI 어시스턴트입니다.",
+                    },
+                    {"role": "user", "content": prompt},
                 ],
                 temperature=0.4,
             )
@@ -350,13 +373,19 @@ tags와 title 및 description이 사용자의 요청과 관련 없는 상품도 
         # 버그 잡이
         except AuthenticationError as e:
             logger.error(f"인증 오류 발생: {e}")
-            return Response({"error": "OpenAI API 인증 오류가 발생했습니다."}, status=500)
+            return Response(
+                {"error": "OpenAI API 인증 오류가 발생했습니다."}, status=500
+            )
         except RateLimitError as e:
             logger.error(f"요청 제한 초과: {e}")
-            return Response({"error": "OpenAI API 요청 제한을 초과했습니다."}, status=500)
+            return Response(
+                {"error": "OpenAI API 요청 제한을 초과했습니다."}, status=500
+            )
         except OpenAIError as e:
             logger.error(f"OpenAI API 오류 발생: {e}")
-            return Response({"error": "AI 서비스 호출 중 오류가 발생했습니다."}, status=500)
+            return Response(
+                {"error": "AI 서비스 호출 중 오류가 발생했습니다."}, status=500
+            )
         except Exception as e:
             logger.error(f"예상치 못한 오류 발생: {e}", exc_info=True)
             return Response({"error": "서버 내부 오류가 발생했습니다."}, status=500)
@@ -367,14 +396,14 @@ tags와 title 및 description이 사용자의 요청과 관련 없는 상품도 
 
         except (KeyError, IndexError) as e:
             logger.error(f"AI 응답 처리 중 오류 발생: {e}")
-            return Response({"error": "AI 응답 처리 중 오류가 발생했습니다."}, status=500)
+            return Response(
+                {"error": "AI 응답 처리 중 오류가 발생했습니다."}, status=500
+            )
 
         # AI의 응답을 그대로 반환
         return Response({"response": ai_response}, status=200)
-    
-    
-    
-    
+
+
 # HTML 파일 보여주는 class
 class HomePageView(TemplateView):
     template_name = "home.html"
