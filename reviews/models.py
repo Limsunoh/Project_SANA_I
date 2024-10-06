@@ -1,29 +1,44 @@
 from django.db import models
-from accounts.models import User
+from django.conf import settings
+from django.apps import apps
+
 
 # 리뷰
 class Review(models.Model):
-    product = models.ForeignKey('products.Product', related_name= 'reviews', on_delete= models.SET_NULL, null= True, blank= True)        # 게시글 종속
-    user = models.ForeignKey(User, related_name= 'written_reviews', on_delete= models.CASCADE)                  # 계정 삭제 시, 같이 삭제
-    # 선택 항목(increase_feedback, deduct_answer)
-    cheecklist_1= models.BooleanField(default= False, null= True)
-    cheecklist_2= models.BooleanField(default= False, null= True)
-    cheecklist_3= models.BooleanField(default= False, null= True)
-    cheecklist_4= models.BooleanField(default= False, null= True)
-    cheecklist_5= models.BooleanField(default= False, null= True)
-    cheecklist_6= models.BooleanField(default= False, null= True)
-    cheecklist_7= models.BooleanField(default= False, null= True)
-    cheecklist_8= models.BooleanField(default= False, null= True)
-    cheecklist_9= models.BooleanField(default= False, null= True)
-    cheecklist_10= models.BooleanField(default= False, null= True)
-    written_feedback= models.TextField(blank= True)                 # 서술 내용(점수 반영x)
-    created_at= models.DateTimeField(auto_now_add= True)            # 작성 일시
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name= 'additional_comments', on_delete= models.CASCADE
+    )                  # 계정 삭제 시, 같이 삭제
+    products = models.ForeignKey('products.Product',
+        on_delete= models.CASCADE
+    )
+    cheecklist= models.JSONField()  # 선택 항목 저장(객관식)
+    additional_comments= models.TextField(blank= True) # 추가 작성(서술식)
+    created_at= models.DateTimeField(auto_now_add= True) # 작성 일시
+    score= models.IntegerField() # 총점 (항목별 점수 합산)
     
+    def __str__(self):
+        return f"Review by {self.author.username} on {self.product.name}"
+    
+    class Meta:
+        unique_together= ('author', 'products') # 한 상품에 대해 한 명이 하나의 리뷰만 작성
+    
+    
+    # 선택 항목(increase_feedback, deduct_answer)
+    # cheecklist_1= models.BooleanField(default= False, null= True)
+    # cheecklist_2= models.BooleanField(default= False, null= True)
+    # cheecklist_3= models.BooleanField(default= False, null= True)
+    # cheecklist_4= models.BooleanField(default= False, null= True)
+    # cheecklist_5= models.BooleanField(default= False, null= True)
+    # cheecklist_6= models.BooleanField(default= False, null= True)
+    # cheecklist_7= models.BooleanField(default= False, null= True)
+    # cheecklist_8= models.BooleanField(default= False, null= True)
+    # cheecklist_9= models.BooleanField(default= False, null= True)
+    # cheecklist_10= models.BooleanField(default= False, null= True)
     
     # class Meta:
     #     ordering= ['-created_at'] # 내림차순 정렬(최신 우선)
     
-    # def total_score(self):````````````````````39181919```   #     # 객관식 개별 점수
+    # def total_score(self):   # 객관식 개별 점수
     #     score_mapping= {
     #         'cheecklist_1':0.1, 
     #         'cheecklist_2':0.1, 

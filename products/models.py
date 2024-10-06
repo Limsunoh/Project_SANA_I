@@ -33,7 +33,7 @@ class Product(models.Model):
     likes = models.ManyToManyField(User, related_name='like_products', blank=True)
     # 해시태그 사용
     tags = models.ManyToManyField(Hashtag, related_name= "products", blank=True)
-    review = models.OneToOneField(Review, on_delete=models.CASCADE, related_name= "reviews", null= True, blank= True)
+    reviews = models.OneToOneField(Review, on_delete=models.CASCADE, related_name= "reviews", null= True, blank= True)
     
     def __str__(self):
         return f"User:{self.name} (Status:{self.status})"
