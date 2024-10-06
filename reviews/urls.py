@@ -13,7 +13,7 @@ app_name= "reviews"
 # ]
 
 router= DefaultRouter()
-router.register(r'reviews', ReviewViewSet, basename='review')
+router.register(r'review', ReviewViewSet, basename='review')
 
 urlpatterns = [
     path('', include(router.urls)),
