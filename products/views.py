@@ -58,16 +58,14 @@ class ProductListAPIView(ListCreateAPIView):
         order_by = self.request.query_params.get("order_by")
         queryset = Product.objects.all()
         
-         # 디버그: 현재 검색어를 출력
-        print(f"받은 search 파라미터: {search}")
-        print(f"받은 order_by 파라미터: {order_by}")
+
 
         # 검색
         if search:
             queryset = queryset.filter(
                 Q(title__icontains=search) | Q(content__icontains=search) | Q(tags__name__icontains=search)
             )
-            print(f"필터링된 쿼리셋: {queryset.query}")  # 필터링된 쿼리셋 출력
+
 
         # 정렬
         if order_by == "likes":
