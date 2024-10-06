@@ -56,7 +56,7 @@ class UserSerializer(serializers.ModelSerializer):
         write_only_fields = ("image",)
 
     def validate(self, data):
-        if 'email' not in data or not data['email']:
+        if "email" not in data or not data["email"]:
             raise serializers.ValidationError("이메일을 입력해주세요.")
         # 비밀번호 두개가 일치하는지 확인
         if data["password"] != data["checkpassword"]:
@@ -149,7 +149,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "followings",
             "followers",
         )
-        
+
     def get_profile_image(self, obj):
         return obj.get_profile_image_url()
 
@@ -179,15 +179,17 @@ class UserChangeSerializer(serializers.ModelSerializer):
             "username",
             "nickname",
             "name",
+            "postcode",
             "mainaddress",
             "subaddress",
+            "extraaddress",
             "birth",
             "email",
             "image",
             "profile_image",
         )
         read_only_fields = ("username",)
-        
+
     def get_profile_image(self, obj):
         return obj.get_profile_image_url()
 
