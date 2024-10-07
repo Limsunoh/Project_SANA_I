@@ -39,7 +39,6 @@ async function loadProductList(order_by = '', search = '', page = 1) {
     const productListContainer = document.getElementById('product-list-grid');
 
     try {
-        // order_by와 page 파라미터를 URL에 올바르게 추가
         let apiUrl = `/api/products/?order_by=${order_by}&page=${page}`;
         if (search) {
             apiUrl += `&search=${search}`;
@@ -55,12 +54,11 @@ async function loadProductList(order_by = '', search = '', page = 1) {
         console.log('서버에서 받은 데이터:', products);  // 서버로부터 받은 데이터 확인
         productListContainer.innerHTML = '';
 
-        // 받은 데이터가 배열이 아니라면 results로 접근
         const productList = products.results;
 
         productList.forEach(product => {
             const productCard = `
-                <div class="product-item">
+                <div class="product-item" onclick="window.location.href='/api/products/detail-page/${product.id}/'" style="cursor: pointer;">
                     <div class="product-image">
                         <img src="${product.preview_image}" alt="${product.title}">
                     </div>
@@ -75,17 +73,18 @@ async function loadProductList(order_by = '', search = '', page = 1) {
             `;
             productListContainer.insertAdjacentHTML('beforeend', productCard);
         });
+        
 
-        // 페이지네이션 정보 업데이트
-        currentPage = page; // 현재 페이지 업데이트
-        totalPages = Math.ceil(products.count / productList.length); // 전체 페이지 수 계산
+        currentPage = page;
+        totalPages = Math.ceil(products.count / productList.length);
         updatePaginationControls(search, order_by);
 
     } catch (error) {
-        console.error('에러 발생:', error); // 에러 로그 확인
+        console.error('에러 발생:', error);
         alert('상품 목록을 불러올 수 없습니다.');
     }
 }
+
 
 // 페이지네이션 컨트롤 업데이트 함수
 function updatePaginationControls(searchQuery, orderByParam) {
