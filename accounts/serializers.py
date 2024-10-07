@@ -8,7 +8,7 @@ from django.conf import settings
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import serializers
 from products.models import Product
-from products.serializers import ProductListSerializer
+from products.serializers import ProductListSerializer, ChatRoomSerializer
 from .validata import passwordValidation
 from .models import User
 
@@ -140,10 +140,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "birth",
             "email",
             "mainaddress",
-            "subaddress",
+            "image",
             "profile_image",
             "introduce",
-            "created_at",
             "products",
             "like_products",
             "followings",
@@ -168,6 +167,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
     def get_followers(self, obj):
         follwers = obj.followers.all()
         return UserFollowSerializer(follwers, many=True).data
+    
+
 
 
 class UserChangeSerializer(serializers.ModelSerializer):
