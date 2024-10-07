@@ -8,6 +8,12 @@
 {% endblock %}
 
 {% block content %}
+
+<!-- 로딩 스피너 -->
+<div id="loading-overlay">
+    <div class="spinner"></div> 
+</div>
+
 <!-- 배너 이미지 영역 -->
 <!-- <div class="banner">
     <img src="{% static 'images/scandinavian-interior-mockup-wall-decal-background.jpg' %}" alt="배너 이미지">
@@ -17,9 +23,9 @@
 <div class="ai-recommendation">
     <h2>AI 추천</h2>
     <div class="search-container">
-        <input type="text" id="search-input" placeholder="물품명을 검색해보세요">
+        <input type="text" id="ai-search-input" placeholder="요구사항을 적으면 AI가 상품을 추천합니다" onkeydown="if(event.key === 'Enter') aiSearch()">
         <button id="search-clear">X</button>
-    </div>
+    </div>    
 </div>
 
 <!-- 상품 목록 섹션 -->
@@ -40,6 +46,7 @@
                 </div>
             </div>
     </div>
+    <p id="ai-recommendation-message" style="display: none; font-size: 1.2em; color: #333;"></p>
     <div class="product-grid" id="product-list-grid">
         <!-- 상품 목록이 동적으로 채워질 예정 -->
     </div>

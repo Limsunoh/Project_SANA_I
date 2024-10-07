@@ -180,3 +180,25 @@ SIMPLE_JWT = {
 }
 
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'WARNING',  # Django 기본 로그는 WARNING 이상만 표시
+            'propagate': True,
+        },
+        'products': {  # 해당 앱에서만 로그 표시 (앱 이름을 'products'로 가정)
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
