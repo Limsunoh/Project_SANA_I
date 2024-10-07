@@ -25,11 +25,10 @@ async function fetchWithAuth(url, options = {}) {
     const access_token = getAccessToken();
 
     if (!access_token) {
-        window.location.href = "/api/accounts/login-page/"; // 토큰이 없으면 로그인 페이지로 이동
+        window.location.href = "/api/accounts/login-page/";
         return;
     }
 
-    // 기존 헤더에 Authorization 헤더 추가
     options.headers = {
         ...options.headers,
         "Authorization": `Bearer ${access_token}`,
@@ -37,7 +36,6 @@ async function fetchWithAuth(url, options = {}) {
 
     let response = await fetch(url, options);
 
-    // 토큰이 만료되었을 때 refresh token을 사용하여 갱신
     if (response.status === 401) {
         const refreshResponse = await fetch("/api/accounts/token/refresh/", {
             method: "POST",
@@ -48,8 +46,6 @@ async function fetchWithAuth(url, options = {}) {
         if (refreshResponse.ok) {
             const data = await refreshResponse.json();
             setAccessToken(data.access);
-
-            // 갱신된 토큰으로 다시 요청
             options.headers["Authorization"] = `Bearer ${data.access}`;
             response = await fetch(url, options);
         } else {
@@ -61,37 +57,103 @@ async function fetchWithAuth(url, options = {}) {
     return response;
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    const searchInput = document.getElementById('search-input');
-    const searchButton = document.getElementById('search-button');
-    const productRegisterButton = document.getElementById('product-register-button');
+document.addEventListener("DOMContentLoaded", function () {
+    const signupLink = document.querySelector("a[href='/api/accounts/signup-page/']");
+    const loginLink = document.querySelector("a[href='/api/accounts/login-page/']");
+    const logoutForm = document.querySelector(".logout-form");
+    const mypageLink = document.getElementById("mypage-link");
+    const chatLink = document.getElementById("chat-link");
+
+    const searchInput = document.getElementById("search-input");
+    const searchButton = document.getElementById("search-button");
+    const productRegisterButton = document.getElementById("product-register-button");
+
+    function updateButtonDisplay() {
+        const accessToken = getAccessToken();
+        console.log("AccessToken:", accessToken);
+
+        if (accessToken) {
+            if (signupLink) signupLink.style.display = "none";
+            if (loginLink) loginLink.style.display = "none";
+            if (logoutForm) {
+                logoutForm.style.display = "inline";
+                logoutForm.classList.remove("d-none");
+            }
+        } else {
+            if (signupLink) signupLink.style.display = "inline";
+            if (loginLink) loginLink.style.display = "inline";
+            if (logoutForm) {
+                logoutForm.style.display = "none";
+                logoutForm.classList.add("d-none");
+            }
+        }
+    }
+
+    // 초기 로딩 시 상태 확인
+    updateButtonDisplay();
+
+    // 로그아웃 폼 제출 시 로그아웃 처리
+    if (logoutForm) {
+        logoutForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            removeTokens();
+            alert("로그아웃되었습니다.");
+            window.location.href = "/api/accounts/login-page/";
+            updateButtonDisplay();
+        });
+    }
+
+    // '내 상점' 클릭 시 로그인 상태가 아닌 경우 로그인 페이지로 이동
+    if (mypageLink) {
+        mypageLink.addEventListener("click", function (event) {
+            const accessToken = getAccessToken();
+            if (!accessToken) {
+                event.preventDefault();  // 기본 클릭 동작 방지
+                alert("로그인 후 이용할 수 있습니다.");
+                window.location.href = "/api/accounts/login-page/";
+            } else {
+                window.location.href = "/api/accounts/profile/";
+            }
+        });
+    }
+
+    // '1:1 채팅' 클릭 시 로그인 상태가 아닌 경우 로그인 페이지로 이동
+    if (chatLink) {
+        chatLink.addEventListener("click", function (event) {
+            const accessToken = getAccessToken();
+            if (!accessToken) {
+                event.preventDefault();  // 기본 클릭 동작 방지
+                alert("로그인 후 이용할 수 있습니다.");
+                window.location.href = "/api/accounts/login-page/";
+            } else {
+                window.location.href = "/1on1-chat/";
+            }
+        });
+    }
 
     // 검색 기능 구현
     if (searchButton && searchInput) {
-        searchButton.addEventListener('click', function () {
+        searchButton.addEventListener("click", function () {
             const query = searchInput.value.trim();
             if (query) {
-                // 검색어가 있을 때만 URL을 변경하고 `history.pushState`로 브라우저 URL을 업데이트
                 const newUrl = `/api/products/home-page/?search=${query}`;
-                window.history.pushState({ path: newUrl }, '', newUrl);
-                
-                // `loadProductList` 함수를 직접 호출하여 검색 결과를 표시 (home.js에서 함수가 전역으로 노출되어 있어야 함)
-                if (typeof loadProductList === 'function') {
-                    loadProductList('created_at', query);  // 기본 정렬 기준을 유지하면서 검색
+                window.history.pushState({ path: newUrl }, "", newUrl);
+
+                if (typeof loadProductList === "function") {
+                    loadProductList("created_at", query);
                 }
             }
         });
 
-        // 엔터 키로도 검색 가능하게 설정
-        searchInput.addEventListener('keypress', function (event) {
-            if (event.key === 'Enter') {
+        searchInput.addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
                 const query = searchInput.value.trim();
                 if (query) {
                     const newUrl = `/home-page/?search=${query}`;
-                    window.history.pushState({ path: newUrl }, '', newUrl);
+                    window.history.pushState({ path: newUrl }, "", newUrl);
 
-                    if (typeof loadProductList === 'function') {
-                        loadProductList('created_at', query);
+                    if (typeof loadProductList === "function") {
+                        loadProductList("created_at", query);
                     }
                 }
             }
@@ -100,8 +162,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 상품 등록 버튼 클릭 이벤트
     if (productRegisterButton) {
-        productRegisterButton.addEventListener('click', function () {
-            window.location.href = "/api/products/create/"; // 상품 등록 페이지로 이동
+        productRegisterButton.addEventListener("click", function () {
+            window.location.href = "/api/products/create/";
         });
     }
 });
