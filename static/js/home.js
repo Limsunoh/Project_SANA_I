@@ -1,48 +1,15 @@
 let currentPage = 1; // 현재 페이지 번호
 let totalPages = 1;  // 전체 페이지 수 (초기값)
 
-document.addEventListener('DOMContentLoaded', function () {
-    // 페이지 로드 시, URL 파라미터를 기반으로 상품 목록을 불러옴
-    const urlParams = new URLSearchParams(window.location.search);
-    const searchQuery = urlParams.get('search') || '';
-    const orderByParam = urlParams.get('order_by') || 'created_at';
-    currentPage = parseInt(urlParams.get('page') || 1, 10);
-
-    // 페이지가 로드될 때 URL의 파라미터를 기준으로 상품 목록을 로드
-    loadProductList(orderByParam, searchQuery, currentPage);
-
-    // 정렬 버튼 클릭 시 호출
-    document.querySelectorAll('.dropdown-item').forEach(item => {
-        item.addEventListener('click', event => {
-            const selectedOrder = event.target.textContent.trim();
-            let orderByParam = '';
-
-            if (selectedOrder === '인기순') {
-                orderByParam = 'likes';
-            } else if (selectedOrder === '조회순') {
-                orderByParam = 'hits';
-            } else if (selectedOrder === '최신순') {
-                orderByParam = 'created_at';
-            }
-
-            // 정렬 기준에 따라 URL을 업데이트하고, 상품 목록 다시 불러오기
-            const newUrl = `/home-page/?search=${searchQuery}&order_by=${orderByParam}&page=1`;
-            window.history.pushState({ path: newUrl }, '', newUrl);
-
-            loadProductList(orderByParam, searchQuery, 1);
-        });
-    });
-});
+// 한 페이지에 표시할 상품의 수 (API와 동일하게 설정)
+const ITEMS_PER_PAGE = 12; 
 
 // 상품 목록을 가져오는 함수
 async function loadProductList(order_by = '', search = '', page = 1) {
     const productListContainer = document.getElementById('product-list-grid');
 
     try {
-        let apiUrl = `/api/products/?order_by=${order_by}&page=${page}`;
-        if (search) {
-            apiUrl += `&search=${search}`;
-        }
+        let apiUrl = `/api/products?search=${search}&order_by=${order_by}&page=${page}`;
         console.log(`API 호출 URL: ${apiUrl}`);  // URL 로그 출력
 
         const response = await fetch(apiUrl);
@@ -51,10 +18,10 @@ async function loadProductList(order_by = '', search = '', page = 1) {
         }
 
         const products = await response.json();
-        console.log('서버에서 받은 데이터:', products);  // 서버로부터 받은 데이터 확인
         productListContainer.innerHTML = '';
 
-        const productList = products.results;
+        // 받은 데이터가 배열이 아니라면 results로 접근
+        const productList = products.results || [];
 
         productList.forEach(product => {
             const productCard = `
@@ -73,18 +40,48 @@ async function loadProductList(order_by = '', search = '', page = 1) {
             `;
             productListContainer.insertAdjacentHTML('beforeend', productCard);
         });
-        
 
-        currentPage = page;
-        totalPages = Math.ceil(products.count / productList.length);
+        // 페이지네이션 정보 업데이트 (ITEMS_PER_PAGE 사용하여 정확한 전체 페이지 수 계산)
+        currentPage = page; // 현재 페이지 업데이트
+        totalPages = Math.ceil(products.count / ITEMS_PER_PAGE); // 전체 페이지 수 계산
         updatePaginationControls(search, order_by);
 
     } catch (error) {
-        console.error('에러 발생:', error);
+        console.error('에러 발생:', error); // 에러 로그 확인
         alert('상품 목록을 불러올 수 없습니다.');
     }
 }
 
+document.addEventListener('DOMContentLoaded', function () {
+    console.log("DOMContentLoaded");
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchQuery = urlParams.get('search') || '';
+    const orderByParam = urlParams.get('order_by') || 'created_at';
+    currentPage = parseInt(urlParams.get('page') || 1, 10);
+
+    loadProductList(orderByParam, searchQuery, currentPage);
+
+    // 정렬 버튼 클릭 시 호출
+    document.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', event => {
+            const selectedOrder = event.target.textContent.trim();
+            let orderByParam = '';
+            const searchQuery = urlParams.get('search') || '';
+
+            if (selectedOrder === '인기순') {
+                orderByParam = 'likes';
+            } else if (selectedOrder === '조회순') {
+                orderByParam = 'hits';
+            } else if (selectedOrder === '최신순') {
+                orderByParam = 'created_at';
+            }
+
+            const newUrl = `/home-page/?search=${searchQuery}&order_by=${orderByParam}&page=1`;
+            window.history.pushState({ path: newUrl }, '', newUrl);
+            loadProductList(orderByParam, searchQuery, 1);
+        });
+    });
+});
 
 // 페이지네이션 컨트롤 업데이트 함수
 function updatePaginationControls(searchQuery, orderByParam) {
@@ -95,26 +92,18 @@ function updatePaginationControls(searchQuery, orderByParam) {
     pageInfo.textContent = `${currentPage} / ${totalPages}`;
 
     // 이전 페이지 버튼 활성화 여부
-    if (currentPage > 1) {
-        prevButton.disabled = false;
-        prevButton.onclick = () => {
-            const newUrl = `/home-page/?search=${searchQuery}&order_by=${orderByParam}&page=${currentPage - 1}`;
-            window.history.pushState({ path: newUrl }, '', newUrl);
-            loadProductList(orderByParam, searchQuery, currentPage - 1);
-        };
-    } else {
-        prevButton.disabled = true;
-    }
+    prevButton.disabled = currentPage <= 1;
+    prevButton.onclick = currentPage > 1 ? () => {
+        const newUrl = `${window.location.pathname}?search=${searchQuery}&order_by=${orderByParam}&page=${currentPage - 1}`;
+        window.history.pushState({ path: newUrl }, '', newUrl);
+        loadProductList(orderByParam, searchQuery, currentPage - 1);
+    } : null;
 
     // 다음 페이지 버튼 활성화 여부
-    if (currentPage < totalPages) {
-        nextButton.disabled = false;
-        nextButton.onclick = () => {
-            const newUrl = `/home-page/?search=${searchQuery}&order_by=${orderByParam}&page=${currentPage + 1}`;
-            window.history.pushState({ path: newUrl }, '', newUrl);
-            loadProductList(orderByParam, searchQuery, currentPage + 1);
-        };
-    } else {
-        nextButton.disabled = true;
-    }
+    nextButton.disabled = currentPage >= totalPages;
+    nextButton.onclick = currentPage < totalPages ? () => {
+        const newUrl = `${window.location.pathname}?search=${searchQuery}&order_by=${orderByParam}&page=${currentPage + 1}`;
+        window.history.pushState({ path: newUrl }, '', newUrl);
+        loadProductList(orderByParam, searchQuery, currentPage + 1);
+    } : null;
 }
