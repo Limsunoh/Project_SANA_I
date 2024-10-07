@@ -34,7 +34,7 @@ from .serializers import (
     ChatRoomSerializer
 )
 from .pagnations import ProductPagnation
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, DetailView
 # AI 관련 임포트
 import openai
 import json
@@ -378,3 +378,15 @@ tags와 title 및 description이 사용자의 요청과 관련 없는 상품도 
 # HTML 파일 보여주는 class
 class HomePageView(TemplateView):
     template_name = "home.html"
+
+
+class ProductDetailPageView(DetailView):
+    model = Product
+    template_name = 'product_detail.html'
+    context_object_name = 'product'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['images'] = self.object.images.all()  # 여러 이미지를 가져옴
+        return context
+
