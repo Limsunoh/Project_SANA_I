@@ -107,11 +107,17 @@
 .like-btn {
     border: none;
     background-color: transparent;
+    cursor: pointer;
 }
 
 .heart-icon {
-    width: 24px;
-    height: 24px;
-    background-image: url('{% static "images/heart-icon.svg" %}');
+    width: 30px;
+    height: 30px;
+    background-image: url('{% static "images/heart-empty.svg" %}'); /* 빈 하트 이미지 */
     background-size: cover;
+    transition: background-image 0.3s ease;
+}
+
+.heart-icon.liked {
+    background-image: url('{% static "images/heart-filled.svg" %}'); /* 채워진 하트 이미지 */
 }
