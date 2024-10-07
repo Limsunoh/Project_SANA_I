@@ -14,6 +14,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const currentUsername = localStorage.getItem("current_username");
     const accessToken = localStorage.getItem("access_token");
 
+    console.log("Access Token:", accessToken);  // 디버그용
+    console.log("Current Username:", currentUsername);  // 디버그용
+
     if (!currentUsername || !accessToken) {
         alert("로그인된 사용자 정보가 없습니다.");
         window.location.href = "/api/accounts/login-page/";
@@ -24,11 +27,19 @@ document.addEventListener("DOMContentLoaded", function () {
     fetch(`/api/accounts/profile/${currentUsername}/`, {
         headers: {
             "Authorization": `Bearer ${accessToken}`,
+            "Content-Type": "application/json"
         },
     })
-        .then(response => response.json())
+        .then(response => {
+            console.log("API 응답 상태:", response.status);  // 응답 상태 코드 확인
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error(`API 응답 에러: ${response.status}`);
+            }
+        })
         .then(data => {
-            // 프로필 정보 반영
+            console.log("프로필 데이터:", data);  // 서버에서 받은 데이터 출력
             usernameDisplay.textContent = data.nickname || data.username;
             emailDisplay.textContent = data.email;
             createdAtDisplay.textContent = `가입일: ${new Date(data.created_at).toLocaleDateString()}`;
@@ -53,13 +64,13 @@ document.addEventListener("DOMContentLoaded", function () {
                     myProductsContainer.insertAdjacentHTML("beforeend", productCard);
                 });
             }
-
-            // 내 후기 및 구매 내역은 추가 구현 필요
         })
         .catch(error => {
             console.error("프로필 정보를 불러오는 중 오류 발생:", error);
             alert("프로필 정보를 불러올 수 없습니다.");
+            window.location.href = "/api/accounts/login-page/";  // 오류 발생 시 로그인 페이지로 이동
         });
+});
 
     // 프로필 수정 페이지로 이동
     document.getElementById("edit-profile-btn").addEventListener("click", () => {
