@@ -104,4 +104,14 @@ document.addEventListener('DOMContentLoaded', function () {
             window.location.href = "/api/products/create/"; // 상품 등록 페이지로 이동
         });
     }
+
+    // 톡(Talk) 버튼 관련 이벤트 추가
+    const talkButton = document.getElementById('talk-button');
+
+    if (talkButton) {
+        talkButton.addEventListener('click', function () {
+            alert('1:1 문의 버튼 클릭됨');
+            // 팝업 창 및 GPT 연동 기능은 이후에 구현 예정
+        });
+    }
 });

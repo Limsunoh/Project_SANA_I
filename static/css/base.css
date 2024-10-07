@@ -183,3 +183,48 @@ footer p {
     text-align: center; /* 중앙 정렬 */
 }
 
+/* 톡(Talk) 버튼 고정 스타일 */
+#talk-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    background-color: #b88e2f;
+    color: white;
+    border: none;
+    padding: 20px 20px;
+    border-radius: 50px;
+    font-size: 16px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* 톡 버튼 hover 시 배경색 변화 */
+#talk-button:hover {
+    background-color: #c0247f;
+}
+
+/* 톡(Talk) 버튼에 호버 시 말풍선 */
+#talk-button::after {
+    content: "1:1 문의";
+    position: absolute;
+    bottom: 90px; /* 버튼 위에 말풍선 위치 */
+    right: 50%;
+    transform: translateX(50%);
+    background-color: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    white-space: nowrap;
+    font-size: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 1001;
+}
+
+/* Talk 버튼 hover 시 말풍선 표시 */
+#talk-button:hover::after {
+    opacity: 1;
+}
