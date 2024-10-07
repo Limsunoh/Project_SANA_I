@@ -133,6 +133,9 @@ class SignupPageView(TemplateView):
 class LoginPageView(TemplateView):
     template_name = "login.html"
     
+class ProfileView(TemplateView):
+    template_name = "profile.html"
+
     
 class Profile_editView(TemplateView):
     template_name = "profile_edit.html"
