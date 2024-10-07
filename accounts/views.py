@@ -93,9 +93,8 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
             # 권한이 없을 때 응답
             return Response({"message": "삭제처리할 권한이 없습니다."}, status=403)
 
+
     # 유저 비밀번호 변경
-
-
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
