@@ -28,8 +28,6 @@ class UserCreateView(CreateAPIView):
     permisson_classes = [AllowAny]
 
     def create(self, request, *args, **kwargs):
-        print("요청 데이터:", request.data)  # 요청 데이터 확인
-
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
             print("데이터 검증 오류:", serializer.errors)  # 데이터 검증 오류 확인
@@ -95,9 +93,8 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
             # 권한이 없을 때 응답
             return Response({"message": "삭제처리할 권한이 없습니다."}, status=403)
 
+
     # 유저 비밀번호 변경
-
-
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
@@ -135,3 +132,11 @@ class SignupPageView(TemplateView):
 
 class LoginPageView(TemplateView):
     template_name = "login.html"
+    
+class ProfileView(TemplateView):
+    template_name = "profile.html"
+
+    
+class Profile_editView(TemplateView):
+    template_name = "profile_edit.html"
+    

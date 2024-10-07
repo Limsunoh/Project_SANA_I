@@ -83,6 +83,37 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+document.addEventListener('DOMContentLoaded', function () {
+    console.log("DOMContentLoaded");
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchQuery = urlParams.get('search') || '';
+    const orderByParam = urlParams.get('order_by') || 'created_at';
+    currentPage = parseInt(urlParams.get('page') || 1, 10);
+
+    loadProductList(orderByParam, searchQuery, currentPage);
+
+    // 정렬 버튼 클릭 시 호출
+    document.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', event => {
+            const selectedOrder = event.target.textContent.trim();
+            let orderByParam = '';
+            const searchQuery = urlParams.get('search') || '';
+
+            if (selectedOrder === '인기순') {
+                orderByParam = 'likes';
+            } else if (selectedOrder === '조회순') {
+                orderByParam = 'hits';
+            } else if (selectedOrder === '최신순') {
+                orderByParam = 'created_at';
+            }
+
+            const newUrl = `/home-page/?search=${searchQuery}&order_by=${orderByParam}&page=1`;
+            window.history.pushState({ path: newUrl }, '', newUrl);
+            loadProductList(orderByParam, searchQuery, 1);
+        });
+    });
+});
+
 // 페이지네이션 컨트롤 업데이트 함수
 function updatePaginationControls(searchQuery, orderByParam) {
     const pageInfo = document.getElementById('page-info');
@@ -98,8 +129,20 @@ function updatePaginationControls(searchQuery, orderByParam) {
         window.history.pushState({ path: newUrl }, '', newUrl);
         loadProductList(orderByParam, searchQuery, currentPage - 1);
     } : null;
+    prevButton.disabled = currentPage <= 1;
+    prevButton.onclick = currentPage > 1 ? () => {
+        const newUrl = `${window.location.pathname}?search=${searchQuery}&order_by=${orderByParam}&page=${currentPage - 1}`;
+        window.history.pushState({ path: newUrl }, '', newUrl);
+        loadProductList(orderByParam, searchQuery, currentPage - 1);
+    } : null;
 
     // 다음 페이지 버튼 활성화 여부
+    nextButton.disabled = currentPage >= totalPages;
+    nextButton.onclick = currentPage < totalPages ? () => {
+        const newUrl = `${window.location.pathname}?search=${searchQuery}&order_by=${orderByParam}&page=${currentPage + 1}`;
+        window.history.pushState({ path: newUrl }, '', newUrl);
+        loadProductList(orderByParam, searchQuery, currentPage + 1);
+    } : null;
     nextButton.disabled = currentPage >= totalPages;
     nextButton.onclick = currentPage < totalPages ? () => {
         const newUrl = `${window.location.pathname}?search=${searchQuery}&order_by=${orderByParam}&page=${currentPage + 1}`;

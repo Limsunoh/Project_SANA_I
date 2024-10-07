@@ -8,7 +8,7 @@ from django.conf import settings
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import serializers
 from products.models import Product
-from products.serializers import ProductListSerializer
+from products.serializers import ProductListSerializer, ChatRoomSerializer
 from .validata import passwordValidation
 from .models import User
 
@@ -56,7 +56,7 @@ class UserSerializer(serializers.ModelSerializer):
         write_only_fields = ("image",)
 
     def validate(self, data):
-        if 'email' not in data or not data['email']:
+        if "email" not in data or not data["email"]:
             raise serializers.ValidationError("이메일을 입력해주세요.")
         # 비밀번호 두개가 일치하는지 확인
         if data["password"] != data["checkpassword"]:
@@ -140,16 +140,15 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "birth",
             "email",
             "mainaddress",
-            "subaddress",
+            "image",
             "profile_image",
             "introduce",
-            "created_at",
             "products",
             "like_products",
             "followings",
             "followers",
         )
-        
+
     def get_profile_image(self, obj):
         return obj.get_profile_image_url()
 
@@ -168,6 +167,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
     def get_followers(self, obj):
         follwers = obj.followers.all()
         return UserFollowSerializer(follwers, many=True).data
+    
+
 
 
 class UserChangeSerializer(serializers.ModelSerializer):
@@ -179,15 +180,17 @@ class UserChangeSerializer(serializers.ModelSerializer):
             "username",
             "nickname",
             "name",
+            "postcode",
             "mainaddress",
             "subaddress",
+            "extraaddress",
             "birth",
             "email",
             "image",
             "profile_image",
         )
         read_only_fields = ("username",)
-        
+
     def get_profile_image(self, obj):
         return obj.get_profile_image_url()
 
