@@ -59,10 +59,9 @@ document.getElementById('signup-form').onsubmit = async function (event) {
     const response = await fetch('/api/accounts/signup/', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
             'X-CSRFToken': getCookie('csrftoken'),
         },
-        body: JSON.stringify(formDataObj),
+        body: formData,
     });
 
     if (response.ok) {
