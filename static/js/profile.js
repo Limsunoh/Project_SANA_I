@@ -187,4 +187,4 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("see-more-products").addEventListener("click", () => {
         window.location.href = `/api/products/user-products/${currentUsername}`;
     });
-
+});
