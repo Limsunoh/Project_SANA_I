@@ -113,6 +113,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const chatBody = document.getElementById('chat-body');
     let isPopupOpen = false;
 
+    // 기본 인사 메시지
+    const defaultMessage = '안녕하세요! 딸기마켓에 대해 궁금한 점이 있으시면 말씀해 주세요.\n중고 물품 거래와 관련된 정보나 이용약관에 대한 질문에 답변해 드리겠습니다.\n어떤 도움이 필요하신가요?';
+
     if (talkButton) {
         talkButton.addEventListener('click', function () {
             if (isPopupOpen) {
@@ -126,12 +129,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 isPopupOpen = true;
                 talkButton.classList.add('chat-active');  // 버튼 호버 비활성화
 
-                // 팝업이 열릴 때 인사 메시지를 추가
-                addMessageToChat('AI', '안녕하세요! 딸기마켓에 대해 궁금한 점이 있으시면 말씀해 주세요.\n중고 물품 거래와 관련된 정보나 이용약관에 대한 질문에 답변해 드리겠습니다.\n어떤 도움이 필요하신가요?');
+                // 기본 메시지가 이미 있는지 확인하고 추가
+                if (!chatBody.innerText.includes(defaultMessage)) {
+                    addMessageToChat('AI', defaultMessage);  // 기본 메시지 추가
+                }
             }
         });
     }
-    
 
     // Send 버튼 클릭 시 메시지 보내기 기능
     if (sendButton) {
