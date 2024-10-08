@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const likeApiUrl = `/api/products/${productId}/like/`;  // 찜하기 API URL
     const likeButton = document.getElementById('like-button');
     const heartIcon = document.getElementById('heart-icon');
+    const likesCountElement = document.getElementById('product-likes');
 
     // 버튼과 아이콘이 제대로 선택되는지 확인
     if (!likeButton || !heartIcon) {
@@ -12,6 +13,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     console.log("likeButton 요소 찾음:", likeButton);
+    
+
 
     // 1. 제품 상세 정보 가져오기 (기존 fetch 사용)
     fetch(apiUrl)
@@ -53,9 +56,12 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             // 작성자와 현재 로그인한 유저의 닉네임이 같으면 찜하기 버튼 숨기기
-            const currentUserNickname = localStorage.getItem('user_nickname');  // 사용자 닉네임을 로컬 스토리지에서 가져오기
-            if (currentUserNickname && currentUserNickname === data.author) {
+            const currentUserNickname = localStorage.getItem('current_username');  // 사용자 닉네임을 로컬 스토리지에서 가져오기
+            console.log("author:",data.author)
+            console.log("currentUserNickname:",currentUserNickname)
+            if (currentUserNickname && currentUserNickname.trim() === data.author.trim()) {
                 likeButton.style.display = 'none';
+                console.log("작성자와 사용자 동일, 찜 버튼 숨김");
             }
         })
         .catch(error => {
@@ -91,14 +97,16 @@ document.addEventListener('DOMContentLoaded', function () {
         fetchWithAuth(likeApiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' } })
             .then(response => response.json())
             .then(data => {
+                let currentLikesCount = parseInt(likesCountElement.textContent);
+
                 if (data.message === "찜하기 했습니다.") {
-                    console.log("찜하기 성공");
                     heartIcon.classList.remove('bi-suit-heart');
                     heartIcon.classList.add('bi-suit-heart-fill', 'liked');  // 찜하기 성공 시 채워진 하트로 변경
+                    likesCountElement.textContent = currentLikesCount + 1;  // 찜수 증가
                 } else if (data.message === "찜하기 취소했습니다.") {
-                    console.log("찜하기 취소");
                     heartIcon.classList.remove('bi-suit-heart-fill', 'liked');
                     heartIcon.classList.add('bi-suit-heart');  // 찜하기 취소 시 빈 하트로 변경
+                    likesCountElement.textContent = currentLikesCount - 1;  // 찜수 감소
                 }
             })
             .catch(error => console.error('Error:', error));
