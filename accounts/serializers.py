@@ -120,6 +120,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)  # 기본 토큰 생성 로직 호출
         data['username'] = self.user.username
+        data['nickname'] = self.user.nickname
         return data
 
 
