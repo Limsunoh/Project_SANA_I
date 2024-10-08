@@ -199,6 +199,7 @@ class UserChangeSerializer(serializers.ModelSerializer):
             "email",
             "image",
             "profile_image",
+            "introduce",
         )
         read_only_fields = ("username",)
 

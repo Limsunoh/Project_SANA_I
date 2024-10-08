@@ -66,7 +66,7 @@ class ProductListAPIView(ListCreateAPIView):
                 Q(title__icontains=search)
                 | Q(content__icontains=search)
                 | Q(tags__name__icontains=search)
-            )
+            ).distinct()
 
         # 정렬
         if order_by == "likes":
