@@ -1,3 +1,6 @@
+function products_detailpage(pk){
+    window.location.href="/api/products/detail-page/"+pk+"/"
+}
 document.addEventListener("DOMContentLoaded", function () {
     const usernameDisplay = document.getElementById("username_display");
     const emailDisplay = document.getElementById("email_display");
@@ -129,11 +132,12 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .then(response => response.json())
         .then(profileData => {
+            console.log("asd")
             if (profileData.products && profileData.products.length > 0) {
                 const myProductsContainer = document.getElementById("my-products");
                 profileData.products.slice(0, 4).forEach(product => {
                     const productCard = `
-                    <div class="card m-2" style="width: 18rem;">
+                    <div class="card m-2" style="width: 18rem; cursor:pointer;" onclick="products_detailpage(${product.id})" >
                         <img src="${product.preview_image}" class="card-img-top" alt="${product.title}">
                         <div class="card-body">
                             <h5 class="card-title">${product.title}</h5>

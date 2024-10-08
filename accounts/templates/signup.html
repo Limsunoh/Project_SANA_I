@@ -9,7 +9,7 @@
 
 {% block content %}
 <h2>회원 가입</h2>
-<form id="signup-form">
+<form id="signup-form" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="input-group">
         <label for="username">ID</label>
@@ -38,6 +38,10 @@
     <div class="input-group">
         <label for="email">E-mail</label>
         <input type="email" id="email" name="email" required>
+    </div>
+    <div class="input-group">
+        <label for="image">image</label>
+        <input type="file" id="image" name="image" required>
     </div>
     <div class="input-group">
         <label for="sample6_postcode">Address</label>
