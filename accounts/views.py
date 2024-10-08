@@ -20,6 +20,8 @@ from .serializers import (
 from .models import User
 from .permissions import IsOwnerOrReadOnly
 from django.views.generic import TemplateView
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import CustomTokenObtainPairSerializer
 
 
 class UserCreateView(CreateAPIView):
@@ -92,6 +94,10 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
         else:
             # 권한이 없을 때 응답
             return Response({"message": "삭제처리할 권한이 없습니다."}, status=403)
+        
+    def get_queryset(self):
+        return User.objects.all()  # 전체 User 객체에서 필터링
+
 
 
     # 유저 비밀번호 변경
@@ -113,6 +119,11 @@ class ChangePasswordView(APIView):
 
 class FollowView(APIView):
     permission_classes = [IsAuthenticated]
+    
+    def get(self, request, username):
+        user = User.objects.get(username=username)
+        is_following = request.user in user.followers.all()
+        return Response({'is_following': is_following}, status=200)
 
     def post(self, request, username):
         target_user = get_object_or_404(User, username=username)
@@ -123,6 +134,11 @@ class FollowView(APIView):
         else:
             target_user.followers.add(current_user)
             return Response("follow했습니다.", status=200)
+        
+
+# 로그인 시 username을 저장할 수 있도록 토큰을 커스텀하는뷰
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 
 # HTML 파일 보여주는 class

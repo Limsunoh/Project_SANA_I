@@ -3,12 +3,15 @@ document.getElementById("login-form").onsubmit = async function (event) {
 
     const formData = new FormData(event.target);
     const formDataObj = Object.fromEntries(formData.entries());
+    
 
     const response = await fetch("/api/accounts/login/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formDataObj),
     });
+    console.log(formDataObj)
+
 
     if (response.ok) {
         const data = await response.json();
@@ -16,6 +19,12 @@ document.getElementById("login-form").onsubmit = async function (event) {
         // 액세스 토큰과 리프레시 토큰만 저장
         setAccessToken(data.access);
         setRefreshToken(data.refresh);
+        // **username이 응답에 포함되어 있다면 로컬 스토리지에 저장**
+        if (data.username) {
+            localStorage.setItem("current_username", data.username);
+        } else {
+            console.error("Username not found in response data");
+        }
 
         alert("로그인이 되었습니다.");
 

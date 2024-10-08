@@ -11,6 +11,7 @@ from products.models import Product
 from products.serializers import ProductListSerializer, ChatRoomSerializer
 from .validata import passwordValidation
 from .models import User
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 # JWT 토큰 생성하는 함수
@@ -113,6 +114,13 @@ class UserSerializer(serializers.ModelSerializer):
         email.send()
 
         return user
+    
+    
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)  # 기본 토큰 생성 로직 호출
+        data['username'] = self.user.username
+        return data
 
 
 class UserFollowSerializer(serializers.ModelSerializer):
@@ -120,6 +128,7 @@ class UserFollowSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             "id",
+            "username",
             "nickname",
             "image",
         )
@@ -131,6 +140,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     followings = serializers.SerializerMethodField()
     followers = serializers.SerializerMethodField()
     profile_image = serializers.SerializerMethodField()
+    created_at = serializers.DateTimeField(format="%Y-%m-%d", read_only=True)
 
     class Meta:
         model = User
@@ -140,6 +150,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "birth",
             "email",
             "mainaddress",
+            "created_at",
             "image",
             "profile_image",
             "introduce",

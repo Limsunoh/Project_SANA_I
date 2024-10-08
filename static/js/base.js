@@ -73,19 +73,23 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("AccessToken:", accessToken);
 
         if (accessToken) {
-            if (signupLink) signupLink.style.display = "none";
-            if (loginLink) loginLink.style.display = "none";
+            // 로그인 상태일 때
+            if (signupLink) signupLink.classList.add("d-none"); // d-none 클래스를 추가하여 숨김
+            if (loginLink) loginLink.classList.add("d-none");
             if (logoutForm) {
-                logoutForm.style.display = "inline";
-                logoutForm.classList.remove("d-none");
+                logoutForm.classList.remove("d-none"); // d-none 클래스를 제거하여 보임
             }
+            if (mypageLink) mypageLink.classList.remove("d-none");
+            if (chatLink) chatLink.classList.remove("d-none");
         } else {
-            if (signupLink) signupLink.style.display = "inline";
-            if (loginLink) loginLink.style.display = "inline";
+            // 비로그인 상태일 때
+            if (signupLink) signupLink.classList.remove("d-none");
+            if (loginLink) loginLink.classList.remove("d-none");
             if (logoutForm) {
-                logoutForm.style.display = "none";
                 logoutForm.classList.add("d-none");
             }
+            if (mypageLink) mypageLink.classList.add("d-none");
+            if (chatLink) chatLink.classList.add("d-none");
         }
     }
 
@@ -107,12 +111,15 @@ document.addEventListener("DOMContentLoaded", function () {
     if (mypageLink) {
         mypageLink.addEventListener("click", function (event) {
             const accessToken = getAccessToken();
-            if (!accessToken) {
+            const currentUsername = localStorage.getItem("current_username");
+            
+            if (!accessToken || !currentUsername) {  // 로그인 상태나 사용자 이름이 없는 경우
                 event.preventDefault();  // 기본 클릭 동작 방지
                 alert("로그인 후 이용할 수 있습니다.");
                 window.location.href = "/api/accounts/login-page/";
             } else {
-                window.location.href = "/api/accounts/profile/";
+                // current_username 값이 있을 때만 href 설정
+                mypageLink.href = `/api/accounts/profile-page/${currentUsername}/`;
             }
         });
     }
