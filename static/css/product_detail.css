@@ -110,14 +110,15 @@
     cursor: pointer;
 }
 
+/* 부트스트랩 하트 아이콘 크기 조정 */
 .heart-icon {
-    width: 30px;
-    height: 30px;
-    background-image: url('{% static "images/heart-empty.svg" %}'); /* 빈 하트 이미지 */
-    background-size: cover;
-    transition: background-image 0.3s ease;
+    font-size: 30px; /* 아이콘 크기 */
+    color: #ff6b6b;  /* 기본 하트 색상 */
+    transition: color 0.3s ease;
 }
 
+/* 찜한 상태의 채워진 하트 색상 */
 .heart-icon.liked {
-    background-image: url('{% static "images/heart-filled.svg" %}'); /* 채워진 하트 이미지 */
+    color: #ff0000;  /* 찜하기 했을 때의 색상 */
 }
+

@@ -5,24 +5,29 @@ document.addEventListener('DOMContentLoaded', function () {
     const likeButton = document.getElementById('like-button');
     const heartIcon = document.getElementById('heart-icon');
 
-    // 1. 제품 상세 정보 가져오기
+    // 버튼과 아이콘이 제대로 선택되는지 확인
+    if (!likeButton || !heartIcon) {
+        console.error("likeButton 또는 heartIcon 요소를 찾을 수 없습니다.");
+        return;
+    }
+
+    console.log("likeButton 요소 찾음:", likeButton);
+
+    // 1. 제품 상세 정보 가져오기 (기존 fetch 사용)
     fetch(apiUrl)
         .then(response => {
-            console.log(response);  // 응답 상태를 출력하여 확인
-            if (!response.ok) {  // 응답 상태가 OK(200)인지 확인
+            if (!response.ok) {
                 throw new Error('Failed to fetch product details');
             }
             return response.json();
         })
         .then(data => {
-            console.log(data);  // 응답 데이터를 확인하여 올바른지 체크
-            // 데이터를 사용한 제품 상세 정보 렌더링
+            // 제품 상세 정보 렌더링
             document.getElementById('product-title').textContent = data.title;
             document.getElementById('product-author').textContent = data.author;
 
-            // 지역명 처리: 두 번째 공백 전까지만 표시
             const mainaddress = data.mainaddress;
-            const shortenedAddress = mainaddress.split(" ").slice(0, 2).join(" ");  // 첫 두 단어만 가져옴
+            const shortenedAddress = mainaddress.split(" ").slice(0, 2).join(" ");
             document.getElementById('product-location').textContent = shortenedAddress || '지역명 없음';
             document.getElementById('product-status').textContent = data.status || '상태 정보 없음';
             document.getElementById('product-price').textContent = `${data.price}원`;
@@ -30,7 +35,6 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('product-likes').textContent = `${data.likes_count}`;
             document.getElementById('product-description').textContent = data.content;
 
-            // 이미지 갤러리 렌더링
             const imageGallery = document.getElementById('image-gallery');
             data.images.forEach(image => {
                 const imgElement = document.createElement('img');
@@ -40,7 +44,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 imageGallery.appendChild(imgElement);
             });
 
-            // 해시태그 렌더링
             const hashtagContainer = document.getElementById('hashtags');
             data.hashtag.forEach(tag => {
                 const tagElement = document.createElement('span');
@@ -48,48 +51,56 @@ document.addEventListener('DOMContentLoaded', function () {
                 tagElement.classList.add('hashtag');
                 hashtagContainer.appendChild(tagElement);
             });
-        })
-        .catch(error => {
-            console.error('Error:', error);  // 에러 메시지를 콘솔에 출력
-            alert('제품 정보를 불러오는 데 실패했습니다.');
-        });
 
-    // 2. 찜 상태 확인 및 하트 아이콘 초기화
-    fetch(likeApiUrl, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,  // 토큰 사용
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.is_liked) {
-            heartIcon.classList.add('liked');  // 이미 찜한 상태면 채워진 하트로 변경
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching like status:', error);
-    });
-
-    // 3. 하트 클릭 시 찜하기 기능 처리
-    likeButton.addEventListener('click', function () {
-        fetch(likeApiUrl, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,  // 토큰 사용
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.message === "찜하기 했습니다.") {
-                heartIcon.classList.add('liked');  // 찜하기 성공 시 채워진 하트로 변경
-            } else if (data.message === "찜하기 취소했습니다.") {
-                heartIcon.classList.remove('liked');  // 찜하기 취소 시 빈 하트로 변경
+            // 작성자와 현재 로그인한 유저의 닉네임이 같으면 찜하기 버튼 숨기기
+            const currentUserNickname = localStorage.getItem('user_nickname');  // 사용자 닉네임을 로컬 스토리지에서 가져오기
+            if (currentUserNickname && currentUserNickname === data.author) {
+                likeButton.style.display = 'none';
             }
         })
         .catch(error => {
             console.error('Error:', error);
+            alert('제품 정보를 불러오는 데 실패했습니다.');
         });
+
+    // 2. 찜 상태 확인 및 하트 아이콘 초기화 (로그인한 유저만)
+    const accessToken = localStorage.getItem("access_token");
+
+    if (accessToken) {
+        fetchWithAuth(likeApiUrl, { method: 'GET' })
+            .then(response => response.json())
+            .then(likeData => {
+                if (likeData.is_liked) {
+                    console.log("찜한 상태입니다.");  // 확인용 로그
+                    heartIcon.classList.remove('bi-suit-heart');
+                    heartIcon.classList.add('bi-suit-heart-fill', 'liked');  // 이미 찜한 상태면 채워진 하트로 변경
+                }
+            })
+            .catch(error => console.error('Error fetching like status:', error));
+    }
+
+    // 3. 찜하기 기능 처리
+    likeButton.addEventListener('click', function () {
+        console.log("찜하기 버튼 클릭됨");  // 이 로그가 출력되는지 확인
+
+        if (!accessToken) {
+            alert("로그인이 필요합니다.");
+            return;
+        }
+
+        fetchWithAuth(likeApiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' } })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === "찜하기 했습니다.") {
+                    console.log("찜하기 성공");
+                    heartIcon.classList.remove('bi-suit-heart');
+                    heartIcon.classList.add('bi-suit-heart-fill', 'liked');  // 찜하기 성공 시 채워진 하트로 변경
+                } else if (data.message === "찜하기 취소했습니다.") {
+                    console.log("찜하기 취소");
+                    heartIcon.classList.remove('bi-suit-heart-fill', 'liked');
+                    heartIcon.classList.add('bi-suit-heart');  // 찜하기 취소 시 빈 하트로 변경
+                }
+            })
+            .catch(error => console.error('Error:', error));
     });
 });
