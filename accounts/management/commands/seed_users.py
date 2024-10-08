@@ -9,7 +9,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         fake = Faker('ko_KR')  # 한국어 locale 설정
-        num_users = 100  # 생성할 사용자 수 = 본격적 테스트 규모 = 100명정도?
+        num_users = 1  # 생성할 사용자 수 = 본격적 테스트 규모 = 100명정도?
 
         # nickname 생성에 사용할 단어 리스트
         first_words = ['행복한', '용감한', '똑똑한', '즐거운', '멋진', '강한', '귀여운', '친절한', '열정적인', '차분한',

@@ -170,3 +170,48 @@ body {
     font-size: 16px;
     font-weight: bold;
 }
+
+/* 로딩 오버레이 스타일 */
+#loading-overlay {
+    display: none; /* 기본적으로 숨김 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw; /* 전체 화면의 너비 */
+    height: 100vh; /* 전체 화면의 높이 */
+    background-color: rgba(255, 255, 255, 0.8); /* 불투명한 흰색 배경 */
+    z-index: 9999; /* 다른 모든 요소보다 위에 표시 */
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; /* 세로 방향 정렬 */
+}
+
+/* 로딩 스피너 스타일 */
+.spinner {
+    border: 8px solid #f3f3f3; /* 회색 테두리 */
+    border-top: 8px solid #3498db; /* 파란색 테두리 */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px; /* 스피너 아래 여백 추가 */
+}
+
+/* AI 로딩 중 메시지 스타일 */
+.loading-message {
+    font-size: 1.2em; /* 글씨 크기 조정 */
+    color: #333; /* 색상 */
+    text-align: center; /* 중앙 정렬 */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#ai-recommendation-message {
+    font-size: 1.2em;
+    color: #333;
+    text-align: left;
+    margin-bottom: 20px;
+}
