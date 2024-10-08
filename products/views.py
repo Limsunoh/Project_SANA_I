@@ -416,4 +416,8 @@ class ProductDetailPageView(DetailView):
         context = super().get_context_data(**kwargs)
         context['images'] = self.object.images.all()  # 여러 이미지를 가져옴
         return context
+    
+
+class ProductCreateView(TemplateView):
+    template_name = "products_create.html"
 

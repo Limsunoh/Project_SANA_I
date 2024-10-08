@@ -23,7 +23,7 @@ document.getElementById("login-form").onsubmit = async function (event) {
         if (data.username) {
             localStorage.setItem("current_username", data.username);
         } else {
-            console.error("Username,nickname not found in response data");
+            console.error("Username not found in response data");
         }
 
         alert("로그인이 되었습니다.");

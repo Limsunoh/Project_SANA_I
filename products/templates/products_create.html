@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <h2>새제품 등록</h2>
+
+    <div class="mb-3">
+        <label for="image-upload" class="form-label">이미지 첨부</label>
+        <input type="file" class="form-control" id="image-upload" name="images" multiple accept="image/*" onchange="previewImages(event)">
+        <div id="imagePreview" class="d-flex flex-wrap mb-3"></div> <!-- 사진 미리보기 컨테이너 -->
+    </div>
+    
+    <form id="product-create-form" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="title" class="form-label">제목</label>
+            <input type="text" class="form-control" id="title" name="title" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="price">가격</label>
+            <input type="number" class="form-control" id="price" name=  "price" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="content" class="form-label">내용</label>
+            <textarea class="form-control" id="content" name="content" rows="3" required></textarea>
+        </div>
+        
+        <div class="mb-3"></div>
+            <label for="status" class="form-label">제목</label>
+            <select name="status" id="status">
+                <option value="sell">판매중</option>
+                <option value="reservation">예약중</option>
+                <option value="complete">판매완료</option>
+                </select>
+        </div>
+        
+
+        <div class="mb-3">
+            <label for="tags" class="form-label">해시태그 (쉼표로 구분)</label>
+            <input type="text" class="form-control" id="tags" name="tags">
+        </div>
+
+        <button type="submit" class="btn btn-primary">등록</button>
+    </form>
+</div>
+<script src="{% static 'js/products_create.js' %}"></script>
+
+{% endblock content %}
