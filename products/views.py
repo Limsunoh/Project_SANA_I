@@ -145,9 +145,15 @@ class LikeAPIView(APIView):
     serializer_class = ProductListSerializer
     permission_classes = [IsAuthenticated]
 
-    # 유저가 찜한 제품 리스트 반환
-    def get(self):
-        return Product.objects.filter(likes=self.request.user)
+    # 개별 제품에 대한 찜 상태 반환
+    def get(self, request, pk):
+        product = get_object_or_404(Product, pk=pk)
+
+        # 이미 찜한 제품인지 확인
+        is_liked = request.user in product.likes.all()
+
+        # JSON 응답으로 is_liked 값을 반환
+        return Response({"is_liked": is_liked}, status=200)
 
     # 찜하기 기능 처리
     def post(self, request, pk):
@@ -161,6 +167,8 @@ class LikeAPIView(APIView):
         # 찜하기 추가
         product.likes.add(request.user)
         return Response({"message": "찜하기 했습니다."}, status=200)
+
+
 
 
 class CommentListCreateView(ListCreateAPIView):

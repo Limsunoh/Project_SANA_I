@@ -47,12 +47,14 @@
 
         <!-- 찜하기 버튼 -->
         <div class="like-section">
-            <button class="like-btn">
-                <i class="heart-icon"></i>
+            <button class="like-btn" id="like-button">
+                <!-- 빈 하트 아이콘 (기본 상태) -->
+                <i class="bi bi-suit-heart" id="heart-icon"></i>
             </button>
         </div>
+
     </div>
 </div>
 
-<script src="{% static 'js/product_detail.js' %}"></script>
+<script src="{% static 'js/product_detail.js' %}" defer></script>
 {% endblock %}
