@@ -7,51 +7,131 @@ document.addEventListener("DOMContentLoaded", function () {
     const followingsCountDisplay = document.getElementById("followings_count");
     const followersCountDisplay = document.getElementById("followers_count");
     const likeProductsCountDisplay = document.getElementById("like_products_count");
-    const myProductsContainer = document.getElementById("my-products");
-    const myReviewsContainer = document.getElementById("my-reviews");
-    const purchaseHistoryContainer = document.getElementById("purchase-history");
+    const followButton = document.getElementById("follow-button");
+    const profileAddressDisplay = document.getElementById("profile_address");
+    const introduceDisplay = document.getElementById("introduce_display");
 
-    const currentUsername = localStorage.getItem("current_username");
     const accessToken = localStorage.getItem("access_token");
+    const currentUsername = localStorage.getItem("current_username");
+    let isFollowing = false;
 
-    console.log("Access Token:", accessToken);  // 디버그용
-    console.log("Current Username:", currentUsername);  // 디버그용
+    // URL에서 특정 profile username을 가져옴
+    const profileUsername = window.location.pathname.split('/').filter(Boolean).pop();
 
-    if (!currentUsername || !accessToken) {
-        alert("로그인된 사용자 정보가 없습니다.");
+    if (!profileUsername || !accessToken) {
+        alert("잘못된 접근입니다. 로그인 후 다시 시도해주세요.");
         window.location.href = "/api/accounts/login-page/";
         return;
     }
 
     // 프로필 데이터 불러오기
-    fetch(`/api/accounts/profile/${currentUsername}/`, {
-        headers: {
-            "Authorization": `Bearer ${accessToken}`,
-            "Content-Type": "application/json"
-        },
+    fetch(`/api/accounts/profile/${profileUsername}/`, {
+        headers: { "Authorization": `Bearer ${accessToken}` },
     })
-        .then(response => {
-            console.log("API 응답 상태:", response.status);  // 응답 상태 코드 확인
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error(`API 응답 에러: ${response.status}`);
-            }
-        })
-        .then(data => {
-            console.log("프로필 데이터:", data);  // 서버에서 받은 데이터 출력
-            usernameDisplay.textContent = data.nickname || data.username;
-            emailDisplay.textContent = data.email;
-            createdAtDisplay.textContent = `가입일: ${new Date(data.created_at).toLocaleDateString()}`;
-            profileImage.src = data.profile_image || "/static/images/default_profile.jpg";
-            mannerScoreDisplay.textContent = data.manner_score || "0.0";
-            followingsCountDisplay.textContent = data.followings.length;
-            followersCountDisplay.textContent = data.followers.length;
-            likeProductsCountDisplay.textContent = data.like_products.length;
+    .then(response => response.json())
+    .then(profileData => {
+        console.log("프로필 데이터:", profileData);
+        usernameDisplay.textContent = profileData.nickname || profileData.username;
+        emailDisplay.textContent = profileData.email;
 
-            // 내가 작성한 상품 리스트 추가
-            if (data.products.length > 0) {
-                data.products.slice(0, 4).forEach(product => {
+        if (profileData.created_at) {
+            createdAtDisplay.textContent = `가입일: ${new Date(profileData.created_at).toLocaleDateString("ko-KR")}`;
+        } else {
+            createdAtDisplay.textContent = "가입일 정보가 없습니다.";
+        }
+
+        profileImage.src = profileData.profile_image || "/static/images/default_profile.jpg";
+        mannerScoreDisplay.textContent = profileData.manner_score ? profileData.manner_score.toFixed(1) : "0.0";
+        followingsCountDisplay.textContent = profileData.followings ? profileData.followings.length : "0";
+        followersCountDisplay.textContent = profileData.followers ? profileData.followers.length : "0";
+        likeProductsCountDisplay.textContent = profileData.like_products ? profileData.like_products.length : "0";
+
+        const mainAddress = profileData.mainaddress || '';
+        profileAddressDisplay.textContent = mainAddress.split(" ").slice(0, 2).join(" ") || '지역명 없음';
+        introduceDisplay.textContent = profileData.introduce || '자기소개가 없습니다.';
+
+        return fetch(`/api/accounts/follow/${profileUsername}/`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+            },
+        });
+    })
+    .then(response => response.json())
+    .then(followData => {
+        console.log("팔로우 여부 확인:", followData.is_following);
+        isFollowing = followData.is_following;
+        updateFollowButton(); // 초기 버튼 상태 설정
+    })
+    .catch(error => {
+        console.error("팔로우 여부 확인 중 오류 발생:", error);
+    });
+
+    // 팔로우 버튼 클릭 이벤트 등록
+    if (followButton) {
+        followButton.addEventListener("click", function () {
+            console.log("팔로우 버튼 클릭");
+            followButton.disabled = true;
+
+            fetch(`/api/accounts/follow/${profileUsername}/`, {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${accessToken}`,
+                    "Content-Type": "application/json",
+                },
+            })
+            .then(response => {
+                console.log("서버 응답:", response);
+                if (!response.ok) {
+                    throw new Error("서버 응답 오류 발생");
+                }
+                return response.text();
+            })
+            .then(result => {
+                console.log("서버 응답 데이터:", result);
+                console.log(result);
+                
+                if (result === "\"follow했습니다.\"") {
+                    isFollowing = true;
+                    console.log("A",parseInt(followersCountDisplay.textContent) + 1)
+                    followersCountDisplay.textContent = (parseInt(followersCountDisplay.textContent) + 1).toString();
+                } else if (result === "\"unfollow했습니다.\"") {
+                    isFollowing = false;
+                    console.log("B",parseInt(followersCountDisplay.textContent) - 1)
+                    followersCountDisplay.textContent = Math.max(0, parseInt(followersCountDisplay.textContent) - 1).toString();
+                } else {
+                    console.error("예상치 못한 서버 응답:", result);
+                }
+                updateFollowButton(); // 팔로우 상태 업데이트 후 버튼 갱신
+            })
+            .catch(error => {
+                console.error("팔로우/언팔로우 요청 중 오류 발생:", error);
+            })
+            .finally(() => {
+                followButton.disabled = false;
+            });
+        });
+    }
+
+    // 팔로우 버튼 상태 업데이트 함수
+    function updateFollowButton() {
+        followButton.textContent = "팔로우";
+        followButton.classList.add("btn-primary");
+        followButton.classList.remove("btn-outline-primary");
+        console.log("버튼 텍스트 갱신됨:", followButton.textContent);
+    }
+
+    // 내가 작성한 상품 리스트 추가
+    if (document.getElementById("my-products")) {
+        fetch(`/api/accounts/profile/${profileUsername}/`, {
+            headers: { "Authorization": `Bearer ${accessToken}` },
+        })
+        .then(response => response.json())
+        .then(profileData => {
+            if (profileData.products && profileData.products.length > 0) {
+                const myProductsContainer = document.getElementById("my-products");
+                profileData.products.slice(0, 4).forEach(product => {
                     const productCard = `
                     <div class="card m-2" style="width: 18rem;">
                         <img src="${product.preview_image}" class="card-img-top" alt="${product.title}">
@@ -68,9 +148,35 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(error => {
             console.error("프로필 정보를 불러오는 중 오류 발생:", error);
             alert("프로필 정보를 불러올 수 없습니다.");
-            window.location.href = "/api/accounts/login-page/";  // 오류 발생 시 로그인 페이지로 이동
         });
-});
+    }
+
+    // 클릭 가능한 통계 항목 설정
+    addClickEventsToStats(profileUsername);
+
+    // 통계 항목에 클릭 이벤트 추가 (매너점수, 팔로우, 팔로워, 찜)
+    function addClickEventsToStats(username) {
+        mannerScoreDisplay.style.cursor = "pointer";
+        followingsCountDisplay.style.cursor = "pointer";
+        followersCountDisplay.style.cursor = "pointer";
+        likeProductsCountDisplay.style.cursor = "pointer";
+
+        mannerScoreDisplay.addEventListener("click", () => {
+            alert("매너점수 페이지로 이동합니다."); 
+        });
+
+        followingsCountDisplay.addEventListener("click", () => {
+            window.location.href = `/api/accounts/followings/${username}`;
+        });
+
+        followersCountDisplay.addEventListener("click", () => {
+            window.location.href = `/api/accounts/followers/${username}`;
+        });
+
+        likeProductsCountDisplay.addEventListener("click", () => {
+            window.location.href = `/api/products/like-products/${username}`;
+        });
+    }
 
     // 프로필 수정 페이지로 이동
     document.getElementById("edit-profile-btn").addEventListener("click", () => {
