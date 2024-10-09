@@ -183,6 +183,11 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = `/api/accounts/profile_edit-page/${currentUsername}`;
     });
 
+    // 비밀번호 수정 페이지로 이동
+    document.getElementById("edit-password-btn").addEventListener("click", function() {
+        window.location.href = `/api/accounts/profile/${profileUsername}/password-page/`;
+    });
+    
     // 내가 작성한 상품 더보기 클릭 시
     document.getElementById("see-more-products").addEventListener("click", () => {
         window.location.href = `/api/products/user-products/${currentUsername}`;
