@@ -23,6 +23,6 @@ urlpatterns = [
     path("login-page/", views.LoginPageView.as_view(), name="login-page"),
     path("profile-page/<str:username>/", views.ProfileView.as_view(), name="profile"),
     path("profile_edit-page/<str:username>/", views.Profile_editView.as_view(), name="profile_edit"),
-    
+    path("profile/<str:username>/password-page/", views.ChangePasswordPageView.as_view(), name="change_password_page"),
     
 ]

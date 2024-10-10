@@ -155,4 +155,6 @@ class ProfileView(TemplateView):
     
 class Profile_editView(TemplateView):
     template_name = "profile_edit.html"
-    
+
+class ChangePasswordPageView(TemplateView):
+    template_name = "change_password.html"
