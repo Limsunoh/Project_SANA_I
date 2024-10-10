@@ -212,20 +212,20 @@ function displayProductRecommendations(products) {
 
     products.forEach(product => {
         const productCard = `
-            <div class="product-item">
-                <div class="product-image">
-                    <img src="${product.preview_image || '/default-image.jpg'}" alt="${product.title}">
-                </div>
-                <div class="product-info">
-                    <h3>${product.title}</h3>
-                    <p>판매자: ${product.author}</p>
-                    <p class="product-price">${product.price}원</p>
-                    <p>찜수: ${product.likes_count}</p>
-                    <p>조회수: ${product.hits}</p>
-                </div>
+        <div class="product-item" onclick="window.location.href='/api/products/detail-page/${product.id}/'" style="cursor: pointer;">
+            <div class="product-image">
+                <img src="${product.preview_image}" alt="${product.title}">
             </div>
-        `;
-        productListContainer.insertAdjacentHTML('beforeend', productCard);
+            <div class="product-info">
+                <h3>${product.title}</h3>
+                <p>판매자: ${product.author}</p>
+                <p class="product-price">${product.price}원</p>
+                <p>찜수: ${product.likes_count}</p>
+                <p>조회수: ${product.hits}</p>
+            </div>
+        </div>
+    `;
+    productListContainer.insertAdjacentHTML('beforeend', productCard);
     });
 
     currentPage = 1;
