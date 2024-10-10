@@ -207,3 +207,64 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+
+// 계정 삭제
+document.addEventListener("DOMContentLoaded", function () {
+    const deleteProfileBtn = document.getElementById("delete-profile-btn");
+    const confirmDeleteBtn = document.getElementById("confirm-delete-btn");
+
+    // 계정이 이미 비활성화된 상태인지 체크하는 플래그
+    let isAccountDeactivated = false;
+
+    // Bootstrap 모달 객체 생성
+    const deleteAccountModal = new bootstrap.Modal(document.getElementById('deleteAccountModal'));
+
+    // 계정 삭제 버튼 클릭 시 모달 열기
+    deleteProfileBtn.addEventListener("click", function () {
+        deleteAccountModal.show();
+    });
+
+    // "예" 버튼 클릭 시 계정 비활성화
+    confirmDeleteBtn.addEventListener("click", function () {
+        if (isAccountDeactivated) {
+            alert("계정이 이미 비활성화되었습니다.");
+            return;
+        }
+
+        const profileUsername = window.location.pathname.split('/').filter(Boolean).pop();
+        const accessToken = localStorage.getItem("access_token");
+
+        fetch(`/api/accounts/profile/${profileUsername}/`, {
+            method: 'DELETE',
+            headers: {
+                "Authorization": `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                // 성공적으로 비활성화된 경우
+                isAccountDeactivated = true; // 비활성화 상태 플래그 설정
+                localStorage.removeItem("access_token"); // 토큰 삭제
+                return response.text().then(text => {
+                    return text ? JSON.parse(text) : {}; // 응답이 있으면 파싱
+                });
+            } else if (response.status === 403) {
+                // 403 에러일 경우 추가 요청 방지
+                throw new Error('계정이 이미 비활성화되었거나 권한이 없습니다.');
+            } else {
+                throw new Error('계정 비활성화에 실패했습니다.');
+            }
+        })
+        .then(data => {
+            alert(data.message || '계정이 성공적으로 비활성화되었습니다.');
+            window.location.href = "/api/products/home-page/"; // 홈으로 이동
+        })
+        .catch(error => {
+            console.error('계정 비활성화 중 오류 발생:', error);
+            alert(error.message || '계정 비활성화에 실패했습니다.');
+        });
+    });
+});
+
