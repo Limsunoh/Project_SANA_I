@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+
+<main>
+    <form>
+        <div class="form-group">
+            <label for="category">상품 카테고리</label>
+            <select name="status" id="status">
+                <option value="sell">판매중</option>
+                <option value="reservation">예약중</option>
+                <option value="complete">판매완료</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="details">상품 상세 설명</label>
+            <textarea id="details" name="details" rows="10" placeholder="상세 설명을 입력하세요"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="price">가격</label>
+            <input type="text" id="price" name="price" placeholder="가격을 입력하세요">
+        </div>
+
+        <div class="form-group">
+            <label for="stock">재고 수량</label>
+            <input type="number" id="stock" name="stock" placeholder="재고 수량을 입력하세요">
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" id="submit">저장</button>
+            <button type="button" id="cancel">취소</button>
+        </div>
+    </form>
+</main>
+
+<footer>
+    <div class="footer-content">
+        <h3>SANA I</h3>
+        <address>420 University Drive Suite 300 Coral Gables, FL 33146 USA</address>
+        <ul class="footer-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Payment Options</a></li>
+            <li><a href="#">Returns</a></li>
+            <li><a href="#">Privacy Policies</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </div>
+    <p>2023 lunro. All rights reserved.</p>
+</footer>
+
+    <script src="{% static 'product_update.js' %}"></script>
+
+{% endblock %}
