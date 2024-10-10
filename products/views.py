@@ -17,10 +17,10 @@ from accounts.permissions import (
     SellerorBuyerOnly,
 )
 from .models import (
+    User,
     Product,
     Image,
     Hashtag,
-    PrivateComment,
     ChatMessage,
     ChatRoom,
     TransactionStatus,
@@ -29,7 +29,6 @@ from .serializers import (
     ProductListSerializer,
     ProductCreateSerializer,
     ProductDetailSerializer,
-    PrivateCommentSerializer,
     ChatMessageSerializer,
     TransactionStatusSerializer,
     ChatRoomSerializer,
@@ -169,52 +168,34 @@ class LikeAPIView(APIView):
         return Response({"message": "찜하기 했습니다."}, status=200)
 
 
-
-
-class CommentListCreateView(ListCreateAPIView):
-    permission_classes = [SenderorReceiverOnly]
-    queryset = PrivateComment.objects.all().order_by("-pk")
-    serializer_class = PrivateCommentSerializer
-
-    def get(self, request, *args, **kwargs):
-        user = request.user
-        comments = PrivateComment.objects.filter(Q(sender=user) | Q(receiver=user))
-        serializer = PrivateCommentSerializer(
-            comments, many=True, context={"request": request}
-        )
-        return Response(serializer.data, status=200)
-
-    def perform_create(self, serializer):
-        product = get_object_or_404(Product, pk=self.kwargs["pk"])
-        sender = self.request.user
-        receiver = product.author
-        serializer.save(sender=sender, product=product, receiver=receiver)
-
-
 # 새로운 채팅방 만들기
 class ChatRoomCreateAPIView(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly, SellerorBuyerOnly]
+    permission_classes = [IsAuthenticated, SellerorBuyerOnly]
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, product_id, *args, **kwargs):
         user = request.user
-        chat_rooms = ChatRoom.objects.filter(Q(seller=user) | Q(buyer=user))
-        serializer = ChatRoomSerializer(chat_rooms, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
+        # 요청한 유저가 참여 중인 채팅방 중에서 해당 상품과 관련된 채팅방을 가져옵니다
+        chat_room = ChatRoom.objects.filter(product__id=product_id).filter(Q(seller=user) | Q(buyer=user)).first()
+
+        if not chat_room:
+            return Response({"detail": "참여 중인 채팅방이 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ChatRoomSerializer(chat_room)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        
     def post(self, request, product_id, *args, **kwargs):
         product = get_object_or_404(Product, id=product_id)
 
-        # 이미 채팅방이 존재하는지 확인 (동일한 판매자와 구매자 간)
-        existing_room = ChatRoom.objects.filter(
-            product=product, seller=product.author, buyer=request.user
-        ).first()
+        # 이미 해당 상품에 대해 생성된 채팅방이 있는지 확인합니다.
+        existing_room = ChatRoom.objects.filter(product=product).first()
         if existing_room:
             return Response(
-                {"detail": "해당 상품에 대한 채팅방이 이미 존재합니다."},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"detail": "이미 해당 상품에 대한 채팅방이 존재합니다."},
+                status=status.HTTP_400_BAD_REQUEST
             )
 
-        # 새로운 채팅방 생성
+        # 새로운 채팅방 생성 (처음 생성되는 경우에만)
         chat_room = ChatRoom.objects.create(
             product=product,
             seller=product.author,  # 상품의 판매자
@@ -225,16 +206,20 @@ class ChatRoomCreateAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-# 새로운 채팅 메시지 생성
+# 채팅 메시지 조회 및 생성
 class ChatMessageCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, room_id, *args, **kwargs):
         user = request.user
+
+        # 해당 유저가 참여 중인 채팅방인지 확인합니다.
+        room = get_object_or_404(ChatRoom, id=room_id)
+        if room.seller != user and room.buyer != user:
+            return Response({"detail": "이 채팅방에 접근할 수 있는 권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN)
+
+        # 메시지 조회 로직
         last_message_id = request.query_params.get("last_message_id", None)
-        room = get_object_or_404(
-            ChatRoom.objects.filter(Q(seller=user) | Q(buyer=user)), id=room_id
-        )
         new_messages = []
 
         # 롱 폴링 대기 시간 (최대 30초)
@@ -265,11 +250,27 @@ class ChatMessageCreateAPIView(APIView):
 
     def post(self, request, room_id, *args, **kwargs):
         room = get_object_or_404(ChatRoom, id=room_id)
+
+        # 해당 유저가 채팅방에 참여 중인지 확인합니다.
+        if room.seller != request.user and room.buyer != request.user:
+            return Response({"detail": "이 채팅방에 접근할 수 있는 권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN)
+
         serializer = ChatMessageSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(sender=request.user, room=room)
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
+    
+# 채팅방 리스트 확인하는 API
+class ChatRoomListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, username, *args, **kwargs):  # username을 받도록 수정
+        user = get_object_or_404(User, username=username)  # username을 기반으로 유저 조회
+        chat_rooms = ChatRoom.objects.filter(Q(seller=user) | Q(buyer=user))
+        serializer = ChatRoomSerializer(chat_rooms, many=True)
+        return Response(serializer.data, status=200)
+
 
 
 # 거래 상태를 업데이트하는 API
@@ -417,3 +418,6 @@ class ProductDetailPageView(DetailView):
         context['images'] = self.object.images.all()  # 여러 이미지를 가져옴
         return context
 
+
+class ChatRoomHTMLView(TemplateView):
+    template_name = "chat_room_list.html"
