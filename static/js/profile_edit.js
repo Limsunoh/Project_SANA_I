@@ -15,12 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let username = localStorage.getItem("current_username");
     let accessToken = localStorage.getItem("access_token");
 
-    console.log("localStorage의 current_username 값:", username);  // 디버깅 로그 추가
-    console.log("localStorage의 access_token 값:", accessToken);  // 디버깅 로그 추가
-
-    // current_username이 비어 있는 경우, 다시 설정 시도
     if (!username) {
-        // accessToken이 있을 때만 API를 통해 username 가져오기
         if (accessToken) {
             console.log("current_username이 없으므로 API 요청을 통해 username을 가져옵니다.");
             
@@ -111,7 +106,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // 기존 프로필 데이터를 불러오는 함수
     async function loadProfileData() {
-        // 올바른 URL 형식으로 프로필 데이터 요청
         const profileUrl = `/api/accounts/profile/${username}/`;
         console.log("프로필 요청 URL:", profileUrl); // 디버그용 로그
 

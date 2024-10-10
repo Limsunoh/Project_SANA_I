@@ -7,6 +7,7 @@ app_name = "products"
 urlpatterns = [
     # API 앤드포인트
     path("", views.ProductListAPIView.as_view(), name="product_list"),
+    path('user-products/<str:username>/', views.UserProductsListView.as_view(), name='user_products'),
     path("<int:pk>/", views.ProductDetailAPIView.as_view(), name="product_detail"),
     path('<int:pk>/like/', views.LikeAPIView.as_view(), name='like'),  # 개별 제품 찜 상태 확인 및 찜하기 기능
     path("<int:pk>/comment/", views.CommentListCreateView.as_view(), name='comment'),
@@ -21,4 +22,5 @@ urlpatterns = [
     path("detail-page/<int:pk>/", views.ProductDetailPageView.as_view(), name="product_detail"),
     path('create/', views.ProductCreateView.as_view(), name='product-create'),
     path('update/<int:pk>/', views.ProductupdateView.as_view(), name= 'product-update'),
+    path('user-products-page/<str:username>/', views.UserProductsListPageView.as_view(), name='user_products_page'),
 ]
