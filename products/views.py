@@ -363,6 +363,7 @@ class AISearchAPIView(APIView):
         각 제품은 다음과 같은 필드를 가져야 합니다:
         [
             {{
+                "id": "상품 ID",
                 "title": "상품 제목",
                 "price": "상품 가격",
                 "preview_image": "이미지 URL",
