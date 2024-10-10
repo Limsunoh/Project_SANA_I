@@ -22,6 +22,7 @@ urlpatterns = [
     path('home-page/', views.HomePageView.as_view(), name='home-page'),
     path("detail-page/<int:pk>/", views.ProductDetailPageView.as_view(), name="product_detail"),
     path('create/', views.ProductCreateView.as_view(), name='product-create'),
+    path('update/<int:pk>/', views.ProductupdateView.as_view(), name= 'product-update'),
     path('user-products-page/<str:username>/', views.UserProductsListPageView.as_view(), name='user_products_page'),
     path('user/<str:username>/like-products/', views.LikeProductsPageView.as_view(), name='like-products-page'),
 ]
