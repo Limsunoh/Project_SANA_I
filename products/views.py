@@ -4,7 +4,7 @@ import time
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.generics import ListCreateAPIView, UpdateAPIView
+from rest_framework.generics import ListCreateAPIView, UpdateAPIView, ListAPIView
 from rest_framework.permissions import (
     IsAuthenticated,
     IsAuthenticatedOrReadOnly,
@@ -24,6 +24,7 @@ from .models import (
     ChatMessage,
     ChatRoom,
     TransactionStatus,
+    User,
 )
 from .serializers import (
     ProductListSerializer,
@@ -96,11 +97,19 @@ class ProductListAPIView(ListCreateAPIView):
         for image in images:
             Image.objects.create(product=product, image_url=image)
         for tag in tags:
-            print(tag)
             hashtag, created = Hashtag.objects.get_or_create(
                 name=tag
             )  # 해시태그가 존재하지 않으면 생성
             product.tags.add(hashtag)  # 제품에 해시태그 추가
+
+
+class UserProductsListView(ListAPIView):
+    serializer_class = ProductListSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        username = self.kwargs.get('username')
+        return Product.objects.filter(author__username=username)
 
 
 class ProductDetailAPIView(UpdateAPIView):
@@ -166,6 +175,17 @@ class LikeAPIView(APIView):
         # 찜하기 추가
         product.likes.add(request.user)
         return Response({"message": "찜하기 했습니다."}, status=200)
+
+
+# 내가 찜한 상품 리스트보기 
+class LikeListForUserAPIView(APIView):
+    permission_classes = [AllowAny] 
+
+    def get(self, request, username):
+        user = get_object_or_404(User, username=username)
+        liked_products = Product.objects.filter(likes=user)
+        serializer = ProductListSerializer(liked_products, many=True)
+        return Response(serializer.data, status=200)
 
 
 # 새로운 채팅방 만들기
@@ -323,10 +343,10 @@ class AISearchAPIView(APIView):
         # OpenAI API 키 설정
         openai.api_key = OPENAI_API_KEY
 
-        # 가장 최근에 생성된 40개의 상품을 조회
+        # 가장 최근에 생성된 100개의 상품을 조회
         products = Product.objects.filter(status__in=["sell", "reservation"]).order_by(
             "-created_at"
-        )[:200]
+        )[:100]
 
         product_list = []
 
@@ -354,6 +374,7 @@ class AISearchAPIView(APIView):
         각 제품은 다음과 같은 필드를 가져야 합니다:
         [
             {{
+                "id": "상품 ID",
                 "title": "상품 제목",
                 "price": "상품 가격",
                 "preview_image": "이미지 URL",
@@ -402,12 +423,13 @@ class AISearchAPIView(APIView):
         # AI의 응답을 그대로 반환
         return Response({"response": ai_response}, status=200)
 
-    
-# HTML 파일 보여주는 class
+
+# 상품 목록 리스트 template
 class HomePageView(TemplateView):
     template_name = "home.html"
 
 
+# 상품디테일 template
 class ProductDetailPageView(DetailView):
     model = Product
     template_name = 'product_detail.html'
@@ -417,6 +439,41 @@ class ProductDetailPageView(DetailView):
         context = super().get_context_data(**kwargs)
         context['images'] = self.object.images.all()  # 여러 이미지를 가져옴
         return context
+
+
+# 상품 작성 template
+class ProductCreateView(TemplateView):
+    template_name = "product_create.html"
+    
+    
+class ProductupdateView(TemplateView):
+    template_name = "product_update.html"
+    
+
+# 내가 작성한 상품 리스트 template
+class UserProductsListPageView(TemplateView):
+    template_name = "user_products.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        username = self.kwargs.get('username')  # URL에서 username 가져오기
+        profile_user = get_object_or_404(User, username=username)  # username으로 사용자 객체 가져오기
+        context['profile_user'] = profile_user  # 템플릿에 profile_user 추가
+        return context
+
+
+# 내가 찜한 리스트 template
+class LikeProductsPageView(TemplateView):
+    template_name = "liked_products.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        username = self.kwargs.get('username')
+        profile_user = get_object_or_404(User, username=username)
+        context['profile_user'] = profile_user
+        return context
+
+
 
 
 class ChatRoomHTMLView(TemplateView):

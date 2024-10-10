@@ -21,7 +21,7 @@ from .models import User
 from .permissions import IsOwnerOrReadOnly
 from django.views.generic import TemplateView
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import CustomTokenObtainPairSerializer
+from .serializers import CustomTokenObtainPairSerializer, UserListSerializer
 
 
 class UserCreateView(CreateAPIView):
@@ -134,7 +134,28 @@ class FollowView(APIView):
         else:
             target_user.followers.add(current_user)
             return Response("follow했습니다.", status=200)
-        
+
+
+class UserFollowingListAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, username):
+        user = get_object_or_404(User, username=username)
+        followings = user.followings.all()
+        serializer = UserListSerializer(followings, many=True)
+        return Response(serializer.data, status=200)
+
+class UserFollowerListAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, username):
+        user = get_object_or_404(User, username=username)
+        followers = user.followers.all()
+        serializer = UserListSerializer(followers, many=True)
+        return Response(serializer.data, status=200)
+
+
+
 
 # 로그인 시 username을 저장할 수 있도록 토큰을 커스텀하는뷰
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -145,14 +166,42 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 class SignupPageView(TemplateView):
     template_name = "signup.html"
 
-
+# 로그인 template
 class LoginPageView(TemplateView):
     template_name = "login.html"
-    
+
+# 프로필 template
 class ProfileView(TemplateView):
     template_name = "profile.html"
 
-    
+# 프로필 수정 template
 class Profile_editView(TemplateView):
     template_name = "profile_edit.html"
-    
+
+# 비밀번호 수정 template
+class ChangePasswordPageView(TemplateView):
+    template_name = "change_password.html"
+
+# followings 목록 template
+class FollowingsPageView(TemplateView):
+    template_name = "followings.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        username = self.kwargs.get('username')
+        profile_user = get_object_or_404(User, username=username)
+        context['profile_user'] = profile_user
+        context['followings'] = profile_user.followings.all()
+        return context
+
+# Followers 목록 template
+class FollowersPageView(TemplateView):
+    template_name = "followers.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        username = self.kwargs.get('username')
+        profile_user = get_object_or_404(User, username=username)
+        context['profile_user'] = profile_user
+        context['followers'] = profile_user.followers.all()
+        return context
