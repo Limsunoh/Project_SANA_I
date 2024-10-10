@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (response.ok) {
-                window.location.href = "/api/products/detail-page/<int:pk>/";
+                window.location.href = "/api/products/detail-page/ <int:pk>/";
                 console.log("제품이 성공적으로 등록되었습니다.");
             } else {
                 console.error("제품 등록에 실패했습니다.");
