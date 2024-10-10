@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/product_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="product-detail">
+        <!-- 이미지 섹션 -->
+        <div id="image-gallery" class="images">
+        </div>
+
+        <!-- 제품 정보 섹션 -->
+        <div class="product-info">
+            <div class="author-info">
+                <img src="{% static 'images/default_profile.jpg' %}" alt="Author Image" class="author-profile"> <!-- 프로필 이미지 -->
+                <div class="author-details">
+                    <p id="product-author">작성자명</p>
+                    <p id="product-location">지역명</p>
+                </div>
+                <div class="product-actions">
+                    <button class="btn">평판</button>
+                    <button class="btn" id="chat-button" style="display: none;">채팅하기</button> <!-- 기본적으로 숨김 처리 -->
+                </div>
+            </div>
+
+            <!-- 제품 상태 -->
+            <div class="product-status">
+                <p><strong>상태:</strong> <span id="product-status">판매 중</span></p> 
+            </div>
+
+            <!-- 제품 세부 정보 -->
+            <div class="product-details">
+                <p><strong>제목:</strong> <span id="product-title">제품 제목</span></p>
+                <p><strong>가격:</strong> <span id="product-price">가격</span></p>
+                <p><strong>내용:</strong> <span id="product-description">제품 설명</span></p>
+                <p><strong>조회수:</strong> <span id="product-hits">조회수</span></p>
+                <p><strong>찜수:</strong> <span id="product-likes">찜수</span></p>
+            </div>
+
+            <!-- 해시태그 섹션 -->
+            <div id="hashtags" class="hashtags">
+            </div>
+        </div>
+
+        <!-- 찜하기 버튼 -->
+        <div class="like-section">
+            <button class="like-btn" id="like-button">
+                <!-- 빈 하트 아이콘 (기본 상태) -->
+                <i class="bi bi-suit-heart" id="heart-icon"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/product_detail.js' %}" defer></script>
+{% endblock %}

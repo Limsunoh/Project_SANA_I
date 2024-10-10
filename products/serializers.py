@@ -1,6 +1,14 @@
 from rest_framework import serializers
 from accounts.models import User
-from .models import Product, Image, Hashtag, PrivateComment, ChatRoom, ChatMessage, TransactionStatus
+from .models import (
+    Product,
+    Image,
+    Hashtag,
+    PrivateComment,
+    ChatRoom,
+    ChatMessage,
+    TransactionStatus,
+)
 from reviews.serializers import ReviewSerializer
 
 
@@ -91,6 +99,9 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     images = ImageSerializer(many=True, read_only=True)
     hashtag = HashtagSerializer(many=True, source="tags", required=False)
     author = serializers.StringRelatedField()
+    mainaddress = serializers.CharField(
+        source="author.mainaddress", read_only=True
+    )  # 작성자의 mainaddress를 가져옴
     likes_count = serializers.SerializerMethodField()
     reviews = ReviewSerializer(read_only=True)
 
@@ -103,6 +114,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             "title",
             "content",
             "author",
+            "mainaddress",
             "price",
             "status",
             "hashtag",
@@ -122,77 +134,96 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         instance.hits += 1
         instance.save(update_fields=["hits"])
         return super().to_representation(instance)
-    
-    
 
 
 class PrivateCommentSerializer(serializers.ModelSerializer):
-    sender_username = serializers.ReadOnlyField(source='sender.username')
-    receiver_username = serializers.ReadOnlyField(source='receiver.username')
+    sender_username = serializers.ReadOnlyField(source="sender.username")
+    receiver_username = serializers.ReadOnlyField(source="receiver.username")
     product = serializers.StringRelatedField()
-
 
     class Meta:
         model = PrivateComment
-        fields = ['id', 
-                'product', 
-                'sender_username', 
-                'receiver_username', 
-                'content', 
-                'created_at', 
-                'is_sold'
-                ]
-        read_only_fields = ['product']
-    
-    
+        fields = [
+            "id",
+            "product",
+            "sender_username",
+            "receiver_username",
+            "content",
+            "created_at",
+            "is_sold",
+        ]
+        read_only_fields = ["product"]
+
 
 class ChatMessageSerializer(serializers.ModelSerializer):
-    sender_username = serializers.ReadOnlyField(source='sender.username')
+    sender_username = serializers.ReadOnlyField(source="sender.username")
     room = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = ChatMessage
-        fields = ['id', 'room', 'sender', 'sender_username', 'content', 'image', 'created_at', 'is_read']
-        read_only_fields = ['id', 'sender', 'sender_image', 'created_at', 'is_read', 'room']
-        
-    
+        fields = [
+            "id",
+            "room",
+            "sender",
+            "sender_username",
+            "content",
+            "image",
+            "created_at",
+            "is_read",
+        ]
+        read_only_fields = [
+            "id",
+            "sender",
+            "sender_image",
+            "created_at",
+            "is_read",
+            "room",
+        ]
+
     def to_representation(self, instance):
         rep = super().to_representation(instance)
-        
+
         sender = instance.sender
-        rep['sender_image'] = sender.get_profile_image_url()
+        rep["sender_image"] = sender.get_profile_image_url()
         return rep
 
 
 class ChatRoomSerializer(serializers.ModelSerializer):
-    seller_username = serializers.ReadOnlyField(source='seller.username')
-    buyer_username = serializers.ReadOnlyField(source='buyer.username')
-    product_title = serializers.ReadOnlyField(source='product.title')
+    seller_username = serializers.ReadOnlyField(source="seller.username")
+    buyer_username = serializers.ReadOnlyField(source="buyer.username")
+    product_title = serializers.ReadOnlyField(source="product.title")
     last_message = serializers.SerializerMethodField(read_only=True)
-    
 
     class Meta:
         model = ChatRoom
-        fields = ['id', 'product_title', 'seller', 'buyer', 'seller_username', 'buyer_username', 'last_message', 'created_at']
-    
+        fields = [
+            "id",
+            "product_title",
+            "seller",
+            "buyer",
+            "seller_username",
+            "buyer_username",
+            "last_message",
+            "created_at",
+        ]
+
     def to_representation(self, instance):
         rep = super().to_representation(instance)
-        
+
         seller = instance.seller
         buyer = instance.buyer
-        rep['seller_image'] = seller.get_profile_image_url()
-        rep['buyer_image'] = buyer.get_profile_image_url()
+        rep["seller_image"] = seller.get_profile_image_url()
+        rep["buyer_image"] = buyer.get_profile_image_url()
         return rep
-    
+
     def get_last_message(self, instance):
         if instance.messages.exists():
             last_message = instance.messages.order_by("id").last()
             return last_message.content  # 마지막 내용을 반환
-        return None 
-        
+        return None
 
 
 class TransactionStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = TransactionStatus
-        fields = ['id', 'room', 'is_sold', 'is_completed', 'updated_at']
+        fields = ["id", "room", "is_sold", "is_completed", "updated_at"]
