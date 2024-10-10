@@ -4,7 +4,7 @@ import time
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.generics import ListCreateAPIView, UpdateAPIView
+from rest_framework.generics import ListCreateAPIView, UpdateAPIView, ListAPIView
 from rest_framework.permissions import (
     IsAuthenticated,
     IsAuthenticatedOrReadOnly,
@@ -24,6 +24,7 @@ from .models import (
     ChatMessage,
     ChatRoom,
     TransactionStatus,
+    User,
 )
 from .serializers import (
     ProductListSerializer,
@@ -102,6 +103,15 @@ class ProductListAPIView(ListCreateAPIView):
                 name=tag
             )  # 해시태그가 존재하지 않으면 생성
             product.tags.add(hashtag)  # 제품에 해시태그 추가
+
+
+class UserProductsListView(ListAPIView):
+    serializer_class = ProductListSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        username = self.kwargs.get('username')
+        return Product.objects.filter(author__username=username)
 
 
 class ProductDetailAPIView(UpdateAPIView):
@@ -325,7 +335,7 @@ class AISearchAPIView(APIView):
         # 가장 최근에 생성된 40개의 상품을 조회
         products = Product.objects.filter(status__in=["sell", "reservation"]).order_by(
             "-created_at"
-        )[:200]
+        )[:100]
 
         product_list = []
 
@@ -420,4 +430,17 @@ class ProductDetailPageView(DetailView):
 
 class ProductCreateView(TemplateView):
     template_name = "products_create.html"
+    
+
+class UserProductsListPageView(TemplateView):
+    template_name = "user_products.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        username = self.kwargs.get('username')  # URL에서 username 가져오기
+        profile_user = get_object_or_404(User, username=username)  # username으로 사용자 객체 가져오기
+        context['profile_user'] = profile_user  # 템플릿에 profile_user 추가
+        return context
+
+
 

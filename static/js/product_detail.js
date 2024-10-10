@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
             // 작성자와 현재 로그인한 유저의 닉네임이 같으면 찜하기 버튼 숨기기
-            const currentUserNickname = localStorage.getItem('current_username');  // 사용자 닉네임을 로컬 스토리지에서 가져오기
+            const currentUserNickname = localStorage.getItem('current_username');
             console.log("author:",data.author)
             console.log("currentUserNickname:",currentUserNickname)
             if (currentUserNickname && currentUserNickname.trim() === data.author.trim()) {
@@ -77,7 +77,6 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(response => response.json())
             .then(likeData => {
                 if (likeData.is_liked) {
-                    console.log("찜한 상태입니다.");  // 확인용 로그
                     heartIcon.classList.remove('bi-suit-heart');
                     heartIcon.classList.add('bi-suit-heart-fill', 'liked');  // 이미 찜한 상태면 채워진 하트로 변경
                 }
@@ -87,7 +86,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 3. 찜하기 기능 처리
     likeButton.addEventListener('click', function () {
-        console.log("찜하기 버튼 클릭됨");  // 이 로그가 출력되는지 확인
 
         if (!accessToken) {
             alert("로그인이 필요합니다.");
