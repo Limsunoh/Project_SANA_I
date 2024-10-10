@@ -10,7 +10,6 @@ document.getElementById("login-form").onsubmit = async function (event) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formDataObj),
     });
-    console.log(formDataObj)
 
 
     if (response.ok) {
@@ -19,7 +18,6 @@ document.getElementById("login-form").onsubmit = async function (event) {
         // 액세스 토큰과 리프레시 토큰만 저장
         setAccessToken(data.access);
         setRefreshToken(data.refresh);
-        // **username이 응답에 포함되어 있다면 로컬 스토리지에 저장**
         if (data.username) {
             localStorage.setItem("current_username", data.username);
         } else {

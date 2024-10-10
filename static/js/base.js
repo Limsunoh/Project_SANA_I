@@ -70,7 +70,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateButtonDisplay() {
         const accessToken = getAccessToken();
-        console.log("AccessToken:", accessToken);
 
         if (accessToken) {
             // 로그인 상태일 때
