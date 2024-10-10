@@ -17,7 +17,7 @@ function checkAIRecommendationStatus() {
 async function loadProductList(order_by = '', search = '', page = 1) {
     checkAIRecommendationStatus(); // AI 상태 체크
     const productListContainer = document.getElementById('product-list-grid');
-    showLoading(); // 로딩창 표시
+    
 
     try {
         let apiUrl = `/api/products?search=${search}&order_by=${order_by}&page=${page}`;
@@ -89,12 +89,12 @@ document.addEventListener('DOMContentLoaded', function () {
             if (isAIRecommendationActive) {
                 // AI 추천이 활성화된 경우, ai_search 파라미터 유지
                 const aiSearchQuery = urlParams.get('ai_search') || '';
-                const newUrl = `/home-page/?ai_search=${aiSearchQuery}&order_by=${orderByParam}&page=1`;
+                const newUrl = `/api/products/home-page/?ai_search=${aiSearchQuery}&order_by=${orderByParam}&page=1`;
                 window.history.pushState({ path: newUrl }, '', newUrl);
                 sortAIRecommendations(orderByParam);  // AI 추천 상품 정렬
             } else {
                 // 일반 검색일 경우, search 파라미터 사용
-                const newUrl = `/home-page/?search=${searchQuery}&order_by=${orderByParam}&page=1`;
+                const newUrl = `/api/products/home-page/?search=${searchQuery}&order_by=${orderByParam}&page=1`;
                 window.history.pushState({ path: newUrl }, '', newUrl);
                 loadProductList(orderByParam, searchQuery, 1);
             }
@@ -173,7 +173,7 @@ async function aiSearch() {
         isSearchActive = false;  // 검색 상태 비활성화
 
         // AI 추천 결과 페이지로 이동
-        const newUrl = `/home-page/?ai_search=${query}&order_by=created_at&page=1`;
+        const newUrl = `/api/products/home-page/?ai_search=${query}&order_by=created_at&page=1`;
         window.history.pushState({ path: newUrl }, '', newUrl);
 
         displayProductRecommendations(aiRecommendedProducts);
@@ -211,21 +211,26 @@ function displayProductRecommendations(products) {
     }
 
     products.forEach(product => {
+        console.log("Product Data:", product); // `product` 객체를 로그로 확인
+        if (!product.id) {
+            console.error("상품 ID가 누락되었습니다.", product);
+        }
+
         const productCard = `
-            <div class="product-item">
-                <div class="product-image">
-                    <img src="${product.preview_image || '/default-image.jpg'}" alt="${product.title}">
-                </div>
-                <div class="product-info">
-                    <h3>${product.title}</h3>
-                    <p>판매자: ${product.author}</p>
-                    <p class="product-price">${product.price}원</p>
-                    <p>찜수: ${product.likes_count}</p>
-                    <p>조회수: ${product.hits}</p>
-                </div>
+        <div class="product-item" onclick="window.location.href='/api/products/detail-page/${product.id}/'" style="cursor: pointer;">
+            <div class="product-image">
+                <img src="${product.preview_image}" alt="${product.title}">
             </div>
-        `;
-        productListContainer.insertAdjacentHTML('beforeend', productCard);
+            <div class="product-info">
+                <h3>${product.title}</h3>
+                <p>판매자: ${product.author}</p>
+                <p class="product-price">${product.price}원</p>
+                <p>찜수: ${product.likes_count}</p>
+                <p>조회수: ${product.hits}</p>
+            </div>
+        </div>
+    `;
+    productListContainer.insertAdjacentHTML('beforeend', productCard);
     });
 
     currentPage = 1;

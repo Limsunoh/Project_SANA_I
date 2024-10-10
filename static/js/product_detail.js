@@ -61,8 +61,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 hashtagContainer.appendChild(tagElement);
             });
 
-            // 작성자와 현재 로그인한 유저의 닉네임이 같으면 찜하기, 채팅하기 버튼 숨기기
+            // 작성자와 현재 로그인한 유저의 닉네임이 같으면 찜하기 버튼 숨기기
             const currentUserNickname = localStorage.getItem('current_username');
+            console.log("author:",data.author)
+            console.log("currentUserNickname:",currentUserNickname)
             if (currentUserNickname && currentUserNickname.trim() === data.author.trim()) {
                 likeButton.style.display = 'none';
                 chatButton.style.display = 'none';
