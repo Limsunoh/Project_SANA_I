@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}딸기 마켓 - 프로필{% endblock %}
+
+{% block extra_css %}
+<style>
+    .card:hover{
+        transform: translateY(-10px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Profile Header -->
+    <div class="profile-header text-center">
+        <div class="profile-info">
+            <img id="profile_image" class="rounded-circle mx-auto d-block" src="{% static 'images/default_profile.jpg' %}" alt="프로필 이미지" style="width: 500px; height: 500px; border: 1px solid #ddd;">
+            <h3 id="username_display" class="mt-3"></h3>
+            <p id="email_display"></p>
+            <p id="created_at_display"></p>
+            <!-- 주소 및 자기소개 추가 -->
+            <p id="profile_address" class="text-muted"></p>
+            <p id="introduce_display" class="mt-2"></p>
+            <button id="follow-button" class="btn btn-outline-primary mt-2">팔로우</button>
+        </div>
+        
+        <!-- Profile Stats -->
+        <div class="profile-stats d-flex justify-content-center mt-3">
+            <div class="stat-item mx-3">
+                <p>매너점수</p>
+                <h3 id="manner_score">0.0</h3>
+            </div>
+            <div class="stat-item mx-3">
+                <p>팔로우</p>
+                <h3 id="followings_count">0</h3>
+            </div>
+            <div class="stat-item mx-3">
+                <p>팔로워</p>
+                <h3 id="followers_count">0</h3>
+            </div>
+            <div class="stat-item mx-3">
+                <p>찜</p>
+                <h3 id="like_products_count">0</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- 내가 작성한 상품 -->
+    <h4 class="mt-4">내가 작성한 상품</h4>
+    <div id="my-products" class="product-list d-flex flex-wrap mb-4">
+        <!-- 동적으로 제품 목록이 채워질 예정 -->
+    </div>
+    <button id="see-more-products" class="btn btn-secondary mb-4">내가 작성한 상품 더보기</button>
+
+    <!-- 내 후기 -->
+    <h4>내 후기</h4>
+    <div id="my-reviews" class="review-list">
+        <!-- 후기 목록 동적 추가 예정 -->
+    </div>
+
+    <!-- 구매 내역 -->
+    <h4>구매 내역</h4>
+    <div id="purchase-history" class="purchase-history-list">
+        <!-- 구매 내역 동적 추가 예정 -->
+    </div>
+
+    <!-- 회원정보 관리 -->
+    <h4>회원 정보 관리</h4>
+    <button id="edit-profile-btn" class="btn btn-primary mt-4">프로필 수정</button>
+    <button id="edit-password-btn" class="btn btn-primary mt-4">비밀번호 수정</button>
+    <button id="delete-profile-btn" class="btn btn-danger mt-4">계정 삭제</button>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/profile.js' %}"></script>
+{% endblock %}

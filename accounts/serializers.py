@@ -8,9 +8,10 @@ from django.conf import settings
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import serializers
 from products.models import Product
-from products.serializers import ProductListSerializer
+from products.serializers import ProductListSerializer, ChatRoomSerializer
 from .validata import passwordValidation
 from .models import User
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 # JWT 토큰 생성하는 함수
@@ -46,6 +47,7 @@ class UserSerializer(serializers.ModelSerializer):
             "postcode",
             "mainaddress",
             "subaddress",
+            "extraaddress",
             "image",
             "profile_image",
             "introduce",
@@ -55,6 +57,8 @@ class UserSerializer(serializers.ModelSerializer):
         write_only_fields = ("image",)
 
     def validate(self, data):
+        if "email" not in data or not data["email"]:
+            raise serializers.ValidationError("이메일을 입력해주세요.")
         # 비밀번호 두개가 일치하는지 확인
         if data["password"] != data["checkpassword"]:
             raise serializers.ValidationError("똑같은 비밀번호를 입력하세요.")
@@ -110,6 +114,13 @@ class UserSerializer(serializers.ModelSerializer):
         email.send()
 
         return user
+    
+    
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)  # 기본 토큰 생성 로직 호출
+        data['username'] = self.user.username
+        return data
 
 
 class UserFollowSerializer(serializers.ModelSerializer):
@@ -117,6 +128,7 @@ class UserFollowSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             "id",
+            "username",
             "nickname",
             "image",
         )
@@ -128,6 +140,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     followings = serializers.SerializerMethodField()
     followers = serializers.SerializerMethodField()
     profile_image = serializers.SerializerMethodField()
+    created_at = serializers.DateTimeField(format="%Y-%m-%d", read_only=True)
 
     class Meta:
         model = User
@@ -137,16 +150,16 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "birth",
             "email",
             "mainaddress",
-            "subaddress",
+            "created_at",
+            "image",
             "profile_image",
             "introduce",
-            "created_at",
             "products",
             "like_products",
             "followings",
             "followers",
         )
-        
+
     def get_profile_image(self, obj):
         return obj.get_profile_image_url()
 
@@ -165,6 +178,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
     def get_followers(self, obj):
         follwers = obj.followers.all()
         return UserFollowSerializer(follwers, many=True).data
+    
+
 
 
 class UserChangeSerializer(serializers.ModelSerializer):
@@ -176,15 +191,18 @@ class UserChangeSerializer(serializers.ModelSerializer):
             "username",
             "nickname",
             "name",
+            "postcode",
             "mainaddress",
             "subaddress",
+            "extraaddress",
             "birth",
             "email",
             "image",
             "profile_image",
+            "introduce",
         )
         read_only_fields = ("username",)
-        
+
     def get_profile_image(self, obj):
         return obj.get_profile_image_url()
 

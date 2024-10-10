@@ -19,12 +19,25 @@ from .serializers import (
 )
 from .models import User
 from .permissions import IsOwnerOrReadOnly
+from django.views.generic import TemplateView
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import CustomTokenObtainPairSerializer
 
 
 class UserCreateView(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permisson_classes = [AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            print("데이터 검증 오류:", serializer.errors)  # 데이터 검증 오류 확인
+            return Response(serializer.errors, status=400)
+
+        # 데이터가 유효하면 사용자 생성
+        self.perform_create(serializer)
+        return Response({"message": "success"}, status=201)
 
 
 def activate_user(request, pk, token):
@@ -53,8 +66,6 @@ def activate_user(request, pk, token):
     except Exception as e:
         return HttpResponse(f"에러 발생: {e}", status=400)
 
-    # 유저 프로필 확인 및 수정, 삭제
-
 
 class UserProfileView(RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
@@ -68,9 +79,28 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
             return UserChangeSerializer
         return super().get_serializer_class()
 
+    def destroy(self, request, *args, **kwargs):
+        # `lookup_field`를 사용하여 해당 사용자를 찾기
+        user = get_object_or_404(User, username=kwargs.get("username"))
+
+        # 요청자가 해당 사용자인지 확인
+        if user == request.user:
+            # is_active 속성을 False로 설정
+            user.is_active = False
+            user.save()
+
+            # 성공적으로 업데이트된 응답 반환
+            return Response({"message": "삭제처리가 완료되었습니다."}, status=200)
+        else:
+            # 권한이 없을 때 응답
+            return Response({"message": "삭제처리할 권한이 없습니다."}, status=403)
+        
+    def get_queryset(self):
+        return User.objects.all()  # 전체 User 객체에서 필터링
+
+
+
     # 유저 비밀번호 변경
-
-
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
@@ -89,6 +119,12 @@ class ChangePasswordView(APIView):
 
 class FollowView(APIView):
     permission_classes = [IsAuthenticated]
+    
+    def get(self, request, username):
+        user = User.objects.get(username=username)
+        is_following = request.user in user.followers.all()
+        return Response({'is_following': is_following}, status=200)
+
     def post(self, request, username):
         target_user = get_object_or_404(User, username=username)
         current_user = request.user
@@ -98,3 +134,27 @@ class FollowView(APIView):
         else:
             target_user.followers.add(current_user)
             return Response("follow했습니다.", status=200)
+        
+
+# 로그인 시 username을 저장할 수 있도록 토큰을 커스텀하는뷰
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
+
+# HTML 파일 보여주는 class
+class SignupPageView(TemplateView):
+    template_name = "signup.html"
+
+
+class LoginPageView(TemplateView):
+    template_name = "login.html"
+    
+class ProfileView(TemplateView):
+    template_name = "profile.html"
+
+    
+class Profile_editView(TemplateView):
+    template_name = "profile_edit.html"
+
+class ChangePasswordPageView(TemplateView):
+    template_name = "change_password.html"
