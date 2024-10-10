@@ -82,6 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
         formData.append("extraaddress", extraAddressInput.value);
         formData.append("birth", birthInput.value);
         formData.append("email", emailInput.value);
+        formData.append('introduce', document.getElementById('introduce').value);
 
         if (imageInput.files[0]) {
             formData.append("image", imageInput.files[0]);

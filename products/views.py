@@ -331,7 +331,7 @@ class AISearchAPIView(APIView):
         # OpenAI API 키 설정
         openai.api_key = OPENAI_API_KEY
 
-        # 가장 최근에 생성된 40개의 상품을 조회
+        # 가장 최근에 생성된 100개의 상품을 조회
         products = Product.objects.filter(status__in=["sell", "reservation"]).order_by(
             "-created_at"
         )[:100]

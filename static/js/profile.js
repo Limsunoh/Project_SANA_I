@@ -194,6 +194,11 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // 비밀번호 수정 페이지로 이동
+    document.getElementById("edit-password-btn").addEventListener("click", function() {
+        window.location.href = `/api/accounts/profile/${profileUsername}/password-page/`;
+    });
+    
     // 내가 작성한 상품 더보기 클릭 시
     const seeMoreProductsBtn = document.getElementById("see-more-products");
     if (seeMoreProductsBtn) {
