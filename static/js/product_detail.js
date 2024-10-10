@@ -10,12 +10,22 @@ document.addEventListener('DOMContentLoaded', function () {
     const authorProfileImg = document.getElementById('author-profile-img');  // 작성자 프로필 이미지 요소
     const authorLinks = document.querySelectorAll('.author-link');  // 작성자 프로필 이미지 및 작성자 이름 링크
 
+    const editButton = document.getElementById('edit-button');  // 수정 버튼
+    const deleteButton = document.getElementById('delete-button');  // 삭제 버튼
+    const confirmDeleteButton = document.getElementById('confirm-delete');  // 모달 내 삭제 버튼
+
+    // 모달 요소
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
+
     // 버튼과 아이콘이 제대로 선택되는지 확인
     if (!likeButton || !heartIcon) {
         console.error("likeButton 또는 heartIcon 요소를 찾을 수 없습니다.");
         return;
     }
 
+    console.log("likeButton 요소 찾음:", likeButton);
+
+    // 1. 제품 상세 정보 가져오기
     // 제품 상세 정보 가져오기
     fetch(apiUrl)
         .then(response => {
@@ -63,8 +73,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // 작성자와 현재 로그인한 유저의 닉네임이 같으면 찜하기 버튼 숨기기
             const currentUserNickname = localStorage.getItem('current_username');
-            console.log("author:",data.author)
-            console.log("currentUserNickname:",currentUserNickname)
+            console.log("author:", data.author);
+            console.log("currentUserNickname:", currentUserNickname);
             if (currentUserNickname && currentUserNickname.trim() === data.author.trim()) {
                 likeButton.style.display = 'none';
                 chatButton.style.display = 'none';
@@ -85,6 +95,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 });
             });
+
+            // 작성자와 현재 사용자가 다를 경우 수정 및 삭제 버튼 숨기기
+            if (currentUserNickname && currentUserNickname.trim() !== data.author.trim()) {
+                editButton.style.display = 'none';
+                deleteButton.style.display = 'none';
+                console.log("작성자와 사용자가 다름, 수정/삭제 버튼 숨김");
+            }
         })
         .catch(error => {
             console.error('Error:', error);
@@ -196,5 +213,40 @@ chatButton.addEventListener('click', function () {
                 }
             })
             .catch(error => console.error('Error:', error));
+    });
+
+    // 4. 게시글 수정 페이지로 이동
+    editButton.addEventListener('click', function () {
+        window.location.href = `/api/products/edit-page/${productId}/`;  // 수정 페이지로 이동
+    });
+
+    // 5. 삭제 버튼 클릭 시 모달 띄우기
+    deleteButton.addEventListener('click', function () {
+        deleteModal.show();
+    });
+
+    // 6. 삭제 확인 버튼 클릭 시 삭제 요청
+    confirmDeleteButton.addEventListener('click', async function () {
+        try {
+            const csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+
+            const response = await fetch(`/api/products/${productId}/`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                }
+            });
+
+            if (response.ok) {
+                // 삭제 성공 시 홈 페이지로 이동
+                window.location.href = '/api/products/home-page/';
+            } else {
+                const errorData = await response.json();
+                console.error('삭제 중 에러 발생:', errorData);
+            }
+        } catch (error) {
+            console.error('서버 통신 중 에러 발생:', error);
+        }
     });
 });

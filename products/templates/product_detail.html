@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block content %}
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 <div class="container">
     <div class="product-detail">
         <!-- 이미지 섹션 -->
@@ -61,7 +62,32 @@
                 <i class="bi bi-suit-heart" id="heart-icon"></i>
             </button>
         </div>
+
+        <!-- 게시글 수정 삭제 -->
+        <div class="product-actions">
+            <button id="edit-button" class="btn btn-warning">수정</button>
+            <button id="delete-button" class="btn btn-danger">삭제</button>
+        </div>
     </div>
+</div>
+
+<!-- 삭제 확인 모달 -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteConfirmationModalLabel">삭제 확인</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        정말로 이 게시글을 삭제하시겠습니까?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+        <button type="button" id="confirm-delete" class="btn btn-danger">삭제</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="{% static 'js/product_detail.js' %}" defer></script>
