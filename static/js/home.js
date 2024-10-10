@@ -17,7 +17,7 @@ function checkAIRecommendationStatus() {
 async function loadProductList(order_by = '', search = '', page = 1) {
     checkAIRecommendationStatus(); // AI 상태 체크
     const productListContainer = document.getElementById('product-list-grid');
-    showLoading(); // 로딩창 표시
+    
 
     try {
         let apiUrl = `/api/products?search=${search}&order_by=${order_by}&page=${page}`;

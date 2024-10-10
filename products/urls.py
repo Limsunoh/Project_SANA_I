@@ -10,6 +10,7 @@ urlpatterns = [
     path('user-products/<str:username>/', views.UserProductsListView.as_view(), name='user_products'),
     path("<int:pk>/", views.ProductDetailAPIView.as_view(), name="product_detail"),
     path('<int:pk>/like/', views.LikeAPIView.as_view(), name='like'),  # 개별 제품 찜 상태 확인 및 찜하기 기능
+    path('likes/<str:username>/', views.LikeListForUserAPIView.as_view(), name='like_list_for_user'),
     path("<int:pk>/comment/", views.CommentListCreateView.as_view(), name='comment'),
     path('<int:product_id>/chatrooms/', views.ChatRoomCreateAPIView.as_view(), name='create-chatroom'),  # 채팅방 생성
     path('<int:pk>/chatrooms/<int:room_id>/messages/', views.ChatMessageCreateAPIView.as_view(), name='create-message'),
@@ -22,4 +23,5 @@ urlpatterns = [
     path("detail-page/<int:pk>/", views.ProductDetailPageView.as_view(), name="product_detail"),
     path('create/', views.ProductCreateView.as_view(), name='product-create'),
     path('user-products-page/<str:username>/', views.UserProductsListPageView.as_view(), name='user_products_page'),
+    path('user/<str:username>/like-products/', views.LikeProductsPageView.as_view(), name='like-products-page'),
 ]

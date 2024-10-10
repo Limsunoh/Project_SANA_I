@@ -179,6 +179,16 @@ class LikeAPIView(APIView):
         return Response({"message": "찜하기 했습니다."}, status=200)
 
 
+# 내가 찜한 상품 리스트보기 
+class LikeListForUserAPIView(APIView):
+    permission_classes = [AllowAny] 
+
+    def get(self, request, username):
+        user = get_object_or_404(User, username=username)
+        liked_products = Product.objects.filter(likes=user)
+        serializer = ProductListSerializer(liked_products, many=True)
+        return Response(serializer.data, status=200)
+
 
 
 class CommentListCreateView(ListCreateAPIView):
@@ -412,12 +422,13 @@ class AISearchAPIView(APIView):
         # AI의 응답을 그대로 반환
         return Response({"response": ai_response}, status=200)
 
-    
-# HTML 파일 보여주는 class
+
+# 상품 목록 리스트 template
 class HomePageView(TemplateView):
     template_name = "home.html"
 
 
+# 상품디테일 template
 class ProductDetailPageView(DetailView):
     model = Product
     template_name = 'product_detail.html'
@@ -427,12 +438,14 @@ class ProductDetailPageView(DetailView):
         context = super().get_context_data(**kwargs)
         context['images'] = self.object.images.all()  # 여러 이미지를 가져옴
         return context
-    
 
+
+# 상품 작성 template
 class ProductCreateView(TemplateView):
     template_name = "products_create.html"
     
 
+# 내가 작성한 상품 리스트 template
 class UserProductsListPageView(TemplateView):
     template_name = "user_products.html"
     
@@ -441,6 +454,18 @@ class UserProductsListPageView(TemplateView):
         username = self.kwargs.get('username')  # URL에서 username 가져오기
         profile_user = get_object_or_404(User, username=username)  # username으로 사용자 객체 가져오기
         context['profile_user'] = profile_user  # 템플릿에 profile_user 추가
+        return context
+
+
+# 내가 찜한 리스트 template
+class LikeProductsPageView(TemplateView):
+    template_name = "liked_products.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        username = self.kwargs.get('username')
+        profile_user = get_object_or_404(User, username=username)
+        context['profile_user'] = profile_user
         return context
 
 
