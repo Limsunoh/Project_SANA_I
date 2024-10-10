@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ profile_user.username }}님의 팔로워 목록{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 id="profile-username" data-username="{{ profile_user.username }}">{{ profile_user.username }}님의 팔로워 목록</h2>
+    <div id="followers-list" class="user-list-grid d-flex flex-wrap mt-4">
+        <!-- 팔로워 목록이 여기에 동적으로 추가됩니다. -->
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/followers.js' %}"></script>
+{% endblock %}

@@ -169,19 +169,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (followingsCountDisplay) {
             followingsCountDisplay.addEventListener("click", () => {
-                window.location.href = `/api/accounts/followings/${username}`;
+                window.location.href = `/api/accounts/profile/${username}/followings`;
             });
         }
 
         if (followersCountDisplay) {
             followersCountDisplay.addEventListener("click", () => {
-                window.location.href = `/api/accounts/followers/${username}`;
+                window.location.href = `/api/accounts/profile/${username}/followers`;
             });
         }
 
         if (likeProductsCountDisplay) {
             likeProductsCountDisplay.addEventListener("click", () => {
-                window.location.href = `/api/products/like-products/${username}`;
+                window.location.href = `/api/products/user/${username}/like-products/`;
             });
         }
     }
