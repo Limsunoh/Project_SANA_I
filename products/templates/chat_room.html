@@ -1,104 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Room</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <style>
-        .chat-container {
-            max-width: 800px;
-            margin: 50px auto;
-        }
-        .chat-messages {
-            height: 400px;
-            overflow-y: scroll;
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin-bottom: 20px;
-        }
-    </style>
-</head>
-<body>
-    <div class="chat-container">
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/chat_room.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- product_id 및 room_id 데이터를 포함한 chat-container 요소 -->
+    <div class="chat-container" data-product-id="{{ product_id }}" data-room-id="{{ room_id }}">
         <h1>채팅방</h1>
         <div id="chat-messages" class="chat-messages">
             <!-- 메시지 목록이 여기에 표시됩니다 -->
         </div>
-        <form id="send-message-form">
-            <div class="form-group">
-                <textarea id="message-content" class="form-control" rows="3" placeholder="메시지를 입력하세요..."></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">메시지 전송</button>
+        <form id="send-message-form" class="chat-form">
+            <textarea id="message-content" class="form-control" rows="3" placeholder="메시지를 입력하세요..."></textarea>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i></button>
         </form>
     </div>
+</div>
+{% endblock %}
 
-    <!-- jQuery 로드 -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        // 전역 변수 설정
-        const roomId = "{{ room_id }}";  // Django 템플릿 변수로 채팅방 ID를 가져옴
-        const productId = "{{ product_id }}";  // Django 템플릿 변수로 상품 ID를 가져옴
-        const apiUrl = `http://127.0.0.1:8000/api/products/${productId}/chatrooms/${roomId}/messages/`;
-
-        // 현재 사용자 인증 토큰 (테스트용)
-        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI3OTEwMDc1LCJpYXQiOjE3Mjc4NTAxMzUsImp0aSI6ImUxNzdlZThjYThmMzRhNzM4MjJiMDk1NjY2NjEwNTIwIiwidXNlcl9pZCI6Mn0.e0nnNMm979oHyx_PCVaDVqdQCFWk7m3p1ypBgBOO9z0";  // 토큰 값을 여기에 입력하세요
-
-        // AJAX를 이용하여 채팅 메시지 목록 불러오기
-        function loadMessages() {
-            $.ajax({
-                url: apiUrl,
-                type: "GET",
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                },
-                success: function (response) {
-                    const chatContainer = $('#chat-messages');
-                    chatContainer.empty();  // 기존 메시지 목록을 비웁니다.
-                    response.forEach(msg => {
-                        chatContainer.append(`<div><strong>${msg.sender_username}:</strong> ${msg.content}</div>`);
-                    });
-                },
-                error: function (xhr, status, error) {
-                    console.error("메시지 목록 불러오기 실패:", status, error);
-                }
-            });
-        }
-
-        // 폼 제출 시 AJAX를 사용하여 메시지 전송
-        $('#send-message-form').on('submit', function (e) {
-            e.preventDefault();  // 기본 폼 제출을 방지
-            const messageContent = $('#message-content').val().trim();
-
-            if (messageContent === "") {
-                alert("메시지를 입력하세요.");
-                return;
-            }
-
-            $.ajax({
-                url: apiUrl,
-                type: "POST",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                },
-                data: JSON.stringify({
-                    content: messageContent
-                }),
-                success: function (response) {
-                    $('#message-content').val('');  // 입력 필드를 비웁니다.
-                    loadMessages();  // 새 메시지를 로드하여 화면에 업데이트
-                },
-                error: function (xhr, status, error) {
-                    console.error("메시지 전송 실패:", status, error);
-                }
-            });
-        });
-
-        // 페이지 로드 시 초기 메시지 목록을 불러옴
-        $(document).ready(function () {
-            loadMessages();
-        });
-    </script>
-</body>
-</html>
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery 추가 -->
+<script src="{% static 'js/chat_room.js' %}"></script>
+{% endblock %}

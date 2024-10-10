@@ -1,0 +1,94 @@
+.chat-container {
+    max-width: 800px;
+    margin: 50px auto;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f8f9fa;
+}
+
+.chat-messages {
+    height: 400px;
+    overflow-y: scroll;
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: white;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.message {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.message .profile-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.message .content {
+    max-width: 70%;
+}
+
+.message .content .username {
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.message .content .text {
+    margin: 5px 0;
+}
+
+.message .content .time {
+    font-size: 0.8rem;
+    color: #777;
+}
+
+.my-message {
+    justify-content: flex-end;
+}
+
+.my-message .content {
+    text-align: right;
+}
+
+.my-message .profile-img {
+    order: 2;
+    margin-left: 15px;
+    margin-right: 0;
+}
+
+.chat-form {
+    display: flex;
+    align-items: center;
+}
+
+.chat-form textarea {
+    resize: none;
+    height: 50px;
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+/* 메시지 전송 버튼 스타일 */
+.chat-form button {
+    height: 50px;
+    width: 50px; /* 너비를 설정하여 버튼이 둥글게 보이도록 조정 */
+    border-radius: 50%;
+    background-color: #007bff; /* 파란색 배경 */
+    border: none; /* 테두리 제거 */
+    color: white; /* 아이콘 색상 */
+    font-size: 20px; /* 아이콘 크기 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease; /* 호버 시 색상 변화 효과 */
+}
+
+.chat-form button:hover {
+    background-color: #0056b3; /* 호버 시 배경색 */
+}

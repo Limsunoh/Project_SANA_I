@@ -5,7 +5,6 @@ from .models import (
     Product,
     Image,
     Hashtag,
-    PrivateComment,
     ChatRoom,
     ChatMessage,
     TransactionStatus,
@@ -13,9 +12,14 @@ from .models import (
 
 
 class AuthorSerializer(serializers.ModelSerializer):
+    profile_image_url = serializers.SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ("nickname",)
+        fields = ("nickname", "profile_image_url")
+
+    def get_profile_image_url(self, obj):
+        return obj.get_profile_image_url()
 
 
 class HashtagSerializer(serializers.ModelSerializer):
@@ -99,6 +103,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     images = ImageSerializer(many=True, read_only=True)
     hashtag = HashtagSerializer(many=True, source="tags", required=False)
     author = serializers.StringRelatedField()
+    author_profile_image_url = serializers.SerializerMethodField()
     mainaddress = serializers.CharField(
         source="author.mainaddress", read_only=True
     )  # 작성자의 mainaddress를 가져옴
@@ -112,6 +117,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             "title",
             "content",
             "author",
+            "author_profile_image_url",
             "mainaddress",
             "price",
             "status",
@@ -125,31 +131,16 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     # 좋아요 수 카운팅
     def get_likes_count(self, obj):
         return obj.likes.count()
+    
+    # 작성자의 프로필 이미지 URL을 가져오는 메서드 추가
+    def get_author_profile_image_url(self, obj):
+        return obj.author.get_profile_image_url()
 
     # 조회수 증가 로직
     def to_representation(self, instance):
         instance.hits += 1
         instance.save(update_fields=["hits"])
         return super().to_representation(instance)
-
-
-class PrivateCommentSerializer(serializers.ModelSerializer):
-    sender_username = serializers.ReadOnlyField(source="sender.username")
-    receiver_username = serializers.ReadOnlyField(source="receiver.username")
-    product = serializers.StringRelatedField()
-
-    class Meta:
-        model = PrivateComment
-        fields = [
-            "id",
-            "product",
-            "sender_username",
-            "receiver_username",
-            "content",
-            "created_at",
-            "is_sold",
-        ]
-        read_only_fields = ["product"]
 
 
 class ChatMessageSerializer(serializers.ModelSerializer):

@@ -1,5 +1,4 @@
 from rest_framework.permissions import BasePermission
-from products.models import PrivateComment
 from django.db.models import Q
 
 
