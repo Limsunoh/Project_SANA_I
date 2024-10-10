@@ -1,7 +1,7 @@
 // 이미지 미리보기 함수
 function previewImages(event) {
     const imagePreviewContainer = document.getElementById('imagePreview');
-    imagePreviewContainer.innerHTML = ''; // 기존 미리보기 이미지 초기화
+    imagePreviewContainer.innerHTML = '';
 
     const files = event.target.files;
     for (let i = 0; i < files.length; i++) {
@@ -12,7 +12,7 @@ function previewImages(event) {
             const img = document.createElement('img');
             img.src = e.target.result;
             img.classList.add('img-thumbnail', 'me-2', 'mb-2');
-            img.style.width = '100px'; // 원하는 미리보기 이미지 크기 조절
+            img.style.width = '100px'; 
             imagePreviewContainer.appendChild(img);
         };
 
@@ -24,7 +24,6 @@ function previewImages(event) {
 document.addEventListener('DOMContentLoaded', () => {
     const productForm = document.getElementById('product-create-form');
 
-    // 로컬 스토리지에서 accessToken을 가져오기
     const accessToken = localStorage.getItem('access_token');
 
     productForm.onsubmit = async function (e) {
@@ -38,8 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append("tags", document.getElementById('tags').value);
         formData.append("status", document.getElementById('status').value);
 
-
-        // 이미지 파일이 있다면 폼 데이터에 추가
         const images = document.getElementById('image-upload').files;
         for (let i = 0; i < images.length; i++) {
             formData.append('images', images[i]);
@@ -56,8 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (response.ok) {
+                window.location.href = "/api/products/detail-page/<int:pk>/";
                 console.log("제품이 성공적으로 등록되었습니다.");
-                // 성공 처리 (예: 페이지 리다이렉트 또는 성공 메시지 표시)
             } else {
                 console.error("제품 등록에 실패했습니다.");
                 const errorData = await response.json();

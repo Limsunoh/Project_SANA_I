@@ -10,7 +10,7 @@
     <div class="mb-3">
         <label for="image-upload" class="form-label">이미지 첨부</label>
         <input type="file" class="form-control" id="image-upload" name="images" multiple accept="image/*" onchange="previewImages(event)">
-        <div id="imagePreview" class="d-flex flex-wrap mb-3"></div> <!-- 사진 미리보기 컨테이너 -->
+        <div id="imagePreview" class="d-flex flex-wrap mb-3"></div>
     </div>
     
     <form id="product-create-form" enctype="multipart/form-data">
@@ -38,7 +38,6 @@
                 <option value="complete">판매완료</option>
                 </select>
         </div>
-        
 
         <div class="mb-3">
             <label for="tags" class="form-label">해시태그 (쉼표로 구분)</label>
@@ -48,6 +47,6 @@
         <button type="submit" class="btn btn-primary">등록</button>
     </form>
 </div>
-<script src="{% static 'js/products_create.js' %}"></script>
+<script src="{% static 'js/product_create.js' %}"></script>
 
 {% endblock content %}

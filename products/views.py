@@ -98,7 +98,6 @@ class ProductListAPIView(ListCreateAPIView):
         for image in images:
             Image.objects.create(product=product, image_url=image)
         for tag in tags:
-            print(tag)
             hashtag, created = Hashtag.objects.get_or_create(
                 name=tag
             )  # 해시태그가 존재하지 않으면 생성
@@ -442,7 +441,11 @@ class ProductDetailPageView(DetailView):
 
 # 상품 작성 template
 class ProductCreateView(TemplateView):
-    template_name = "products_create.html"
+    template_name = "product_create.html"
+    
+    
+class ProductupdateView(TemplateView):
+    template_name = "product_update.html"
     
 
 # 내가 작성한 상품 리스트 template
