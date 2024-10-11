@@ -1,9 +1,11 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
 
 from . import views
 
 
 app_name = "products"
+
 urlpatterns = [
     # API 앤드포인트
     path("", views.ProductListAPIView.as_view(), name="product_list"),

@@ -34,6 +34,7 @@ from .serializers import (
     TransactionStatusSerializer,
     ChatRoomSerializer,
 )
+from .serializers import ReviewSerializer
 from .pagnations import ProductPagnation
 from django.views.generic import TemplateView, DetailView
 # AI 관련 임포트
@@ -234,7 +235,7 @@ class ChatRoomCreateAPIView(APIView):
         )
 
         serializer = ChatRoomSerializer(chat_room)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=201)
 
 
 # 채팅 메시지 조회 및 생성

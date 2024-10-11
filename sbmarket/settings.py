@@ -29,21 +29,17 @@ SECRET_KEY = SANAI_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["localhost",
-                 "54.180.134.131",
-                 "127.0.0.1",
-                 "sbmarket.kro.kr",]
+ALLOWED_HOSTS = [
+    "localhost",
+    "54.180.134.131",
+    "127.0.0.1",
+    "sbmarket.kro.kr",
+    ]
 
 
 # Application definition
 
 INSTALLED_APPS = [
-
-    # Local
-    "accounts",
-    "products",
-    "manager",  
-
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -58,6 +54,11 @@ INSTALLED_APPS = [
     'django_seed',
     'django_filters',
 
+    # Local
+    "accounts",
+    "products",
+    "reviews",
+    "manager",
 ]
 
 MIDDLEWARE = [
