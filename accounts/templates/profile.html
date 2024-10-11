@@ -5,7 +5,7 @@
 
 {% block extra_css %}
 <style>
-    .card:hover{
+    .card:hover {
         transform: translateY(-10px);
     }
 </style>
@@ -13,7 +13,6 @@
 
 {% block content %}
 <div class="container mt-4">
-    <!-- Profile Header -->
     <div class="profile-header text-center">
         <div class="profile-info">
             <img id="profile_image" class="rounded-circle mx-auto d-block" src="{% static 'images/default_profile.jpg' %}" alt="프로필 이미지" style="width: 500px; height: 500px; border: 1px solid #ddd;">
@@ -26,7 +25,7 @@
             <button id="follow-button" class="btn btn-outline-primary mt-2">팔로우</button>
         </div>
         
-        <!-- Profile Stats -->
+        <!-- 프로필 데이터 -->
         <div class="profile-stats d-flex justify-content-center mt-3">
             <div class="stat-item mx-3">
                 <p>매너점수</p>
@@ -48,11 +47,11 @@
     </div>
 
     <!-- 내가 작성한 상품 -->
-    <h4 class="mt-4">내가 작성한 상품</h4>
+    <h4 class="mt-4">작성한 상품</h4>
     <div id="my-products" class="product-list d-flex flex-wrap mb-4">
         <!-- 동적으로 제품 목록이 채워질 예정 -->
     </div>
-    <button id="see-more-products" class="btn btn-secondary mb-4">내가 작성한 상품 더보기</button>
+    <button id="see-more-products" class="btn btn-secondary mb-4">작성한 상품 더보기</button>
 
     <!-- 내 후기 -->
     <h4>내 후기</h4>
@@ -72,8 +71,29 @@
     <button id="edit-password-btn" class="btn btn-primary mt-4">비밀번호 수정</button>
     <button id="delete-profile-btn" class="btn btn-danger mt-4">계정 삭제</button>
 </div>
+
+<!-- 계정 삭제 확인 모달 -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteAccountModalLabel">계정 삭제 확인</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        정말로 계정을 삭제하시겠습니까?</br>이 작업은 되돌릴 수 없습니다.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">아니오</button>
+        <button type="button" id="confirm-delete-btn" class="btn btn-danger">예</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
 <script src="{% static 'js/profile.js' %}"></script>
+
 {% endblock %}

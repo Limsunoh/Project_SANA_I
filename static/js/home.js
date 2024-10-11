@@ -17,7 +17,7 @@ function checkAIRecommendationStatus() {
 async function loadProductList(order_by = '', search = '', page = 1) {
     checkAIRecommendationStatus(); // AI 상태 체크
     const productListContainer = document.getElementById('product-list-grid');
-    showLoading(); // 로딩창 표시
+    
 
     try {
         let apiUrl = `/api/products?search=${search}&order_by=${order_by}&page=${page}`;
@@ -56,8 +56,6 @@ async function loadProductList(order_by = '', search = '', page = 1) {
     } catch (error) {
         console.error('에러 발생:', error); // 에러 로그 확인
         alert('상품 목록을 불러올 수 없습니다.');
-    } finally {
-        hideLoading(); // 로딩창 숨김
     }
 }
 

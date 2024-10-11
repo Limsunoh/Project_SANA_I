@@ -43,18 +43,6 @@ class Image(models.Model):
         Product, on_delete=models.CASCADE, related_name="images"
     )
     image_url = models.ImageField(upload_to="images/")
-    
-    
-class PrivateComment(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='comments')
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_private_comments') # 발신자(구매 예정자 혹은 구매자) 
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_private_comments') # 판매자
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    is_sold = models.BooleanField(default=False)  # 판매 완료 여부를 관리하는 필드
-
-    def __str__(self):
-        return f"1:1 비밀댓글 - {self.sender} -> {self.receiver}"
 
 
 # 각 채팅방을 관리하는 모델
