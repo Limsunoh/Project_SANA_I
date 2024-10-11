@@ -19,6 +19,7 @@ class User(AbstractUser):
     introduce = models.TextField(max_length=255)  
     followings = models.ManyToManyField('self', symmetrical=False, related_name="followers", blank = True)  
     
+    
     def get_profile_image_url(self):
         if self.image:
             return self.image.url

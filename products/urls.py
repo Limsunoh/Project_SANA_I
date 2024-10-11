@@ -1,9 +1,11 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
 
 from . import views
 
 
 app_name = "products"
+
 urlpatterns = [
     # API 앤드포인트
     path("", views.ProductListAPIView.as_view(), name="product_list"),
@@ -16,6 +18,7 @@ urlpatterns = [
     path('<int:pk>/chatrooms/<int:room_id>/messages/', views.ChatMessageCreateAPIView.as_view(), name='create-message'),
     path('<int:pk>/chatrooms/<int:room_id>/transaction-status/', views.TransactionStatusUpdateAPIView.as_view(), name='update-transaction-status'),
     path("aisearch/", views.AISearchAPIView.as_view(), name="ai_search"),  # AI 추천 기능
+    path("edit-product/<int:pk>/", views.ProductEditPageView.as_view(), name="product_edit_api"),
     
     # 프론트(화면구성) 주소
     path('home-page/', views.HomePageView.as_view(), name='home-page'),
@@ -27,4 +30,5 @@ urlpatterns = [
     path('1on1-chat/<str:username>/', views.ChatRoomListHTMLView.as_view(), name='chat_room_list'),
     path('<int:product_id>/chatrooms/<int:room_id>/', views.ChatRoomDetailHTMLView.as_view(), name='chat-room-html'),
 
+    path("edit-page/<int:pk>/", views.ProductEditPageView.as_view(), name="product_edit_page"),
 ]
