@@ -239,3 +239,14 @@ class ChangePasswordSerializer(serializers.Serializer):
         instance.set_password(validated_data["new_password"])
         instance.save()
         return instance
+
+
+class UserListSerializer(serializers.ModelSerializer):
+    profile_image = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'nickname', 'profile_image')
+
+    def get_profile_image(self, obj):
+        return obj.get_profile_image_url()

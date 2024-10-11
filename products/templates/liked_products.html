@@ -1,0 +1,18 @@
+<!-- liked_products.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ profile_user.username }}님의 찜한 상품 목록{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 id="profile-username" data-username="{{ profile_user.username }}">{{ profile_user.username }}님의 찜한 상품 목록</h2>
+    <div id="like-products-list" class="product-list-grid d-flex flex-wrap mt-4">
+        <!-- 찜한 상품 목록이 여기에 동적으로 추가됩니다. -->
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/liked_products.js' %}"></script>
+{% endblock %}
