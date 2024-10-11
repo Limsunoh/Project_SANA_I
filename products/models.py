@@ -86,7 +86,7 @@ class ChatMessage(models.Model):
 class TransactionStatus(models.Model):
     room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='status')
     is_sold = models.BooleanField(default=False)  # 판매 완료 여부
-    is_completed = models.BooleanField(default=False)  # 구매 완료 여부
+    is_completed = models.BooleanField(default=False)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
