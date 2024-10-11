@@ -233,7 +233,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (response.ok) {
                 // 삭제 성공 시 홈 페이지로 이동
-                window.location.href = '/api/products/home-page/';
+                window.location.href = '/';
             } else {
                 const errorData = await response.json();
                 console.error('삭제 중 에러 발생:', errorData);

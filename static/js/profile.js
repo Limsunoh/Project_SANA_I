@@ -2,6 +2,9 @@ function products_detailpage(pk) {
     window.location.href = "/api/products/detail-page/" + pk + "/"
 }
 
+const deleteProfileBtn = document.getElementById("delete-profile-btn");
+const confirmDeleteBtn = document.getElementById("confirm-delete-btn");
+
 document.addEventListener("DOMContentLoaded", function () {
     const usernameDisplay = document.getElementById("username_display");
     const emailDisplay = document.getElementById("email_display");
@@ -19,8 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const editProfileBtn = document.getElementById("edit-profile-btn");
     const editPasswordBtn = document.getElementById("edit-password-btn");
-    const deleteProfileBtn = document.getElementById("delete-profile-btn");
-    const confirmDeleteBtn = document.getElementById("confirm-delete-btn");
+    
     
     let isFollowing = false;
 
@@ -34,9 +36,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (currentUsername !== profileUsername) {
-        if (editProfileBtn) editProfileBtn.style.display = 'none';
-        if (editPasswordBtn) editPasswordBtn.style.display = 'none';
-        if (deleteProfileBtn) deleteProfileBtn.style.display = 'none';
+        editProfileBtn.style.display = 'none';
+        editPasswordBtn.style.display = 'none';
+        deleteProfileBtn.style.display = 'none';
     }else{
         followButton.style.display = 'none';
     }
@@ -224,7 +226,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // 계정 삭제
 document.addEventListener("DOMContentLoaded", function () {
-
     // 계정이 이미 비활성화된 상태인지 체크하는 플래그
     let isAccountDeactivated = false;
 
@@ -270,7 +271,7 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .then(data => {
             alert(data.message || '계정이 성공적으로 비활성화되었습니다.');
-            window.location.href = "/api/products/home-page/"; // 홈으로 이동
+            window.location.href = "/"; // 홈으로 이동
         })
         .catch(error => {
             console.error('계정 비활성화 중 오류 발생:', error);

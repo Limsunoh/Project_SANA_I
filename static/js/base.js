@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", function () {
         searchButton.addEventListener("click", function () {
             const query = searchInput.value.trim();
             if (query) {
-                const newUrl = `/api/products/home-page/?search=${query}`;
+                const newUrl = `/?search=${query}`;
                 window.history.pushState({ path: newUrl }, "", newUrl);
 
                 if (typeof loadProductList === "function") {

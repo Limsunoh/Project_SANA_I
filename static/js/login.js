@@ -27,7 +27,7 @@ document.getElementById("login-form").onsubmit = async function (event) {
         alert("로그인이 되었습니다.");
 
         // 프로필 호출 없이 바로 홈 페이지로 이동
-        window.location.href = "/api/products/home-page/";
+        window.location.href = "/";
     } else {
         const errorData = await response.json();
         document.getElementById("message").innerText = "아이디 혹은 비밀번호를 확인하세요";

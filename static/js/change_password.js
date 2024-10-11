@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 messageDiv.innerHTML = `<div class="alert alert-success">비밀번호가 성공적으로 변경되었습니다.</div>`;
                 changePasswordForm.reset();
                 // 프로필 호출 없이 바로 홈 페이지로 이동
-            window.location.href = "/api/products/home-page/";
+            window.location.href = "/";
             } else {
                 let errorMessage = "비밀번호 변경에 실패했습니다.<br>";
                 for (let key in result) {
