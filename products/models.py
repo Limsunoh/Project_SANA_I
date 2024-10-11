@@ -91,7 +91,3 @@ class TransactionStatus(models.Model):
 
     def __str__(self):
         return f"거래 상태 - 판매 완료: {self.is_sold}, 구매 완료: {self.is_completed}"
-
-
-
-
