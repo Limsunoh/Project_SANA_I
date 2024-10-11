@@ -127,6 +127,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (chatLink) {
         chatLink.addEventListener("click", function (event) {
             event.preventDefault();  // 기본 동작 방지
+            event.stopPropagation()
             const accessToken = getAccessToken();
             const currentUsername = localStorage.getItem("current_username");
 

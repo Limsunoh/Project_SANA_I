@@ -24,7 +24,7 @@ urlpatterns = [
     path('update/<int:pk>/', views.ProductupdateView.as_view(), name= 'product-update'),
     path('user-products-page/<str:username>/', views.UserProductsListPageView.as_view(), name='user_products_page'),
     path('user/<str:username>/like-products/', views.LikeProductsPageView.as_view(), name='like-products-page'),    
-    path('1on1-chat/<str:username>/', views.ChatRoomHTMLView.as_view(), name='chat_room_list'),
-    path('<int:product_id>/chatrooms/<int:room_id>/', views.ChatRoomHTMLView.as_view(), name='chat-room-html'),
+    path('1on1-chat/<str:username>/', views.ChatRoomListHTMLView.as_view(), name='chat_room_list'),
+    path('<int:product_id>/chatrooms/<int:room_id>/', views.ChatRoomDetailHTMLView.as_view(), name='chat-room-html'),
 
 ]
