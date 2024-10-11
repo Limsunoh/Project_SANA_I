@@ -53,7 +53,9 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (response.ok) {
-                window.location.href = "/api/products/detail-page/ <int:pk>/";
+                const responseData = await response.json();
+                const productPk = responseData.id; // 서버 응답에서 생성된 제품의 pk 값을 추출
+                window.location.href = `/api/products/detail-page/${productPk}/`;
                 console.log("제품이 성공적으로 등록되었습니다.");
             } else {
                 console.error("제품 등록에 실패했습니다.");

@@ -201,7 +201,7 @@ class Command(BaseCommand):
             hashtag_objs[tag] = obj
 
         # 상품 생성
-        num_products = 200  # 생성할 상품 수
+        num_products = 100  # 생성할 상품 수
         for _ in range(num_products):
 
             # 상기한 카테고리 중 하나 랜덤 선택

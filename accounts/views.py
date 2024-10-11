@@ -70,7 +70,7 @@ def activate_user(request, pk, token):
 class UserProfileView(RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     lookup_field = "username"
-    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_serializer_class(self):
         if self.request.method == "GET":
