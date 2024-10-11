@@ -11,7 +11,7 @@ class IsOwnerOrReadOnly(BasePermission):
             return True
 
         # 쓰기 권한은 객체의 소유자에게만 허용
-        return obj == request.user
+        return obj.author == request.user
 
 
 # 관리자나 스태프 권한을 갖고있는지 판단하기 위한 용도

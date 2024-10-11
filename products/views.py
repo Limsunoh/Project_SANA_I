@@ -34,6 +34,7 @@ from .serializers import (
     TransactionStatusSerializer,
     ChatRoomSerializer,
 )
+from .serializers import ReviewSerializer
 from .pagnations import ProductPagnation
 from django.views.generic import TemplateView, DetailView
 # AI 관련 임포트
@@ -123,14 +124,15 @@ class ProductDetailAPIView(UpdateAPIView):
         return Response(serializer.data, status=200)
 
     def perform_update(self, serializer):
+        instance = serializer.instance  # 현재 수정 중인 객체
         images_data = self.request.FILES.getlist("images")
         tags = self.request.data.getlist("tags")
-        instance = serializer.instance  # 현재 수정 중인 객체
 
         # 요청에 이미지가 포함된 경우
         if images_data:
             # 기존 이미지 삭제
-            instance.images.all().delete()
+            instance.images.all().delete()  # 기존 이미지를 먼저 삭제
+            # 새 이미지 저장
             for image_data in images_data:
                 Image.objects.create(product=instance, image_url=image_data)
 
@@ -141,13 +143,23 @@ class ProductDetailAPIView(UpdateAPIView):
                 hashtag, created = Hashtag.objects.get_or_create(name=tag)
                 instance.tags.add(hashtag)  # 제품에 해시태그 추가
 
-        serializer.save()
+        serializer.save()  # 수정 후 저장
+
 
     def delete(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
         product.delete()
         return Response(status=204)
 
+# 상품 수정용 뷰 추가   
+class ProductEditPageView(TemplateView):
+    template_name = 'product_edit.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product = get_object_or_404(Product, pk=self.kwargs['pk'])
+        context['product'] = product
+        return context
 
 class LikeAPIView(APIView):
     serializer_class = ProductListSerializer
@@ -223,7 +235,7 @@ class ChatRoomCreateAPIView(APIView):
         )
 
         serializer = ChatRoomSerializer(chat_room)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=201)
 
 
 # 채팅 메시지 조회 및 생성

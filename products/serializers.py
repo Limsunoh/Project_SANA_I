@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from accounts.models import User
 from .models import (
     Product,
@@ -9,6 +8,7 @@ from .models import (
     ChatMessage,
     TransactionStatus,
 )
+from reviews.serializers import ReviewSerializer
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -108,6 +108,8 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         source="author.mainaddress", read_only=True
     )  # 작성자의 mainaddress를 가져옴
     likes_count = serializers.SerializerMethodField()
+    reviews = ReviewSerializer(read_only=True)
+
 
     class Meta:
         model = Product
@@ -126,6 +128,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
             "likes_count",
+            "reviews",
         )
 
     # 좋아요 수 카운팅

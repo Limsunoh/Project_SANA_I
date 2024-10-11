@@ -56,8 +56,6 @@ async function loadProductList(order_by = '', search = '', page = 1) {
     } catch (error) {
         console.error('에러 발생:', error); // 에러 로그 확인
         alert('상품 목록을 불러올 수 없습니다.');
-    } finally {
-        hideLoading(); // 로딩창 숨김
     }
 }
 
