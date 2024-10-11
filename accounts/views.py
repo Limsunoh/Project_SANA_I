@@ -18,6 +18,7 @@ from .serializers import (
     ChangePasswordSerializer,
 )
 from .models import User
+from products.models import Product
 from .permissions import IsOwnerOrReadOnly
 from django.views.generic import TemplateView
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -82,11 +83,12 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
     def destroy(self, request, *args, **kwargs):
         # `lookup_field`를 사용하여 해당 사용자를 찾기
         user = get_object_or_404(User, username=kwargs.get("username"))
-
         # 요청자가 해당 사용자인지 확인
         if user == request.user:
             # is_active 속성을 False로 설정
             user.is_active = False
+            products = Product.objects.filter(author=user)
+            products.delete()
             user.save()
 
             # 성공적으로 업데이트된 응답 반환

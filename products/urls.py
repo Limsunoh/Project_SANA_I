@@ -21,7 +21,7 @@ urlpatterns = [
     path("edit-product/<int:pk>/", views.ProductEditPageView.as_view(), name="product_edit_api"),
     
     # 프론트(화면구성) 주소
-    path('home-page/', views.HomePageView.as_view(), name='home-page'),
+    # path('home-page/', views.HomePageView.as_view(), name='home-page'),
     path("detail-page/<int:pk>/", views.ProductDetailPageView.as_view(), name="product_detail"),
     path('create/', views.ProductCreateView.as_view(), name='product-create'),
     path('update/<int:pk>/', views.ProductupdateView.as_view(), name= 'product-update'),
@@ -29,6 +29,5 @@ urlpatterns = [
     path('user/<str:username>/like-products/', views.LikeProductsPageView.as_view(), name='like-products-page'),    
     path('1on1-chat/<str:username>/', views.ChatRoomListHTMLView.as_view(), name='chat_room_list'),
     path('<int:product_id>/chatrooms/<int:room_id>/', views.ChatRoomDetailHTMLView.as_view(), name='chat-room-html'),
-
     path("edit-page/<int:pk>/", views.ProductEditPageView.as_view(), name="product_edit_page"),
 ]

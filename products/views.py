@@ -92,7 +92,8 @@ class ProductListAPIView(ListCreateAPIView):
 
     def perform_create(self, serializer):
         images = self.request.FILES.getlist("images")
-        tags = self.request.data.getlist("tags")
+        tags_raw = self.request.data.get("tags")
+        tags = tags_raw.split(",")
         product = serializer.save(author=self.request.user)
         for image in images:
             Image.objects.create(product=product, image_url=image)
@@ -125,7 +126,8 @@ class ProductDetailAPIView(UpdateAPIView):
     def perform_update(self, serializer):
         instance = serializer.instance  # 현재 수정 중인 객체
         images_data = self.request.FILES.getlist("images")
-        tags = self.request.data.getlist("tags")
+        tags_raw = self.request.data.get("tags")
+        tags = tags_raw.split(",")
 
         # 요청에 이미지가 포함된 경우
         if images_data:
@@ -348,7 +350,7 @@ class AISearchAPIView(APIView):
         # 가장 최근에 생성된 100개의 상품을 조회
         products = Product.objects.filter(status__in=["sell", "reservation"]).order_by(
             "-created_at"
-        )[:100]
+        )[:50]
 
         product_list = []
 

@@ -87,12 +87,12 @@ document.addEventListener('DOMContentLoaded', function () {
             if (isAIRecommendationActive) {
                 // AI 추천이 활성화된 경우, ai_search 파라미터 유지
                 const aiSearchQuery = urlParams.get('ai_search') || '';
-                const newUrl = `/api/products/home-page/?ai_search=${aiSearchQuery}&order_by=${orderByParam}&page=1`;
+                const newUrl = `/?ai_search=${aiSearchQuery}&order_by=${orderByParam}&page=1`;
                 window.history.pushState({ path: newUrl }, '', newUrl);
                 sortAIRecommendations(orderByParam);  // AI 추천 상품 정렬
             } else {
                 // 일반 검색일 경우, search 파라미터 사용
-                const newUrl = `/api/products/home-page/?search=${searchQuery}&order_by=${orderByParam}&page=1`;
+                const newUrl = `/?search=${searchQuery}&order_by=${orderByParam}&page=1`;
                 window.history.pushState({ path: newUrl }, '', newUrl);
                 loadProductList(orderByParam, searchQuery, 1);
             }
@@ -171,7 +171,7 @@ async function aiSearch() {
         isSearchActive = false;  // 검색 상태 비활성화
 
         // AI 추천 결과 페이지로 이동
-        const newUrl = `/api/products/home-page/?ai_search=${query}&order_by=created_at&page=1`;
+        const newUrl = `/?ai_search=${query}&order_by=created_at&page=1`;
         window.history.pushState({ path: newUrl }, '', newUrl);
 
         displayProductRecommendations(aiRecommendedProducts);
