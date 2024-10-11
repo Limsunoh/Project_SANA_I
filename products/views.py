@@ -91,7 +91,6 @@ class ProductListAPIView(ListCreateAPIView):
         return super().post(request, *args, **kwargs)
 
     def perform_create(self, serializer):
-
         images = self.request.FILES.getlist("images")
         tags = self.request.data.getlist("tags")
         product = serializer.save(author=self.request.user)
@@ -151,15 +150,6 @@ class ProductDetailAPIView(UpdateAPIView):
         product.delete()
         return Response(status=204)
 
-# 상품 수정용 뷰 추가   
-class ProductEditPageView(TemplateView):
-    template_name = 'product_edit.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        product = get_object_or_404(Product, pk=self.kwargs['pk'])
-        context['product'] = product
-        return context
 
 class LikeAPIView(APIView):
     serializer_class = ProductListSerializer
@@ -483,6 +473,17 @@ class LikeProductsPageView(TemplateView):
         username = self.kwargs.get('username')
         profile_user = get_object_or_404(User, username=username)
         context['profile_user'] = profile_user
+        return context
+
+
+# 상품 수정용 뷰 추가   
+class ProductEditPageView(TemplateView):
+    template_name = 'product_edit.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product = get_object_or_404(Product, pk=self.kwargs['pk'])
+        context['product'] = product
         return context
 
 
