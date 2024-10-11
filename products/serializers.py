@@ -180,6 +180,7 @@ class ChatRoomSerializer(serializers.ModelSerializer):
     seller_username = serializers.ReadOnlyField(source="seller.username")
     buyer_username = serializers.ReadOnlyField(source="buyer.username")
     product_title = serializers.ReadOnlyField(source="product.title")
+    product_id = serializers.ReadOnlyField(source="product.id")
     last_message = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -187,6 +188,7 @@ class ChatRoomSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "product_title",
+            "product_id",
             "seller",
             "buyer",
             "seller_username",

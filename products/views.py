@@ -313,7 +313,7 @@ class TransactionStatusUpdateAPIView(APIView):
 
 
 # 채팅방 HTML 페이지를 보내주는 View
-class ChatRoomHTMLView(TemplateView):
+class ChatRoomDetailHTMLView(TemplateView):
     template_name = "chat_room.html"
 
     def get_context_data(self, **kwargs):
@@ -474,7 +474,5 @@ class LikeProductsPageView(TemplateView):
         return context
 
 
-
-
-class ChatRoomHTMLView(TemplateView):
+class ChatRoomListHTMLView(TemplateView):
     template_name = "chat_room_list.html"
