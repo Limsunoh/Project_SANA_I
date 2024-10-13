@@ -111,7 +111,7 @@ function updatePaginationControls(searchQuery, orderByParam) {
     if (currentPage > 1) {
         prevButton.disabled = false;
         prevButton.onclick = () => {
-            const newUrl = `/home-page/?search=${searchQuery}&order_by=${orderByParam}&page=${currentPage - 1}`;
+            const newUrl = `/?search=${searchQuery}&order_by=${orderByParam}&page=${currentPage - 1}`;
             window.history.pushState({ path: newUrl }, '', newUrl);
             loadProductList(orderByParam, searchQuery, currentPage - 1);
         };
@@ -122,7 +122,7 @@ function updatePaginationControls(searchQuery, orderByParam) {
     if (currentPage < totalPages) {
         nextButton.disabled = false;
         nextButton.onclick = () => {
-            const newUrl = `/home-page/?search=${searchQuery}&order_by=${orderByParam}&page=${currentPage + 1}`;
+            const newUrl = `/?search=${searchQuery}&order_by=${orderByParam}&page=${currentPage + 1}`;
             window.history.pushState({ path: newUrl }, '', newUrl);
             loadProductList(orderByParam, searchQuery, currentPage + 1);
         };
