@@ -9,6 +9,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import serializers
 from products.models import Product
 from products.serializers import ProductListSerializer, ChatRoomSerializer
+from products.models import Review
+from reviews.serializers import ReviewSerializer
 from .validata import passwordValidation
 from .models import User
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -143,7 +145,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
     like_products = serializers.SerializerMethodField()
     followings = serializers.SerializerMethodField()
     followers = serializers.SerializerMethodField()
+    reviews = serializers.SerializerMethodField()
     profile_image = serializers.SerializerMethodField()
+    # score = 
     created_at = serializers.DateTimeField(format="%Y-%m-%d", read_only=True)
 
     class Meta:
@@ -162,6 +166,8 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "like_products",
             "followings",
             "followers",
+            "reviews",
+            
         )
 
     def get_profile_image(self, obj):
@@ -183,8 +189,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
         follwers = obj.followers.all()
         return UserFollowSerializer(follwers, many=True).data
     
-
-
+    def get_reviews(self, obj):
+        reviews = Review.objects.filter(author=obj)
+        return ReviewSerializer(reviews, many=True).data
+    
+    
+    
 
 class UserChangeSerializer(serializers.ModelSerializer):
     profile_image = serializers.SerializerMethodField()
