@@ -1,4 +1,4 @@
-﻿annotated-types==0.7.0
+annotated-types==0.7.0
 anyio==4.6.0
 asgiref==3.8.1
 black==24.8.0
@@ -10,6 +10,7 @@ cryptography==43.0.1
 distro==1.9.0
 Django==4.2
 django-filter==24.3
+django-multiselectfield==0.1.13
 django-seed==0.3.1
 djangorestframework==3.15.2
 djangorestframework-simplejwt==5.3.1

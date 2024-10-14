@@ -9,6 +9,7 @@ from .models import (
     TransactionStatus,
 )
 from reviews.serializers import ReviewSerializer
+from reviews.models import Review
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -108,7 +109,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         source="author.mainaddress", read_only=True
     )  # 작성자의 mainaddress를 가져옴
     likes_count = serializers.SerializerMethodField()
-    reviews = ReviewSerializer(read_only=True)
+    reviews = serializers.SerializerMethodField()
 
 
     class Meta:
@@ -144,6 +145,12 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         instance.hits += 1
         instance.save(update_fields=["hits"])
         return super().to_representation(instance)
+    
+    def get_reviews(self, obj):
+        # 로그를 추가하여 리뷰 데이터를 확인
+        print(f"Fetching reviews for product {obj.id}")
+        reviews = Review.objects.filter(products=obj)
+        return ReviewSerializer(reviews, many=True).data
 
 
 class ChatMessageSerializer(serializers.ModelSerializer):
