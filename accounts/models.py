@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.templatetags.static import static
-
+from django.db.models import Sum
 
 class User(AbstractUser):
     first_name = None  # 기본 User 모델의 first_name 필드를 사용하지 않도록 설정
@@ -31,3 +31,6 @@ class User(AbstractUser):
             return static(
                 "images/default_profile.jpg"
             )  # static 경로에서 기본 이미지 반환
+        
+    def total_review_score(self):
+        return self.reviews.aggregate(Sum('score'))['score__sum']+25 or 25
