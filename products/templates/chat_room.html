@@ -13,6 +13,16 @@
         <div id="chat-messages" class="chat-messages">
             <!-- 메시지 목록이 여기에 표시됩니다 -->
         </div>
+
+        <!-- 거래 완료 및 리뷰 작성 섹션 -->
+        <div class="transaction-section">
+            <!-- 판매자와 구매자가 서로 거래 완료 버튼을 누를 수 있음 -->
+            <button id="complete-transaction-btn" class="btn btn-success">거래 완료</button>
+
+            <!-- 리뷰 작성 버튼, 거래 완료 시에만 활성화됨 -->
+            <button id="write-review-btn" class="btn btn-primary" disabled>리뷰 작성</button>
+        </div>
+
         <form id="send-message-form" class="chat-form">
             <textarea id="message-content" class="form-control" rows="3" placeholder="메시지를 입력하세요..."></textarea>
             <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i></button>

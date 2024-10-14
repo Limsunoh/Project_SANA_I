@@ -343,6 +343,12 @@ class ChatRoomListView(APIView):
 class TransactionStatusUpdateAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
+    def get(self, request, room_id, *args, **kwargs):
+        room = get_object_or_404(ChatRoom, id=room_id)
+        status = get_object_or_404(TransactionStatus, room=room)
+        serializer = TransactionStatusSerializer(status)
+        return Response(serializer.data)
+
     def post(self, request, room_id, *args, **kwargs):
         room = get_object_or_404(ChatRoom, id=room_id)
         status = get_object_or_404(TransactionStatus, room=room)

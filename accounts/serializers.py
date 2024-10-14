@@ -120,12 +120,12 @@ class UserSerializer(serializers.ModelSerializer):
         email.send()
 
         return user
-    
-    
+
+
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)  # 기본 토큰 생성 로직 호출
-        data['username'] = self.user.username
+        data["username"] = self.user.username
         return data
 
 
@@ -147,7 +147,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     followers = serializers.SerializerMethodField()
     reviews = serializers.SerializerMethodField()
     profile_image = serializers.SerializerMethodField()
-    # score = 
+    review_score_total = serializers.SerializerMethodField()  # 총 리뷰 점수 필드 추가
     created_at = serializers.DateTimeField(format="%Y-%m-%d", read_only=True)
 
     class Meta:
@@ -167,7 +167,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "followings",
             "followers",
             "reviews",
-            
+            "review_score_total",  # 총 리뷰 점수 필드 추가
         )
 
     def get_profile_image(self, obj):
@@ -186,15 +186,26 @@ class UserProfileSerializer(serializers.ModelSerializer):
         return UserFollowSerializer(followings, many=True).data
 
     def get_followers(self, obj):
-        follwers = obj.followers.all()
-        return UserFollowSerializer(follwers, many=True).data
-    
+        followers = obj.followers.all()
+        return UserFollowSerializer(followers, many=True).data
+
     def get_reviews(self, obj):
         reviews = Review.objects.filter(author=obj)
         return ReviewSerializer(reviews, many=True).data
-    
-    
-    
+
+    # 유저가 작성한 제품에 대한 리뷰 점수의 총합 계산
+    def get_review_score_total(self, obj):
+        total_score = 0
+        products = Product.objects.filter(author=obj)  # 유저가 작성한 제품 가져오기
+
+        # 각 제품에 연결된 리뷰의 점수를 합산
+        for product in products:
+            if product.reviews:  # 리뷰가 존재할 경우
+                total_score += product.reviews.score  # 해당 제품의 리뷰 점수 합산
+
+        return total_score
+
+
 
 class UserChangeSerializer(serializers.ModelSerializer):
     profile_image = serializers.SerializerMethodField()
@@ -260,7 +271,7 @@ class UserListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'nickname', 'profile_image')
+        fields = ("id", "username", "nickname", "profile_image")
 
     def get_profile_image(self, obj):
         return obj.get_profile_image_url()

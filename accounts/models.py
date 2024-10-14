@@ -18,8 +18,6 @@ class User(AbstractUser):
     image = models.ImageField(upload_to="images/", blank=True, default='images/default_profile.jpg')
     introduce = models.TextField(max_length=255)  
     followings = models.ManyToManyField('self', symmetrical=False, related_name="followers", blank = True)
-    score = models.IntegerField(default=0)
-    # reviews = models.ForeignKey('reviews.Review',on_delete=models.CASCADE, related_name= 'review-list', null= True, blank= True)
     
     def get_profile_image_url(self):
         if self.image:
