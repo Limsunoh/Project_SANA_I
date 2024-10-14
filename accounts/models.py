@@ -17,12 +17,12 @@ class User(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)  
     image = models.ImageField(upload_to="images/", blank=True, default='images/default_profile.jpg')
     introduce = models.TextField(max_length=255)  
-    followings = models.ManyToManyField('self', symmetrical=False, related_name="followers", blank = True)  
-    
+    followings = models.ManyToManyField('self', symmetrical=False, related_name="followers", blank = True)
+    score = models.IntegerField(default=0)
+    # reviews = models.ForeignKey('reviews.Review',on_delete=models.CASCADE, related_name= 'review-list', null= True, blank= True)
     
     def get_profile_image_url(self):
         if self.image:
             return self.image.url
         else:
             return static('images/default_profile.jpg')  # static 경로에서 기본 이미지 반환
-
