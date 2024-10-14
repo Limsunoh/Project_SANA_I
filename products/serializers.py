@@ -136,7 +136,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     def get_likes_count(self, obj):
         return obj.likes.count()
     
-    # 작성자의 프로필 이미지 URL을 가져오는 메서드 추가
+    # 작성자의 프로필 이미지 URL을 가져오는 메서드
     def get_author_profile_image_url(self, obj):
         return obj.author.get_profile_image_url()
 
@@ -146,11 +146,27 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         instance.save(update_fields=["hits"])
         return super().to_representation(instance)
     
+    # 리뷰 참조 로직
     def get_reviews(self, obj):
         # 로그를 추가하여 리뷰 데이터를 확인
-        print(f"Fetching reviews for product {obj.id}")
         reviews = Review.objects.filter(products=obj)
+        print(f"product: {obj.id}")
+        print(f"review_score: {Review.score}")
         return ReviewSerializer(reviews, many=True).data
+    
+    # def get_reviews(self, obj):
+    #     reviews = obj.reviewed_products.all() 
+    #     review_scores = [review.score for review in reviews]
+
+    #     total_score = sum(review_scores)
+    #     print(total_score)
+
+    #     # 추가적으로 가져올 데이터 필요 시, 수정 필요
+    #     return {
+    #         'total_score': total_score,
+    #         'reviews_count': reviews.count(), 
+    #         'review_details': [{'author': review.author.username, 'score': review.score} for review in reviews],
+    #     }
 
 
 class ChatMessageSerializer(serializers.ModelSerializer):
