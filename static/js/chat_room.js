@@ -118,6 +118,6 @@ document.addEventListener('DOMContentLoaded', function () {
         // 5초마다 새로운 메시지 확인 (롱 폴링 구현)
         setInterval(function () {
             loadMessages(false);
-        }, 5000);
+        }, 3000);
     });
 });

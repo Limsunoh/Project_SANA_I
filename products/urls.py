@@ -14,6 +14,7 @@ urlpatterns = [
     path('<int:pk>/like/', views.LikeAPIView.as_view(), name='like'),  # 개별 제품 찜 상태 확인 및 찜하기 기능
     path('likes/<str:username>/', views.LikeListForUserAPIView.as_view(), name='like_list_for_user'),
     path('<int:product_id>/chatrooms/', views.ChatRoomCreateAPIView.as_view(), name='create-chatroom'),  # 채팅방 생성
+    path('chatroom/new_messages/', views.NewMessageAlertAPIView.as_view(), name='new_message_alert'),
     path('chatrooms/<str:username>/', views.ChatRoomListView.as_view(), name='chatroom_list'),
     path('<int:pk>/chatrooms/<int:room_id>/messages/', views.ChatMessageCreateAPIView.as_view(), name='create-message'),
     path('<int:pk>/chatrooms/<int:room_id>/transaction-status/', views.TransactionStatusUpdateAPIView.as_view(), name='update-transaction-status'),
