@@ -113,7 +113,8 @@ class ProductListAPIView(ListCreateAPIView):
 
     def perform_create(self, serializer):
         images = self.request.FILES.getlist("images")
-        tags = self.request.data.getlist("tags")
+        tags_raw = self.request.data.get("tags")
+        tags = tags_raw.split(",")
         product = serializer.save(author=self.request.user)
         
         for image in images:
@@ -151,7 +152,8 @@ class ProductDetailAPIView(UpdateAPIView):
     def perform_update(self, serializer):
         instance = serializer.instance  # 현재 수정 중인 객체
         images_data = self.request.FILES.getlist("images")
-        tags = self.request.data.getlist("tags")
+        tags_raw = self.request.data.get("tags")
+        tags = tags_raw.split(",")
 
         # 요청에 이미지가 포함된 경우
         if images_data:
@@ -176,7 +178,7 @@ class ProductDetailAPIView(UpdateAPIView):
         product.delete()
         return Response(status=204)
 
-# 상품 수정용 뷰 추가 
+# 상품 수정용 뷰 추가   
 class ProductEditPageView(TemplateView):
     template_name = 'product_edit.html'
 
@@ -243,11 +245,11 @@ class ChatRoomCreateAPIView(APIView):
     def post(self, request, product_id, *args, **kwargs):
         product = get_object_or_404(Product, id=product_id)
 
-        # 이미 해당 상품에 대해 생성된 채팅방이 있는지 확인합니다.
-        existing_room = ChatRoom.objects.filter(product=product).first()
+        # 요청한 유저가 해당 상품에 대해 이미 생성한 채팅방이 있는지 확인합니다.
+        existing_room = ChatRoom.objects.filter(product=product, buyer=request.user).first()
         if existing_room:
             return Response(
-                {"detail": "이미 해당 상품에 대한 채팅방이 존재합니다."},
+                {"detail": "해당 상품에 대해 이미 생성된 채팅방이 있습니다."},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -277,24 +279,34 @@ class ChatMessageCreateAPIView(APIView):
         last_message_id = request.query_params.get("last_message_id", None)
         new_messages = []
 
+        # 디버깅 출력: 요청 시 받은 last_message_id
+        # print("받은 last_message_id:", last_message_id)
+
+        # 최초 조회 시 전체 메시지 반환
+        if last_message_id is None:
+            all_messages = ChatMessage.objects.filter(room=room).order_by('created_at')
+            serializer = ChatMessageSerializer(all_messages, many=True)
+            return Response(serializer.data)
+
         # 롱 폴링 대기 시간 (최대 30초)
         timeout = 30
         start_time = time.time()
 
         while (time.time() - start_time) < timeout:
             # 새 메시지 확인
-            if last_message_id:
-                new_messages = ChatMessage.objects.filter(
-                    room=room, id__gt=last_message_id
-                )
-            else:
-                new_messages = ChatMessage.objects.filter(room=room)
+            new_messages = ChatMessage.objects.filter(
+                room=room, id__gt=last_message_id
+            ).order_by('created_at')  # 새 메시지만 가져옴
+
+            # print("현재 시간:", time.time(), "타임아웃:", timeout, "새 메시지 개수:", new_messages.count())
 
             if new_messages.exists():
+                print("새 메시지가 존재합니다.")
                 break
 
-            time.sleep(2)  # 2초마다 새 메시지 확인
+            time.sleep(5)  # 5초마다 새 메시지 확인
 
+        # 읽음 처리
         for message in new_messages:
             if message.sender != user and not message.is_read:
                 message.is_read = True
@@ -302,6 +314,7 @@ class ChatMessageCreateAPIView(APIView):
 
         serializer = ChatMessageSerializer(new_messages, many=True)
         return Response(serializer.data)
+
 
     def post(self, request, room_id, *args, **kwargs):
         room = get_object_or_404(ChatRoom, id=room_id)
@@ -345,7 +358,7 @@ class TransactionStatusUpdateAPIView(APIView):
         return Response(serializer.data)
 
 # 채팅방 HTML 페이지를 보내주는 View
-class ChatRoomHTMLView(TemplateView):
+class ChatRoomDetailHTMLView(TemplateView):
     template_name = "chat_room.html"
 
     def get_context_data(self, **kwargs):
@@ -376,7 +389,7 @@ class AISearchAPIView(APIView):
         # 가장 최근에 생성된 100개의 상품을 조회
         products = Product.objects.filter(status__in=["sell", "reservation"]).order_by(
             "-created_at"
-        )[:100]
+        )[:50]
 
         product_list = []
 
@@ -499,5 +512,16 @@ class LikeProductsPageView(TemplateView):
         return context
 
 
-class ChatRoomHTMLView(TemplateView):
+# 상품 수정용 뷰 추가   
+class ProductEditPageView(TemplateView):
+    template_name = 'product_edit.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product = get_object_or_404(Product, pk=self.kwargs['pk'])
+        context['product'] = product
+        return context
+
+
+class ChatRoomListHTMLView(TemplateView):
     template_name = "chat_room_list.html"
