@@ -13,8 +13,6 @@ class ReviewSerializer(serializers.ModelSerializer):
         read_only_fields = ['author', 'created_at', 'score']
 
     def create(self, validated_data):
-        
-        # URL에 제품 pk참조
         request = self.context.get('request')
         validated_data['author'] = request.user
         product_pk = self.context['view'].kwargs.get('product_id')

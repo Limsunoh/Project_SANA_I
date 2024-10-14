@@ -45,7 +45,6 @@ class Image(models.Model):
     )
     image_url = models.ImageField(upload_to="images/")
 
-
 # 각 채팅방을 관리하는 모델
 class ChatRoom(models.Model):
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chatrooms_as_seller')
@@ -55,7 +54,6 @@ class ChatRoom(models.Model):
 
     def __str__(self):
         return f"채팅방: 상품: {self.product.title} (판매자: {self.seller.username}, 구매자: {self.buyer.username})"
-
 
 # 채팅 메시지 모델: 각 메시지의 내용을 관리
 class ChatMessage(models.Model):
@@ -68,7 +66,6 @@ class ChatMessage(models.Model):
 
     def __str__(self):
         return f"[{self.room.id}] {self.sender.username}: {self.content[:30]}"
-
 
 # 거래 상태 모델: '판매 완료', '구매 완료' 등 상태를 관리
 class TransactionStatus(models.Model):
