@@ -13,18 +13,35 @@ document.addEventListener('DOMContentLoaded', function () {
     // 전역 변수 설정
     const apiUrl = `http://127.0.0.1:8000/api/products/${productId}/chatrooms/${roomId}/messages/`;
     const token = localStorage.getItem("access_token");
+    let lastMessageId = null;
+    let polling = false;
 
     // AJAX를 이용하여 채팅 메시지 목록 불러오기
-    function loadMessages() {
+    function loadMessages(initialLoad = false) {
+        if (polling) {
+            // 이미 요청이 진행 중이라면 중복된 요청을 보내지 않도록 합니다.
+            return;
+        }
+
+        polling = true;
+
+        let requestUrl = apiUrl;
+        if (!initialLoad && lastMessageId) {
+            requestUrl += `?last_message_id=${lastMessageId}`;
+        }
+
         $.ajax({
-            url: apiUrl,
+            url: requestUrl,
             type: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`
             },
             success: function (response) {
                 const chatContainer = $('#chat-messages');
-                chatContainer.empty();
+                if (initialLoad) {
+                    chatContainer.empty();
+                }
+
                 response.forEach(msg => {
                     // 프로필 이미지 URL 처리
                     const profileImgUrl = msg.sender_image ? msg.sender_image : '/static/images/default_profile.jpg';
@@ -47,10 +64,19 @@ document.addEventListener('DOMContentLoaded', function () {
                     chatContainer.append(messageElement);
                 });
                 chatContainer.scrollTop(chatContainer[0].scrollHeight);
+
+                // 마지막 메시지 ID 업데이트
+                if (response.length > 0) {
+                    lastMessageId = response[response.length - 1].id;
+                    console.log("업데이트된 lastMessageId:", lastMessageId);
+                }
+
+                polling = false;
             },
             error: function (xhr, status, error) {
                 console.error("메시지 목록 불러오기 실패:", status, error);
                 alert("메시지 불러오기 실패. 서버 문제 또는 인증 문제일 수 있습니다.");
+                polling = false;
             }
         });
     }
@@ -77,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }),
             success: function (response) {
                 $('#message-content').val('');
-                loadMessages();  // 메시지 목록 갱신
+                loadMessages(false);  // 새 메시지만 갱신
             },
             error: function (xhr, status, error) {
                 console.error("메시지 전송 실패:", status, error);
@@ -88,6 +114,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 페이지 로드 시 초기 메시지 목록을 불러옴
     $(document).ready(function () {
-        loadMessages();
+        loadMessages(true);
+        // 2초마다 새로운 메시지 확인 (롱 폴링 구현)
+        setInterval(function () {
+            loadMessages(false);
+        }, 2000);
     });
 });

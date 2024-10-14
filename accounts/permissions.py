@@ -2,7 +2,7 @@ from rest_framework.permissions import BasePermission
 from django.db.models import Q
 
 
-# 객체의 소유자만 수정 가능하고, 나머지 사용자는 읽기만 가능
+# product 수정시 필요한 permission 객체의 소유자만 수정 가능하고, 나머지 사용자는 읽기만 가능
 class IsOwnerOrReadOnly(BasePermission):
 
     def has_object_permission(self, request, view, obj):

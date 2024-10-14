@@ -53,7 +53,7 @@ class UserSerializer(serializers.ModelSerializer):
             "introduce",
             "created_at",
         )
-        read_only_fields = ("id",)
+        read_only_fields = ("id", "created_at")
         write_only_fields = ("image",)
 
     def validate(self, data):
@@ -70,6 +70,10 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         # checkpassword 필드는 사용하지 않으므로 제거해야함.
         validated_data.pop("checkpassword")
+        # 기본 이미지 설정 추가
+        image = validated_data.get("image")
+        if not image:
+            image = "images/default_profile.jpg"
 
         user = User(
             username=validated_data["username"],
@@ -80,7 +84,7 @@ class UserSerializer(serializers.ModelSerializer):
             postcode=validated_data.get("postcode", ""),
             mainaddress=validated_data.get("mainaddress"),
             subaddress=validated_data.get("subaddress"),
-            image=validated_data.get("image"),
+            image=image,
             introduce=validated_data.get("introduce", ""),
         )
 

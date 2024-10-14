@@ -14,7 +14,7 @@ class User(AbstractUser):
     extraaddress = models.CharField(max_length=255, blank=True, null=True)  
     birth = models.DateField()  
     email = models.EmailField(max_length=30, unique=False, null=False, blank=False)  
-    created_at = models.TimeField(auto_now_add=True)  
+    created_at = models.DateTimeField(auto_now_add=True)  
     image = models.ImageField(upload_to="images/", blank=True, default='images/default_profile.jpg')
     introduce = models.TextField(max_length=255)  
     followings = models.ManyToManyField('self', symmetrical=False, related_name="followers", blank = True)  

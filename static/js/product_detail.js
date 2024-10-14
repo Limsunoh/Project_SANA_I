@@ -71,10 +71,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 hashtagContainer.appendChild(tagElement);
             });
 
-            // 작성자와 현재 로그인한 유저의 닉네임이 같으면 찜하기 버튼 숨기기
+            // 작성자와 현재 로그인한 유저의 닉네임이 같으면 찜하기, 채팅하기 버튼 숨기기
             const currentUserNickname = localStorage.getItem('current_username');
-            console.log("author:", data.author);
-            console.log("currentUserNickname:", currentUserNickname);
             if (currentUserNickname && currentUserNickname.trim() === data.author.trim()) {
                 likeButton.style.display = 'none';
                 chatButton.style.display = 'none';
@@ -108,72 +106,67 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('제품 정보를 불러오는 데 실패했습니다.');
         });
 
-    // 채팅방으로 이동하는 함수
-function redirectToChatRoom(productId, chatRoomId) {
-    window.location.href = `/api/products/${productId}/chatrooms/${chatRoomId}/`;
-}
+    // 채팅하기 버튼 클릭 시 채팅방 생성 및 이동
+    chatButton.addEventListener('click', function () {
+        const accessToken = localStorage.getItem("access_token");
 
-// 채팅하기 버튼 클릭 시 채팅방 생성 및 이동
-chatButton.addEventListener('click', function () {
-    const accessToken = localStorage.getItem("access_token");
-
-    if (!accessToken) {
-        alert("로그인이 필요합니다.");
-        return;
-    }
-
-    // 채팅방 생성 요청 전 채팅방 존재 여부 확인
-    fetchWithAuth(chatRoomApiUrl, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
+        if (!accessToken) {
+            alert("로그인이 필요합니다.");
+            return;
         }
-    })
-    .then(response => {
-        if (response.status === 403) {
-            throw new Error('이 채팅방에 접근할 수 있는 권한이 없습니다.');
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.id) {
-            // 기존 채팅방이 있는 경우, 해당 채팅방으로 이동
-            redirectToChatRoom(productId, data.id);
-        } else {
-            // 채팅방이 존재하지 않을 경우 새로 생성
-            createChatRoom();
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('채팅방에 접근할 수 없습니다.');
-    });
 
-    function createChatRoom() {
+        // 채팅방 생성 요청 전 채팅방 존재 여부 확인
         fetchWithAuth(chatRoomApiUrl, {
-            method: 'POST',
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             }
         })
         .then(response => {
-            if (response.status === 400) {
-                throw new Error('이미 해당 상품에 대한 채팅방이 존재합니다.');
+            if (response.status === 403) {
+                throw new Error('이 채팅방에 접근할 수 있는 권한이 없습니다.');
             }
             return response.json();
         })
         .then(data => {
             if (data.id) {
-                // 새 채팅방이 생성된 경우, 해당 채팅방으로 이동
-                redirectToChatRoom(productId, data.id);
+                // 기존 채팅방이 있는 경우, 해당 채팅방으로 이동
+                window.location.href = `/api/products/${productId}/chatrooms/${data.id}/`;
+            } else {
+                // 채팅방이 존재하지 않을 경우 새로 생성
+                createChatRoom();
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('이미 해당 상품에 대한 채팅방이 존재합니다.');
+            alert('채팅방에 접근할 수 없습니다.');
         });
-    }
-});
+
+        function createChatRoom() {
+            fetchWithAuth(chatRoomApiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => {
+                if (response.status === 400) {
+                    throw new Error('이미 해당 상품에 대한 채팅방이 존재합니다.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.id) {
+                    // 새 채팅방이 생성된 경우, 해당 채팅방으로 이동
+                    window.location.href = `/api/products/${productId}/chatrooms/${data.id}/`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('이미 해당 상품에 대한 채팅방이 존재합니다.');
+            });
+        }
+    });
 
     // 찜 상태 확인 및 하트 아이콘 초기화 (로그인한 유저만)
     const accessToken = localStorage.getItem("access_token");
@@ -240,7 +233,7 @@ chatButton.addEventListener('click', function () {
 
             if (response.ok) {
                 // 삭제 성공 시 홈 페이지로 이동
-                window.location.href = '/api/products/home-page/';
+                window.location.href = '/';
             } else {
                 const errorData = await response.json();
                 console.error('삭제 중 에러 발생:', errorData);

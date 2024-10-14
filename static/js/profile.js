@@ -2,6 +2,9 @@ function products_detailpage(pk) {
     window.location.href = "/api/products/detail-page/" + pk + "/"
 }
 
+const deleteProfileBtn = document.getElementById("delete-profile-btn");
+const confirmDeleteBtn = document.getElementById("confirm-delete-btn");
+
 document.addEventListener("DOMContentLoaded", function () {
     const usernameDisplay = document.getElementById("username_display");
     const emailDisplay = document.getElementById("email_display");
@@ -15,6 +18,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const profileAddressDisplay = document.getElementById("profile_address");
     const introduceDisplay = document.getElementById("introduce_display");
     const accessToken = localStorage.getItem("access_token");
+    const currentUsername = localStorage.getItem("current_username");
+
+    const editProfileBtn = document.getElementById("edit-profile-btn");
+    const editPasswordBtn = document.getElementById("edit-password-btn");
+    
     
     let isFollowing = false;
 
@@ -25,6 +33,14 @@ document.addEventListener("DOMContentLoaded", function () {
         alert("잘못된 접근입니다. 로그인 후 다시 시도해주세요.");
         window.location.href = "/api/accounts/login-page/";
         return;
+    }
+
+    if (currentUsername !== profileUsername) {
+        editProfileBtn.style.display = 'none';
+        editPasswordBtn.style.display = 'none';
+        deleteProfileBtn.style.display = 'none';
+    }else{
+        followButton.style.display = 'none';
     }
 
     // 프로필 데이터 불러오기
@@ -187,7 +203,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // 프로필 수정 페이지로 이동
-    const editProfileBtn = document.getElementById("edit-profile-btn");
     if (editProfileBtn) {
         editProfileBtn.addEventListener("click", () => {
             window.location.href = `/api/accounts/profile_edit-page/${profileUsername}`;
@@ -195,7 +210,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // 비밀번호 수정 페이지로 이동
-    document.getElementById("edit-password-btn").addEventListener("click", function() {
+    editPasswordBtn.addEventListener("click", function() {
         window.location.href = `/api/accounts/profile/${profileUsername}/password-page/`;
     });
     
@@ -211,9 +226,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // 계정 삭제
 document.addEventListener("DOMContentLoaded", function () {
-    const deleteProfileBtn = document.getElementById("delete-profile-btn");
-    const confirmDeleteBtn = document.getElementById("confirm-delete-btn");
-
     // 계정이 이미 비활성화된 상태인지 체크하는 플래그
     let isAccountDeactivated = false;
 
@@ -259,12 +271,12 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .then(data => {
             alert(data.message || '계정이 성공적으로 비활성화되었습니다.');
-            window.location.href = "/api/products/home-page/"; // 홈으로 이동
+            window.location.href = "/"; // 홈으로 이동
         })
         .catch(error => {
             console.error('계정 비활성화 중 오류 발생:', error);
             alert(error.message || '계정 비활성화에 실패했습니다.');
         });
     });
-});
 
+});
