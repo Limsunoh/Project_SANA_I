@@ -144,7 +144,7 @@ class ProductDetailAPIView(UpdateAPIView):
     def get(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
         serializer = ProductDetailSerializer(product)
-        print(f"product: {product}, PK {pk}")
+        # print(f"product: {product}, PK {pk}")
         # serializer = self.get_serializer(product)
         # review_serializer = ReviewSerializer(reviews)
         return Response(serializer.data, status=200)     

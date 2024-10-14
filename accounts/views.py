@@ -79,7 +79,11 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
         elif self.request.method in ["PATCH", "PUT"]:
             return UserChangeSerializer
         return super().get_serializer_class()
-
+    
+    # 사용자 프로필 반환
+    def get_queryset(self):
+        return User.objects.all()
+    
     def destroy(self, request, *args, **kwargs):
         # `lookup_field`를 사용하여 해당 사용자를 찾기
         user = get_object_or_404(User, username=kwargs.get("username"))
@@ -96,9 +100,6 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
         else:
             # 권한이 없을 때 응답
             return Response({"message": "삭제처리할 권한이 없습니다."}, status=403)
-        
-    def get_queryset(self):
-        return User.objects.all()  # 전체 User 객체에서 필터링
 
 # 유저 비밀번호 변경
 class ChangePasswordView(APIView):
@@ -159,7 +160,10 @@ class UserFollowerListAPIView(APIView):
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
-# HTML 파일 보여주는 class
+
+# Template 참조 Class
+
+# 회원가입 template
 class SignupPageView(TemplateView):
     template_name = "signup.html"
 
