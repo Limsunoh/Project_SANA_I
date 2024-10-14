@@ -22,11 +22,11 @@ class Review(models.Model):
     products = models.ForeignKey(
         'products.Product', related_name='reviewed_products', on_delete=models.CASCADE
     )
-    checklist = MultiSelectField(choices=CHECKLIST_OPTIONS)  # 다중 선택 필드
+    checklist = MultiSelectField(choices=CHECKLIST_OPTIONS)
     additional_comments = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
-    score = models.FloatField(default=0)  # 총점 계산
+    score = models.FloatField(default=0)  # 개별 리뷰 기본 점수
 
     def total_score(self):
         score_mapping = {
@@ -54,7 +54,7 @@ class Review(models.Model):
         super().save(*args, **kwargs)
         product = self.products
         product.reviews = self  # Product의 reviews 필드를 이 Review로 업데이트
-        product.save()  # Product 저장
+        product.save()          # Product 저장
 
     def __str__(self):
         return f"{self.author.username} 의 {self.products.name} 에 대한 리뷰입니다"

@@ -5,14 +5,12 @@ from products.models import Product
 from django.shortcuts import get_object_or_404
 
 
-
 # class UserReviewListView(generics.ListAPIView):
 #     queryset = Review.objects.all()
 #     serializer_class = ReviewSer
 
 
-
-# 리뷰 목록 조회 및 생성
+# 리뷰목록 조회&생성
 class ReviewListCreateView(generics.ListCreateAPIView):
     # queryset = Review.objects.all()
     serializer_class = ReviewSerializer
@@ -22,14 +20,12 @@ class ReviewListCreateView(generics.ListCreateAPIView):
         user_id = self.kwargs.get('user_id')
         product_id = self.kwargs.get('product_id')
 
-        if user_id:
-            # 유저 프로필 페이지에서 해당 유저가 작성한 리뷰 조회
+        if user_id:         # 유저 프로필 페이지에서 작성한 리뷰 조회
             return Review.objects.filter(author__id=user_id)
-        elif product_id:
-            # 제품 상세 페이지에서 해당 제품에 대한 리뷰 조회
+        elif product_id:    # 제품 상세 페이지에서 리뷰 조회
             return Review.objects.filter(products__id=product_id)
-        else:
-            return Review.objects.none()  # 기본적으로 빈 쿼리셋 반환
+        else:               # 빈 쿼리셋 반환
+            return Review.objects.none()  
 
     def perform_create(self, serializer):
         product_id = self.kwargs.get('product_id')
@@ -39,11 +35,6 @@ class ReviewListCreateView(generics.ListCreateAPIView):
             serializer.save(author=self.request.user, products=product)
         else:
             raise serializers.ValidationError("제품 ID가 필요합니다.")
-        
-        # user_pk = self.kwargs['user_id'] 
-        # return Review.objects.filter(user__pk= user_pk)
-        # 점수 계산 후 저장
-        # serializer.save(author=self.request.user)
 
 # 리뷰 조회 및 삭제
 class ReviewDetailView(generics.RetrieveDestroyAPIView):
