@@ -115,9 +115,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // 페이지 로드 시 초기 메시지 목록을 불러옴
     $(document).ready(function () {
         loadMessages(true);
-        // 2초마다 새로운 메시지 확인 (롱 폴링 구현)
+        // 5초마다 새로운 메시지 확인 (롱 폴링 구현)
         setInterval(function () {
             loadMessages(false);
-        }, 2000);
+        }, 5000);
     });
 });
