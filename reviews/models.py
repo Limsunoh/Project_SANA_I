@@ -42,11 +42,19 @@ class Review(models.Model):
             'bad_delivery': -1
         }
         score = 0
+        
 
         # 다중선택한 것들의 점수를 합치기
         for choice in self.checklist:
             score += score_mapping.get(choice, 0)
         return score
+
+    def save(self, *args, **kwargs):
+        # 리뷰를 생성할 때 Product 모델의 reviews 필드도 업데이트
+        super().save(*args, **kwargs)
+        product = self.products
+        product.reviews = self  # Product의 reviews 필드를 이 Review로 업데이트
+        product.save()  # Product 저장
 
     def __str__(self):
         return f"{self.author.username} 의 {self.products.name} 에 대한 리뷰입니다"

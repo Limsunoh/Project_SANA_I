@@ -147,9 +147,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
     followers = serializers.SerializerMethodField()
     reviews = serializers.SerializerMethodField()
     profile_image = serializers.SerializerMethodField()
-    review_score_total = serializers.SerializerMethodField()  # 총 리뷰 점수 필드 추가
+    review_score_total = serializers.FloatField(source= 'total_review_score', read_only= True)
     created_at = serializers.DateTimeField(format="%Y-%m-%d", read_only=True)
-
+    
     class Meta:
         model = User
         fields = (
@@ -167,24 +167,24 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "followings",
             "followers",
             "reviews",
-            "review_score_total",  # 총 리뷰 점수 필드 추가
+            "review_score_total",
         )
-
+        
     def get_profile_image(self, obj):
         return obj.get_profile_image_url()
-
+    
     def get_products(self, obj):
         products = Product.objects.filter(author=obj)
         return ProductListSerializer(products, many=True).data
-
+    
     def get_like_products(self, obj):
         like_products = obj.like_products.all()
         return ProductListSerializer(like_products, many=True).data
-
+    
     def get_followings(self, obj):
         followings = obj.followings.all()
         return UserFollowSerializer(followings, many=True).data
-
+    
     def get_followers(self, obj):
         followers = obj.followers.all()
         return UserFollowSerializer(followers, many=True).data
