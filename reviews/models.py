@@ -1,85 +1,55 @@
 from django.db import models
 from sbmarket import settings
+from multiselectfield import MultiSelectField
 
+CHECKLIST_OPTIONS = (
+    ('quality', '품질이 우수해요'),
+    ('good_value', '합리적인 가격이에요'),
+    ('durability', '내구성이 뛰어나요'),
+    ('customer_service', '친절하고 매너가 좋아요'),
+    ('good_delivery', '거래약속을 잘 지켜요'),
+    ('bad_quality', '영 좋지 않아요'),
+    ('bad_value', '돈이 아까워요'),
+    ('broken', '못 쓸 걸 팔았어요'),
+    ('bad_service', '불친절하게 느껴졌어요'),
+    ('bad_delivery', '시간을 안 지켜요')
+)
 
-# 리뷰
 class Review(models.Model):
     author = models.ForeignKey(
-        settings.AUTH_USER_MODEL, related_name= 'reviewws', on_delete= models.CASCADE
-    )                  # 계정 삭제 시, 같이 삭제
-    products = models.ForeignKey('products.Product',
-        related_name= 'reviewed_products', 
-        on_delete= models.CASCADE
+        settings.AUTH_USER_MODEL, related_name='reviews', on_delete=models.CASCADE
     )
-    checklist= models.JSONField({
-        "quality": True,
-        "value_for_money": False,
-        "usability": True,
-        "design": True
-    })  # 선택 항목 저장(객관식)
-    additional_comments= models.TextField(blank= True) # 추가 작성(서술식)
-    created_at= models.DateTimeField(auto_now_add= True) # 작성 일시
-    score= models.IntegerField() # 총점 (항목별 점수 합산)
+    products = models.ForeignKey(
+        'products.Product', related_name='reviewed_products', on_delete=models.CASCADE
+    )
+    checklist = MultiSelectField(choices=CHECKLIST_OPTIONS)  # 다중 선택 필드
+    additional_comments = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
     
+    score = models.FloatField(default=0)  # 총점 계산
+
+    def total_score(self):
+        score_mapping = {
+            'quality': 0.5,
+            'good_value': 0.5,
+            'durability': 0.5,
+            'customer_service': 0.5,
+            'good_delivery': 0.5,
+            'bad_quality': -1,
+            'bad_value': -1,
+            'broken': -1,
+            'bad_service': -1,
+            'bad_delivery': -1
+        }
+        score = 0
+
+        # 다중선택한 것들의 점수를 합치기
+        for choice in self.checklist:
+            score += score_mapping.get(choice, 0)
+        return score
+
     def __str__(self):
-        return f"Review by {self.author.username} on {self.product.name}"
-    
+        return f"{self.author.username} 의 {self.products.name} 에 대한 리뷰입니다"
+
     class Meta:
-        unique_together= ('author', 'products') # 한 상품에 대해 한 명이 하나의 리뷰만 작성
-    
-    
-# 선택 항목(increase_feedback, deduct_answer)
-# cheecklist_1= models.BooleanField(default= False, null= True)
-# cheecklist_2= models.BooleanField(default= False, null= True)
-# cheecklist_3= models.BooleanField(default= False, null= True)
-# cheecklist_4= models.BooleanField(default= False, null= True)
-# cheecklist_5= models.BooleanField(default= False, null= True)
-# cheecklist_6= models.BooleanField(default= False, null= True)
-# cheecklist_7= models.BooleanField(default= False, null= True)
-# cheecklist_8= models.BooleanField(default= False, null= True)
-# cheecklist_9= models.BooleanField(default= False, null= True)
-# cheecklist_10= models.BooleanField(default= False, null= True)
-
-# class Meta:
-#     ordering= ['-created_at'] # 내림차순 정렬(최신 우선)
-
-# def total_score(self):   # 객관식 개별 점수
-#     score_mapping= {
-#         'cheecklist_1':0.1, 
-#         'cheecklist_2':0.1, 
-#         'cheecklist_3':0.1, 
-#         'cheecklist_4':0.1, 
-#         'cheecklist_5':0.1, 
-#         'cheecklist_6':-0.1, 
-#         'cheecklist_7':-0.1, 
-#         'cheecklist_8':-0.1, 
-#         'cheecklist_9':-0.1, 
-#         'cheecklist_10':-0.1, 
-#     }
-#     score = 10
-#     for field, value in score_mapping.items():
-#         if getattr(self, field):
-#             score += value
-#     return score
-#     def __str__(self):
-#         return f"review for {self.Product.title} by {self.user.username}" if self.product else "Deleted Review"
-    
-#     def total_score(self):
-#         return f"{self.name}"
-    
-#     def save(self, *args, **kwargs):
-#         # 리뷰 저장 시점에 점수도 ReviewScroe에 저장
-#         super().save(*args, **kwargs)
-#         ReviewScore.objects.update_or_create(
-#             review= self,
-#             defaults= {'scpre' : self.total_score()}
-#         )
-    
-#     def delete(self, *args, **kwargs):  # 리뷰 삭제 유무 구분, 실제로 삭제하지 않고 논리적으로 삭제 처리
-#         self.is_deleted= True
-#         self.save()
- 
-
-# class ReviewScore(models.Modle):        # 리뷰 점수
-#     review= models.OneToOneField(Review, on_delete= models.CASCADE)
-#     score= models.IntegerField()
+        unique_together = ('author', 'products')
