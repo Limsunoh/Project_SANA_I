@@ -100,9 +100,7 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         return User.objects.all()  # 전체 User 객체에서 필터링
 
-
-
-    # 유저 비밀번호 변경
+# 유저 비밀번호 변경
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
 
@@ -147,6 +145,7 @@ class UserFollowingListAPIView(APIView):
         serializer = UserListSerializer(followings, many=True)
         return Response(serializer.data, status=200)
 
+
 class UserFollowerListAPIView(APIView):
     permission_classes = [AllowAny]
 
@@ -156,13 +155,9 @@ class UserFollowerListAPIView(APIView):
         serializer = UserListSerializer(followers, many=True)
         return Response(serializer.data, status=200)
 
-
-
-
 # 로그인 시 username을 저장할 수 있도록 토큰을 커스텀하는뷰
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
-
 
 # HTML 파일 보여주는 class
 class SignupPageView(TemplateView):

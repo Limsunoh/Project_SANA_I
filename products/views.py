@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from django.db.models import Q, Count
 import time
-from rest_framework import status
+from rest_framework import status, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import ListCreateAPIView, UpdateAPIView, ListAPIView
@@ -16,6 +16,8 @@ from accounts.permissions import (
     SenderorReceiverOnly,
     SellerorBuyerOnly,
 )
+from reviews.models import Review
+from reviews.serializers import ReviewSerializer
 from .models import (
     User,
     Product,
@@ -49,6 +51,25 @@ from sbmarket.config import OPENAI_API_KEY
 
 # 로깅 설정
 logger = logging.getLogger(__name__)
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    checklist = serializers.ListField(
+        child=serializers.CharField(max_length=100)
+    )
+    
+    class Meta:
+        model = Review
+        fields = ['id', 'author', 'products', 'checklist', 'additional_comments', 'created_at', 'score']
+        read_only_fields = ['author', 'created_at', 'score']
+
+    def create(self, validated_data):
+        # 리뷰를 먼저 생성한 후, score를 계산합니다.
+        checklist = validated_data.get('checklist', [])
+        review = Review.objects.create(**validated_data)
+        review.score = review.total_score()  # 총점 계산
+        review.save()
+        return review
 
 
 class ProductListAPIView(ListCreateAPIView):
@@ -95,8 +116,10 @@ class ProductListAPIView(ListCreateAPIView):
         tags_raw = self.request.data.get("tags")
         tags = tags_raw.split(",")
         product = serializer.save(author=self.request.user)
+        
         for image in images:
             Image.objects.create(product=product, image_url=image)
+        
         for tag in tags:
             hashtag, created = Hashtag.objects.get_or_create(
                 name=tag
@@ -121,7 +144,10 @@ class ProductDetailAPIView(UpdateAPIView):
     def get(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
         serializer = ProductDetailSerializer(product)
-        return Response(serializer.data, status=200)
+        print(f"product: {product}, PK {pk}")
+        # serializer = self.get_serializer(product)
+        # review_serializer = ReviewSerializer(reviews)
+        return Response(serializer.data, status=200)     
 
     def perform_update(self, serializer):
         instance = serializer.instance  # 현재 수정 중인 객체
@@ -152,6 +178,16 @@ class ProductDetailAPIView(UpdateAPIView):
         product.delete()
         return Response(status=204)
 
+# 상품 수정용 뷰 추가   
+class ProductEditPageView(TemplateView):
+    template_name = 'product_edit.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product = get_object_or_404(Product, pk=self.kwargs['pk'])
+        context['product'] = product
+        return context
+
 
 class LikeAPIView(APIView):
     serializer_class = ProductListSerializer
@@ -180,7 +216,6 @@ class LikeAPIView(APIView):
         product.likes.add(request.user)
         return Response({"message": "찜하기 했습니다."}, status=200)
 
-
 # 내가 찜한 상품 리스트보기 
 class LikeListForUserAPIView(APIView):
     permission_classes = [AllowAny] 
@@ -190,7 +225,6 @@ class LikeListForUserAPIView(APIView):
         liked_products = Product.objects.filter(likes=user)
         serializer = ProductListSerializer(liked_products, many=True)
         return Response(serializer.data, status=200)
-
 
 # 새로운 채팅방 만들기
 class ChatRoomCreateAPIView(APIView):
@@ -228,7 +262,6 @@ class ChatRoomCreateAPIView(APIView):
 
         serializer = ChatRoomSerializer(chat_room)
         return Response(serializer.data, status=201)
-
 
 # 채팅 메시지 조회 및 생성
 class ChatMessageCreateAPIView(APIView):
@@ -306,8 +339,6 @@ class ChatRoomListView(APIView):
         serializer = ChatRoomSerializer(chat_rooms, many=True)
         return Response(serializer.data, status=200)
 
-
-
 # 거래 상태를 업데이트하는 API
 class TransactionStatusUpdateAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -326,7 +357,6 @@ class TransactionStatusUpdateAPIView(APIView):
         serializer = TransactionStatusSerializer(status)
         return Response(serializer.data)
 
-
 # 채팅방 HTML 페이지를 보내주는 View
 class ChatRoomDetailHTMLView(TemplateView):
     template_name = "chat_room.html"
@@ -339,12 +369,10 @@ class ChatRoomDetailHTMLView(TemplateView):
         ]  # URL에서 product_id를 가져와서 전달
         return context
 
-
 # ------------------------------------------------------------------------------
 # aisearch 기능 구현
 # 목적: 사용자가 원하는 '요청'에 부합하는 물건 중 적합한 것 5개를 상품 목록에서 찾아 나열해주는 AI 상품 추천 서비스
 # 검색 범위를 너무 넓히지 않기 위해 최근 생성된 20개의 상품만 상품 목록에 넣을 것
-
 
 class AISearchAPIView(APIView):
     permission_classes = [AllowAny]
@@ -438,13 +466,11 @@ class AISearchAPIView(APIView):
         # AI의 응답을 그대로 반환
         return Response({"response": ai_response}, status=200)
 
-
-# 상품 목록 리스트 template
+# 상품 목록 template
 class HomePageView(TemplateView):
     template_name = "home.html"
 
-
-# 상품디테일 template
+# 상품 세부 template
 class ProductDetailPageView(DetailView):
     model = Product
     template_name = 'product_detail.html'
@@ -455,16 +481,14 @@ class ProductDetailPageView(DetailView):
         context['images'] = self.object.images.all()  # 여러 이미지를 가져옴
         return context
 
-
 # 상품 작성 template
 class ProductCreateView(TemplateView):
     template_name = "product_create.html"
     
-    
+# 상품 수정 template
 class ProductupdateView(TemplateView):
     template_name = "product_update.html"
     
-
 # 내가 작성한 상품 리스트 template
 class UserProductsListPageView(TemplateView):
     template_name = "user_products.html"
@@ -475,7 +499,6 @@ class UserProductsListPageView(TemplateView):
         profile_user = get_object_or_404(User, username=username)  # username으로 사용자 객체 가져오기
         context['profile_user'] = profile_user  # 템플릿에 profile_user 추가
         return context
-
 
 # 내가 찜한 리스트 template
 class LikeProductsPageView(TemplateView):
