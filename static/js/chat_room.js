@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const completeTransactionBtn = document.getElementById('complete-transaction-btn');
     const writeReviewBtn = document.getElementById('write-review-btn');
-    let transactionCompleted = false;
+    let transactionStatus = { is_sold: false, is_completed: false };
 
     // 거래 상태를 확인하는 함수
     function checkTransactionStatus() {
@@ -28,13 +28,18 @@ document.addEventListener('DOMContentLoaded', function () {
             success: function (response) {
                 console.log("거래 상태:", response);
     
-                transactionCompleted = response.is_sold;
+                const currentUser = localStorage.getItem('current_username');  // 현재 로그인된 사용자 정보 확인
+                console.log("현재 로그인된 사용자:", currentUser);  // 로그로 확인
+    
                 const isBuyer = response.buyer === currentUser;
                 const isSeller = response.seller === currentUser;
     
-                console.log(`is_sold: ${response.is_sold}, is_completed: ${response.is_completed}, isBuyer: ${isBuyer}`);
-    
-                if (transactionCompleted && response.is_completed && isBuyer) {
+                console.log(`is_sold: ${response.is_sold}, is_completed: ${response.is_completed}, isBuyer: ${isBuyer}, isSeller: ${isSeller}`);
+                
+                // 전역 변수 transactionStatus 업데이트
+                transactionStatus = response;
+
+                if (response.is_sold && response.is_completed && isBuyer) {
                     writeReviewBtn.disabled = false;  // 구매자만 리뷰 작성 가능
                     console.log("리뷰 작성 버튼 활성화");
                 } else {
@@ -42,10 +47,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     console.log("리뷰 작성 버튼 비활성화");
                 }
     
-                if (transactionCompleted) {
-                    completeTransactionBtn.textContent = isSeller ? "판매 완료 취소" : "거래 취소";
+                // 판매자와 구매자를 기준으로 버튼 텍스트 설정
+                if (isSeller) {
+                    // 판매자일 경우 "판매 완료" 또는 "판매 완료 취소" 표시
+                    completeTransactionBtn.textContent = response.is_completed ? "판매 완료 취소" : "판매 완료";
+                } else if (isBuyer) {
+                    // 구매자일 경우 "거래 완료" 또는 "거래 완료 취소" 표시
+                    completeTransactionBtn.textContent = response.is_sold ? "거래 완료 취소" : "거래 완료";
                 } else {
-                    completeTransactionBtn.textContent = isSeller ? "판매 완료" : "거래 완료";
+                    console.log("판매자 또는 구매자가 아닌 사용자입니다.");
                 }
             },
             error: function (xhr, status, error) {
@@ -56,16 +66,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 거래 완료 버튼 클릭 이벤트 (판매자와 구매자 역할에 따라 다르게 처리)
     completeTransactionBtn.addEventListener('click', function () {
-        const isBuyer = completeTransactionBtn.textContent.includes("거래");
-        const isSeller = completeTransactionBtn.textContent.includes("판매");
-
+        const buttonText = completeTransactionBtn.textContent;
+        console.log("버튼 텍스트:", buttonText);
+    
+        const isBuyer = buttonText.includes("거래");
+        const isSeller = buttonText.includes("판매");
+    
+        // 현재 거래 상태를 기반으로 상태 반전
         let data = {};
         if (isSeller) {
-            data = { is_completed: !transactionCompleted };  // 판매자가 완료/취소 시 is_completed 업데이트
+            console.log("판매자가 거래 완료/취소를 시도합니다.");
+            data = { is_completed: !transactionStatus.is_completed };  // 판매자가 완료/취소 시 is_completed 반전
         } else if (isBuyer) {
-            data = { is_sold: !transactionCompleted };  // 구매자가 완료/취소 시 is_sold 업데이트
+            console.log("구매자가 거래 완료/취소를 시도합니다.");
+            data = { is_sold: !transactionStatus.is_sold };  // 구매자가 완료/취소 시 is_sold 반전
         }
-
+    
+        console.log("전송할 데이터:", data);  // 서버로 보내는 데이터 확인
+    
         $.ajax({
             url: transactionStatusUrl,
             type: "POST",
@@ -75,8 +93,10 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             data: JSON.stringify(data),
             success: function (response) {
+                console.log("응답:", response);  // 서버 응답 확인
                 alert(isSeller ? "판매 상태가 업데이트되었습니다." : "거래 상태가 업데이트되었습니다.");
-                checkTransactionStatus();
+                transactionStatus = response;  // 서버 응답을 기반으로 상태 업데이트
+                checkTransactionStatus();  // 상태 업데이트 후 다시 확인
             },
             error: function (xhr, status, error) {
                 console.error("거래 상태 업데이트 실패:", status, error);

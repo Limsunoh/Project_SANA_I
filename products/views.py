@@ -379,16 +379,16 @@ class TransactionStatusUpdateAPIView(APIView):
         room = get_object_or_404(ChatRoom, id=room_id)
 
         # TransactionStatus가 없을 때 새로 생성
-        status, created = TransactionStatus.objects.get_or_create(room=room)
+        product_status, created = TransactionStatus.objects.get_or_create(room=room)
         if created:
             print(f"New TransactionStatus created for room {room_id}")  # 디버깅용 로그
 
-        serializer = TransactionStatusSerializer(status)
+        serializer = TransactionStatusSerializer(product_status)
         return Response(serializer.data)
 
     def post(self, request, room_id, *args, **kwargs):
         room = get_object_or_404(ChatRoom, id=room_id)
-        status, created = TransactionStatus.objects.get_or_create(room=room)
+        product_status, created = TransactionStatus.objects.get_or_create(room=room)
 
         # 디버깅 로그 추가
         print(f"User: {request.user}, Room: {room}, Created: {created}")
@@ -397,24 +397,24 @@ class TransactionStatusUpdateAPIView(APIView):
         if request.user == room.seller:
             print("판매자 거래 완료 처리")
             if request.data.get("is_completed") is not None:
-                status.is_completed = request.data.get("is_completed")
+                product_status.is_completed = request.data.get("is_completed")
             else:
-                status.is_completed = True
-            print(f"Updated is_completed: {status.is_completed}")
+                product_status.is_completed = True
+            print(f"Updated is_completed: {product_status.is_completed}")
 
         # 구매자일 경우 is_sold 업데이트
         if request.user == room.buyer:
             print("구매자 거래 완료 처리")
             if request.data.get("is_sold") is not None:
-                status.is_sold = request.data.get("is_sold")
+                product_status.is_sold = request.data.get("is_sold")
             else:
-                status.is_sold = True
-            print(f"Updated is_sold: {status.is_sold}")
+                product_status.is_sold = True
+            print(f"Updated is_sold: {product_status.is_sold}")
 
         try:
-            status.save()  # DB 저장
-            serializer = TransactionStatusSerializer(status)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            product_status.save()  # DB 저장
+            serializer = TransactionStatusSerializer(product_status)
+            return Response(serializer.data, status=200)
         except Exception as e:
             print(f"Error saving transaction status: {e}")  # 에러 로그
             return Response({"error": str(e)}, status=500)
