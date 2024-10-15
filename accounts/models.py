@@ -33,4 +33,4 @@ class User(AbstractUser):
             )  # static 경로에서 기본 이미지 반환
         
     def total_review_score(self):
-        return self.reviews.aggregate(Sum('score'))['score__sum']+25 or 25
+        return self.reviews.aggregate(Sum('score'))['score__sum'] or 25
