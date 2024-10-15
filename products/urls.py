@@ -7,7 +7,7 @@ from . import views
 app_name = "products"
 
 urlpatterns = [
-    # API 앤드포인트
+    # API 엔드포인트
     path("", views.ProductListAPIView.as_view(), name="product_list"),
     path('user-products/<str:username>/', views.UserProductsListView.as_view(), name='user_products'),
     path("<int:pk>/", views.ProductDetailAPIView.as_view(), name="product_detail"),
