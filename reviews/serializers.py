@@ -4,15 +4,20 @@ from products.models import Product
 from products.models import Product
 
 class ReviewSerializer(serializers.ModelSerializer):
-    checklist = serializers.ListField(
-        child=serializers.CharField(max_length=100)
-    )
+    checklist = serializers.ListField(child=serializers.CharField(max_length=100))
 
     class Meta:
         model = Review
-        fields = ['id', 'author', 'checklist', 'additional_comments', 'created_at', 'score']
-        fields = ['id', 'author', 'checklist', 'additional_comments', 'created_at', 'score']
-        read_only_fields = ['author', 'created_at', 'score']
+        fields = [
+            "id",
+            "author",
+            "products",
+            "checklist",
+            "additional_comments",
+            "created_at",
+            "score",
+        ]
+        read_only_fields = ["author", "created_at", "score"]
 
     def create(self, validated_data):
         

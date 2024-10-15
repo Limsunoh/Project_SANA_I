@@ -128,7 +128,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (chatLink) {
         chatLink.addEventListener("click", function (event) {
             event.preventDefault();  // 기본 동작 방지
-            event.stopPropagation()
+            event.stopPropagation();
             const accessToken = getAccessToken();
             const currentUsername = localStorage.getItem("current_username");
 
@@ -142,7 +142,6 @@ document.addEventListener("DOMContentLoaded", function () {
             window.location.href = `/api/products/1on1-chat/${currentUsername}/`;
         });
     }
-
 
     // 검색 기능 구현
     if (searchButton && searchInput) {
@@ -277,4 +276,34 @@ document.addEventListener("DOMContentLoaded", function () {
             sendButton.click();
         }
     });
+
+    // 알림 배지를 업데이트하는 함수
+    async function updateChatAlertBadge() {
+        try {
+            const response = await fetchWithAuth("/api/products/chatroom/new_messages/");
+            if (!response.ok) throw new Error("새 메시지 확인 실패");
+
+            const data = await response.json();
+            const newMessagesCount = data.new_messages_count;
+
+            const chatLink = document.getElementById("chat-link");
+
+            if (newMessagesCount > 0) {
+                chatLink.classList.add("new-message-alert");
+                chatLink.innerHTML = `내 채팅방 <span class="badge bg-danger">${newMessagesCount}</span>`;
+            } else {
+                chatLink.classList.remove("new-message-alert");
+                chatLink.innerHTML = "내 채팅방";
+            }
+        } catch (error) {
+            console.error("새 메시지 확인 실패:", error);
+        }
+    }
+
+    // 페이지 로드 후 10초마다 새 메시지 체크 (비동기적, 로그인 상태 확인)
+    setInterval(() => {
+        if (getAccessToken()) {
+            updateChatAlertBadge();
+        }
+    }, 10000);
 });
