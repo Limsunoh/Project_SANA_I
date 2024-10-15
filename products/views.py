@@ -390,15 +390,34 @@ class TransactionStatusUpdateAPIView(APIView):
         room = get_object_or_404(ChatRoom, id=room_id)
         status, created = TransactionStatus.objects.get_or_create(room=room)
 
-        # 판매 완료 및 구매 완료 상태 업데이트
-        if request.data.get("is_sold") is not None:
-            status.is_sold = request.data.get("is_sold")
-        if request.data.get("is_completed") is not None:
-            status.is_completed = request.data.get("is_completed")
+        # 디버깅 로그 추가
+        print(f"User: {request.user}, Room: {room}, Created: {created}")
 
-        status.save()
-        serializer = TransactionStatusSerializer(status)
-        return Response(serializer.data)
+        # 판매자일 경우 is_completed 업데이트
+        if request.user == room.seller:
+            print("판매자 거래 완료 처리")
+            if request.data.get("is_completed") is not None:
+                status.is_completed = request.data.get("is_completed")
+            else:
+                status.is_completed = True
+            print(f"Updated is_completed: {status.is_completed}")
+
+        # 구매자일 경우 is_sold 업데이트
+        if request.user == room.buyer:
+            print("구매자 거래 완료 처리")
+            if request.data.get("is_sold") is not None:
+                status.is_sold = request.data.get("is_sold")
+            else:
+                status.is_sold = True
+            print(f"Updated is_sold: {status.is_sold}")
+
+        try:
+            status.save()  # DB 저장
+            serializer = TransactionStatusSerializer(status)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(f"Error saving transaction status: {e}")  # 에러 로그
+            return Response({"error": str(e)}, status=500)
 
 
 # 새로운 메시지 알림 확인 API
