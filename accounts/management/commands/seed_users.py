@@ -1,15 +1,18 @@
+# 한국어로 유저 데이터를 시딩하기 위한 명령어
+# 터미널에 python manage.py seed_users 를 입력해 num_users 만큼의 유저 데이터 생성
+
 from django.core.management.base import BaseCommand
 from accounts.models import User
 import random
 from faker import Faker
-from django.utils import timezone # 현재 시간으로 created at 설정하기 위한 라이브러리
+from django.utils import timezone
 
 class Command(BaseCommand):
     help = 'Seed the database with realistic Korean user data'
 
     def handle(self, *args, **options):
         fake = Faker('ko_KR')  # 한국어 locale 설정
-        num_users = 20  # 생성할 사용자 수 = 본격적 테스트 규모 = 100명정도?
+        num_users = 20  # 생성할 사용자 수
 
         # nickname 생성에 사용할 단어 리스트
         first_words = ['행복한', '용감한', '똑똑한', '즐거운', '멋진', '강한', '귀여운', '친절한', '열정적인', '차분한',
@@ -41,37 +44,23 @@ class Command(BaseCommand):
             "다시 찾아주세요."
         ]
 
+        # num_users 만큼 반복하며 유저 데이터 생성
         for _ in range(num_users):
-            # 1. username: 영어, 공백 없음
             username = fake.user_name()
-
-            # 2. password: 해싱 전 비밀번호
             password = fake.password(length=10)
 
-            # 3. name: 성과 이름 조합 (한글 이름)
             name = fake.name()
-
-            # 4. nickname: 두 단어 조합 (한글)
             nickname = random.choice(first_words) + random.choice(second_words)
 
-            # 5. postcode: 5자리 숫자
             postcode = fake.postcode()
-
-            # 6. mainaddress 및 subaddress: 같은 도시명 사용
             city = fake.city()
             mainaddress = f"{city} {fake.street_name()} {fake.building_number()}"
             subaddress = f"{city} {fake.street_address()}"
-
-            # 7. email
             email = fake.email()
+            birth = fake.date_of_birth(minimum_age=18, maximum_age=65) # 나이는 min~max 에서 랜덤
 
-            # 8. birth: 생년월일
-            birth = fake.date_of_birth(minimum_age=18, maximum_age=65)
-
-            # 9. introduce: 소개 문구
             introduce = random.choice(introduces)
 
-            # 사용자 생성
             user = User.objects.create(
                 username=username,
                 email=email,
@@ -84,12 +73,14 @@ class Command(BaseCommand):
                 introduce=introduce,
                 created_at=timezone.now(),
             )
-
-            # 비밀번호 설정 (해싱)
+            
+            # 비밀번호 해싱
             user.set_password(password)
+
+            # 유저 데이터 저장
             user.save()
 
-            # 사용자 ID와 해싱 전 비밀번호 출력
+            # 사용자 ID & 해싱 전 비밀번호 출력
             print(f"ID: {user.username}, Password: {password}")
 
         self.stdout.write(self.style.SUCCESS('사용자 데이터 시딩이 완료되었습니다.'))

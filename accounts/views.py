@@ -43,7 +43,7 @@ class UserCreateView(CreateAPIView):
 
 def activate_user(request, pk, token):
     try:
-        # pk를 디코딩(암호화된걸 복호화하는느낌)하여 사용자 ID 얻기
+        # pk를 디코딩해서 사용자 ID 얻기
         pk = force_str(urlsafe_base64_decode(pk))
         user = User.objects.get(pk=pk)
         print(pk)
