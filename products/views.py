@@ -339,19 +339,25 @@ class ChatRoomListView(APIView):
         serializer = ChatRoomSerializer(chat_rooms, many=True)
         return Response(serializer.data, status=200)
 
+
 # 거래 상태를 업데이트하는 API
 class TransactionStatusUpdateAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, room_id, *args, **kwargs):
         room = get_object_or_404(ChatRoom, id=room_id)
-        status = get_object_or_404(TransactionStatus, room=room)
+
+        # TransactionStatus가 없을 때 새로 생성
+        status, created = TransactionStatus.objects.get_or_create(room=room)
+        if created:
+            print(f"New TransactionStatus created for room {room_id}")  # 디버깅용 로그
+
         serializer = TransactionStatusSerializer(status)
         return Response(serializer.data)
 
     def post(self, request, room_id, *args, **kwargs):
         room = get_object_or_404(ChatRoom, id=room_id)
-        status = get_object_or_404(TransactionStatus, room=room)
+        status, created = TransactionStatus.objects.get_or_create(room=room)
 
         # 판매 완료 및 구매 완료 상태 업데이트
         if request.data.get("is_sold") is not None:
@@ -362,6 +368,7 @@ class TransactionStatusUpdateAPIView(APIView):
         status.save()
         serializer = TransactionStatusSerializer(status)
         return Response(serializer.data)
+
 
 # 채팅방 HTML 페이지를 보내주는 View
 class ChatRoomDetailHTMLView(TemplateView):
