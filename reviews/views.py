@@ -5,13 +5,6 @@ from products.models import Product
 from django.shortcuts import get_object_or_404
 
 
-
-# class UserReviewListView(generics.ListAPIView):
-#     queryset = Review.objects.all()
-#     serializer_class = ReviewSer
-
-
-
 # 리뷰 목록 조회 및 생성
 class ReviewListCreateView(generics.ListCreateAPIView):
     # queryset = Review.objects.all()
