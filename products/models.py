@@ -54,7 +54,7 @@ class ChatRoom(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"채팅방: 상품: {self.product.title} (판매자: {self.seller.username}, 구매자: {self.buyer.username})"
+        return f"채팅방:{self.pk} 상품: {self.product.title} (판매자: {self.seller.username}, 구매자: {self.buyer.username})"
 
 
 # 채팅 메시지 모델: 각 메시지의 내용을 관리

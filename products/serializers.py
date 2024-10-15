@@ -240,6 +240,9 @@ class ChatRoomSerializer(serializers.ModelSerializer):
 
 
 class TransactionStatusSerializer(serializers.ModelSerializer):
+    seller = serializers.CharField(source='room.seller.username', read_only=True)
+    buyer = serializers.CharField(source='room.buyer.username', read_only=True)
+
     class Meta:
         model = TransactionStatus
-        fields = ["id", "room", "is_sold", "is_completed", "updated_at"]
+        fields = ['id', 'room', 'is_sold', 'is_completed', 'updated_at', 'seller', 'buyer']
