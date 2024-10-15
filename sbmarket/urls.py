@@ -21,6 +21,7 @@ from django.shortcuts import redirect
 from django.conf.urls.static import static
 from django.conf import settings
 from products.views import HomePageView
+from products import views
 
 
 urlpatterns = [

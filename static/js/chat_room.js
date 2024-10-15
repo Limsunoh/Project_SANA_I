@@ -148,7 +148,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 페이지 로드 시 초기 메시지 목록을 불러오고, 거래 상태 확인
     $(document).ready(function () {
-        loadMessages();
-        checkTransactionStatus();  // 거래 상태 확인
+        loadMessages(true);
+        // 5초마다 새로운 메시지 확인 (롱 폴링 구현)
+        setInterval(function () {
+            loadMessages(false);
+        }, 3000);
     });
 });
