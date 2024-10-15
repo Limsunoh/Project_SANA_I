@@ -33,7 +33,9 @@ class Product(models.Model):
     likes = models.ManyToManyField(User, related_name='like_products', blank=True)
     # 해시태그 사용
     tags = models.ManyToManyField(Hashtag, related_name= "products", blank=True)
-    reviews = models.ForeignKey(Review, on_delete=models.CASCADE, related_name= "product_reviews", null= True, blank= True)
+    # 리뷰 참조 사용 / foreignKey를 사용하기 때문에 필요 없음 related_name 사용 함
+    # reviews = models.ForeignKey(Review, on_delete=models.CASCADE, related_name= "products_reviews", null= True, blank= True)
+    
     
     def __str__(self):
         return f"User:{self.author} (Status:{self.status})"
@@ -51,6 +53,8 @@ class ChatRoom(models.Model):
     buyer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chatrooms_as_buyer')
     product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name='chatrooms')
     created_at = models.DateTimeField(auto_now_add=True)
+    review_requested = models.BooleanField(default= False)
+    status_complate = models.BooleanField(default= False)
 
     def __str__(self):
         return f"채팅방: 상품: {self.product.title} (판매자: {self.seller.username}, 구매자: {self.buyer.username})"

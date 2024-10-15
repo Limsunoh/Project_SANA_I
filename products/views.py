@@ -53,23 +53,23 @@ from sbmarket.config import OPENAI_API_KEY
 logger = logging.getLogger(__name__)
 
 
-class ReviewSerializer(serializers.ModelSerializer):
-    checklist = serializers.ListField(
-        child=serializers.CharField(max_length=100)
-    )
+# class ReviewSerializer(serializers.ModelSerializer):
+#     checklist = serializers.ListField(
+#         child=serializers.CharField(max_length=100)
+#     )
     
-    class Meta:
-        model = Review
-        fields = ['id', 'author', 'products', 'checklist', 'additional_comments', 'created_at', 'score']
-        read_only_fields = ['author', 'created_at', 'score']
+#     class Meta:
+#         model = Review
+#         fields = ['id', 'author', 'products', 'checklist', 'additional_comments', 'created_at', 'score']
+#         read_only_fields = ['author', 'created_at', 'score']
 
-    def create(self, validated_data):
-        # 리뷰를 먼저 생성한 후, score를 계산합니다.
-        checklist = validated_data.get('checklist', [])
-        review = Review.objects.create(**validated_data)
-        review.score = review.total_score()  # 총점 계산
-        review.save()
-        return review
+#     def create(self, validated_data):
+#         # 리뷰를 먼저 생성한 후, score를 계산합니다.
+#         checklist = validated_data.get('checklist', [])
+#         review = Review.objects.create(**validated_data)
+#         review.score = review.total_score()  # 총점 계산
+#         review.save()
+#         return review
 
 
 class ProductListAPIView(ListCreateAPIView):
@@ -225,6 +225,11 @@ class LikeListForUserAPIView(APIView):
         liked_products = Product.objects.filter(likes=user)
         serializer = ProductListSerializer(liked_products, many=True)
         return Response(serializer.data, status=200)
+
+'''
+───────────────────────────────────────────────────────────────────────────────────────────────────────────
+# Chat 기능 구현
+'''
 
 # 새로운 채팅방 만들기
 class ChatRoomCreateAPIView(APIView):
@@ -512,7 +517,6 @@ class LikeProductsPageView(TemplateView):
         profile_user = get_object_or_404(User, username=username)
         context['profile_user'] = profile_user
         return context
-
 
 # 상품 수정용 뷰 추가   
 class ProductEditPageView(TemplateView):

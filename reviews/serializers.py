@@ -9,8 +9,8 @@ class ReviewSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Review
-        fields = ['id', 'author', 'checklist', 'additional_comments', 'created_at', 'score']
-        read_only_fields = ['author', 'created_at', 'score']
+        fields = ['id', 'author', 'checklist', 'additional_comments', 'created_at']
+        read_only_fields = ['author', 'created_at']
 
     def create(self, validated_data):
         request = self.context.get('request')
@@ -21,8 +21,7 @@ class ReviewSerializer(serializers.ModelSerializer):
             product = Product.objects.get(pk=product_pk)
         except Product.DoesNotExist:
             raise serializers.ValidationError(f"{product_pk} 게시글을 찾을 수 없습니다.")
-
-        validated_data['products'] = product
+        validated_data['product'] = product
         
         # 리뷰 생성 & 점수 계산
         # checklist = validated_data.get('checklist', [])

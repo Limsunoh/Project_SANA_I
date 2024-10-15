@@ -1,3 +1,4 @@
+/* 채팅 컨테이너 스타일 */
 .chat-container {
     max-width: 800px;
     margin: 50px auto;
@@ -7,6 +8,7 @@
     background-color: #f8f9fa;
 }
 
+/* 채팅 메시지 창 */
 .chat-messages {
     height: 400px;
     overflow-y: scroll;
@@ -17,12 +19,14 @@
     border: 1px solid #ddd;
 }
 
+/* 메시지 */
 .message {
     display: flex;
     align-items: flex-start;
     margin-bottom: 15px;
 }
 
+/* 프로필 이미지 */
 .message .profile-img {
     width: 40px;
     height: 40px;
@@ -30,6 +34,7 @@
     margin-right: 15px;
 }
 
+/* 메시지 내용 */
 .message .content {
     max-width: 70%;
 }
@@ -48,6 +53,7 @@
     color: #777;
 }
 
+/* 나의 메시지 */
 .my-message {
     justify-content: flex-end;
 }
@@ -62,6 +68,7 @@
     margin-right: 0;
 }
 
+/* 채팅 폼 */
 .chat-form {
     display: flex;
     align-items: center;
@@ -74,21 +81,51 @@
     margin-right: 10px;
 }
 
-/* 메시지 전송 버튼 스타일 */
+/* 메시지 전송 버튼 */
 .chat-form button {
     height: 50px;
-    width: 50px; /* 너비를 설정하여 버튼이 둥글게 보이도록 조정 */
+    width: 50px;
     border-radius: 50%;
-    background-color: #007bff; /* 파란색 배경 */
-    border: none; /* 테두리 제거 */
-    color: white; /* 아이콘 색상 */
-    font-size: 20px; /* 아이콘 크기 */
+    background-color: #007bff;
+    border: none;
+    color: white;
+    font-size: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.3s ease; /* 호버 시 색상 변화 효과 */
+    transition: background-color 0.3s ease;
 }
 
 .chat-form button:hover {
-    background-color: #0056b3; /* 호버 시 배경색 */
+    background-color: #0056b3;
+}
+
+/* 리뷰 요청 버튼 */
+#request-review-btn, #write-review-btn {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    margin-bottom: 10px;
+    text-align: center;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#request-review-btn {
+    background-color: #ffc107; /* 경고 색상 */
+    color: white;
+}
+
+#write-review-btn {
+    background-color: #28a745; /* 성공 색상 */
+    color: white;
+}
+
+#request-review-btn:hover {
+    background-color: #e0a800; /* 호버 시 색상 변경 */
+}
+
+#write-review-btn:hover {
+    background-color: #218838; /* 호버 시 색상 변경 */
 }
