@@ -1,0 +1,107 @@
+/* review_create.css */
+
+/* 기본 폼 레이아웃 설정 */
+.review-form-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.review-form-title {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #343a40;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-weight: bold;
+    color: #495057;
+}
+
+/* 체크박스 스타일 */
+.checklist-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.form-check:hover {
+    background-color: #e9ecef;
+}
+
+.form-check input {
+    margin-right: 10px;
+}
+
+.form-check label {
+    margin-bottom: 0;
+    color: #212529;
+}
+
+/* 추가 코멘트 텍스트 박스 */
+#additional-comments {
+    width: 100%;
+    height: 150px;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    resize: none;
+    font-size: 1rem;
+    color: #495057;
+    background-color: #fff;
+}
+
+#additional-comments:focus {
+    border-color: #80bdff;
+    outline: none;
+}
+
+/* 제출 버튼 */
+.review-submit-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.review-submit-btn:hover {
+    background-color: #0056b3;
+}
+
+.review-submit-btn:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.alert {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #ffdddd;
+    border-left: 6px solid #f44336;
+    color: #d8000c;
+}

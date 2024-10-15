@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/review_create.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>리뷰 작성</h1>
+    <form id="review-form">
+    <label>Check List</label>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="quality" id="check-quality">
+        <label class="form-check-label" for="check-quality">
+            품질이 우수해요
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="good_value" id="check-good-value">
+        <label class="form-check-label" for="check-good-value">
+            합리적인 가격이에요
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="durability" id="check-durability">
+        <label class="form-check-label" for="check-durability">
+            내구성이 뛰어나요
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="customer_service" id="check-customer-service">
+        <label class="form-check-label" for="check-customer-service">
+            친절하고 매너가 좋아요
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="good_delivery" id="check-good-delivery">
+        <label class="form-check-label" for="check-good-delivery">
+            거래약속을 잘 지켜요
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="bad_quality" id="check-bad-quality">
+        <label class="form-check-label" for="check-bad-quality">
+            영 좋지 않아요
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="bad_value" id="check-bad-value">
+        <label class="form-check-label" for="check-bad-value">
+            돈이 아까워요
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="broken" id="check-broken">
+        <label class="form-check-label" for="check-broken">
+            못 쓸 걸 팔았어요
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="bad_service" id="check-bad-service">
+        <label class="form-check-label" for="check-bad-service">
+            불친절하게 느껴졌어요
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="bad_delivery" id="check-bad-delivery">
+        <label class="form-check-label" for="check-bad-delivery">
+            시간을 안 지켜요
+        </label>
+    </div>
+
+    <label for="comments">추가 의견</label>
+    <textarea id="comments" name="comments" class="form-control"></textarea>
+
+    <button type="submit" class="btn btn-primary mt-3">리뷰 작성</button>
+</form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery 추가 -->
+<script src="{% static 'js/review_create.js' %}"></script>
+{% endblock %}
