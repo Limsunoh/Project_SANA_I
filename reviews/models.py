@@ -1,6 +1,7 @@
 from django.db import models
 from sbmarket import settings
 from multiselectfield import MultiSelectField
+from django.db.models import Sum
 
 CHECKLIST_OPTIONS = (
     ('quality', '품질이 우수해요'),
@@ -19,17 +20,20 @@ class Review(models.Model):
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name='reviews', on_delete=models.CASCADE
     )
-    products = models.ForeignKey(
+    product = models.OneToOneField(  # 수정: 단수형으로 변경
         'products.Product', related_name='reviewed_products', on_delete=models.CASCADE
     )
     checklist = MultiSelectField(choices=CHECKLIST_OPTIONS)
     additional_comments = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
-    score = models.FloatField(default=0)  # 개별 리뷰 기본 점수
+    '''
+    # 리뷰 점수 관리 로직 모음
+    '''
+    score = models.FloatField()  # 리뷰 점수
 
     def total_score(self):
-        score_mapping = {
+        score_mapping = { 
             'quality': 0.5,
             'good_value': 0.5,
             'durability': 0.5,
@@ -40,24 +44,31 @@ class Review(models.Model):
             'broken': -1,
             'bad_service': -1,
             'bad_delivery': -1
-        }
+        } # 선택되지 않은 체크리스트 값 = 0
         score = 0
-        
 
-        # 다중선택한 것들의 점수를 합치기
+        # 리뷰 한 개 / 선택한 항목 점수를 합한 값 추가 로직
         for choice in self.checklist:
             score += score_mapping.get(choice, 0)
         return score
 
     def save(self, *args, **kwargs):
-        # 리뷰를 생성할 때 Product 모델의 reviews 필드도 업데이트
-        super().save(*args, **kwargs)
-        product = self.products
-        product.reviews = self  # Product의 reviews 필드를 이 Review로 업데이트
-        product.save()          # Product 저장
+        # 점수 계산
+        self.score = self.total_score()  # 리뷰 점수 계산
+
+        # 유저의 기본 점수 조정
+        if hasattr(self.author, 'base_score'):  # base_score 속성 체크
+            self.author.base_score = 25         # 유저 최초 리뷰점수
+        self.author.base_score += self.score    # 리뷰 점수를 유저 점수에 추가
+        self.author.save()  # 유저에 저장
+        
+        # 리뷰에 저장
+        super().save(*args, **kwargs) 
 
     def __str__(self):
-        return f"{self.author.username} 의 {self.products.name} 에 대한 리뷰입니다"
+        return f"{self.author.username}의 {self.product.name}에 대한 리뷰입니다"
 
     class Meta:
-        unique_together = ('author', 'products')
+        constraints = [ 
+            models.UniqueConstraint(fields=['author', 'product'], name='unique_review')
+        ]

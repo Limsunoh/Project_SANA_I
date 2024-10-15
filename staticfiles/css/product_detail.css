@@ -1,0 +1,124 @@
+/* 전체 컨테이너 */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.product-detail {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+/* 이미지 갤러리 섹션 - 세로 정렬 */
+.images {
+    display: flex;
+    flex-direction: column;  /* 세로 정렬 */
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+/* 이미지의 가로 크기는 동일하게, 세로 크기는 비율을 유지 */
+.images img {
+    width: 100%;  /* 가로 크기를 부모 컨테이너에 맞춤 */
+    max-width: 400px;  /* 최대 가로 크기를 400px로 제한 */
+    height: auto;  /* 세로 크기는 자동으로 비율 유지 */
+    object-fit: contain;  /* 이미지 비율 유지, 이미지가 잘리지 않도록 */
+    border-radius: 10px;
+}
+
+#main-product-image {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+/* 작성자 정보 섹션 - 프로필 사진과 작성자명, 지역명 정렬 */
+.author-info {
+    display: flex;
+    align-items: center;  /* 수직 가운데 정렬 */
+    gap: 10px;  /* 프로필 사진과 이름/지역 사이에 여백 */
+    margin-bottom: 20px;
+}
+
+.author-profile {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+
+.author-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.author-details p {
+    margin: 0;  /* 작성자명과 지역명 사이의 여백 제거 */
+}
+
+.product-actions {
+    margin-left: auto;  /* 평판 및 채팅하기 버튼을 오른쪽으로 정렬 */
+}
+
+.product-status,
+.product-details {
+    margin-bottom: 20px;
+}
+
+.product-details p {
+    margin: 5px 0;
+}
+
+/* 해시태그 섹션 */
+.hashtags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    background-color: #f5f5f5;
+    padding: 8px;
+    border-radius: 8px;
+    margin-bottom: 20px;  /* 다른 제품 정보와 자연스럽게 떨어지도록 여백 추가 */
+}
+
+.hashtag {
+    background: #2C2C2C;
+    color: #FFFFFF;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    text-align: center;
+}
+
+/* 찜하기 섹션 */
+.like-section {
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 10px;
+}
+
+.like-btn {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+/* 부트스트랩 하트 아이콘 크기 조정 */
+.heart-icon {
+    font-size: 30px; /* 아이콘 크기 */
+    color: #ff6b6b;  /* 기본 하트 색상 */
+    transition: color 0.3s ease;
+}
+
+/* 찜한 상태의 채워진 하트 색상 */
+.heart-icon.liked {
+    color: #ff0000;  /* 찜하기 했을 때의 색상 */
+}
+

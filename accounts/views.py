@@ -28,7 +28,7 @@ from .serializers import CustomTokenObtainPairSerializer, UserListSerializer
 class UserCreateView(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permisson_classes = [AllowAny]
+    permission_classes = [AllowAny]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -83,7 +83,18 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
     # 사용자 프로필 반환
     def get_queryset(self):
         return User.objects.all()
-    
+
+    def get(self, request, *args, **kwargs):
+        user = self.get_object()  # 현재 사용자 객체 가져오기
+        serializer = self.get_serializer(user)
+
+        # 유저의 총 점수 추가
+        total_score = user.total_review_score()  # 총 점수 계산
+        data = serializer.data
+        data['total_score'] = total_score  # 총 점수를 응답 데이터에 추가
+
+        return Response(data)
+
     def destroy(self, request, *args, **kwargs):
         # `lookup_field`를 사용하여 해당 사용자를 찾기
         user = get_object_or_404(User, username=kwargs.get("username"))

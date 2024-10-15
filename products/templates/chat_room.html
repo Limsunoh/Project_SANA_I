@@ -10,6 +10,17 @@
     <!-- product_id 및 room_id 데이터를 포함한 chat-container 요소 -->
     <div class="chat-container" data-product-id="{{ product_id }}" data-room-id="{{ room_id }}">
         <h1>채팅방</h1>
+        
+        <!-- 판매자일 경우에만 리뷰 요청 버튼 표시 -->
+        {% if request.user == room.seller %}
+        <button id="request-review-btn" class="btn btn-warning mb-3">리뷰 요청</button>
+        {% endif %}
+        
+        <!-- 구매자일 경우에만 리뷰 작성 버튼 표시 -->
+        {% if request.user == room.buyer %}
+        <button id="write-review-btn" class="btn btn-success mb-3">리뷰 작성</button>
+        {% endif %}
+        
         <div id="chat-messages" class="chat-messages">
             <!-- 메시지 목록이 여기에 표시됩니다 -->
         </div>
@@ -22,6 +33,37 @@
 {% endblock %}
 
 {% block scripts %}
+<link rel="stylesheet" href="{% static 'css/chat_romm.css' %}">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery 추가 -->
 <script src="{% static 'js/chat_room.js' %}"></script>
+
+<script>
+    $(document).ready(function() {
+        // 리뷰 요청 버튼 클릭 시
+        $('#request-review-btn').on('click', function() {
+            var roomId = $('.chat-container').data('room-id');
+            
+            $.ajax({
+                url: '/api/chat/' + roomId + '/request-review/', // 리뷰 요청 API 엔드포인트
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'  // CSRF 토큰 추가
+                },
+                success: function(response) {
+                    alert('리뷰 요청을 보냈습니다.');
+                },
+                error: function(xhr, status, error) {
+                    alert('리뷰 요청 중 오류가 발생했습니다.');
+                }
+            });
+        });
+
+        // 리뷰 작성 버튼 클릭 시
+        $('#write-review-btn').on('click', function() {
+            var productId = $('.chat-container').data('product-id');
+            // 리뷰 작성 페이지로 이동 (여기에 실제 리뷰 작성 페이지 URL로 수정)
+            window.location.href = '/products/' + productId + '/write-review/';
+        });
+    });
+</script>
 {% endblock %}
