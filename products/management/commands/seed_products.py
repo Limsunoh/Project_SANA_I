@@ -1,4 +1,6 @@
-# products/management/commands/seed_products.py
+# 한국어로 상품 데이터를 시딩하기 위한 명령어
+# media\images 에 default_image.jpg 라는 이름을 가진 이미지 파일을 넣어야 정상 작동
+# 터미널에 python manage.py seed_products 를 입력해 num_products 만큼의 상품 데이터 생성
 
 from django.core.management.base import BaseCommand
 from products.models import Product, Hashtag, Image

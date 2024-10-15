@@ -40,45 +40,16 @@ from .serializers import ReviewSerializer
 from .pagnations import ProductPagnation
 from django.views.generic import TemplateView, DetailView
 
-# AI 관련 임포트
+# [AI 서비스 관련 임포트] OpenAI 관련 라이브러리
 import openai
 import json
 import logging
 import re
-from openai import AuthenticationError, RateLimitError, OpenAIError
+from sbmarket.config import OPENAI_API_KEY # GPT 키는 config 로 이전
 
-# config 안의 Open AI Key
-from sbmarket.config import OPENAI_API_KEY
-
-# 로깅 설정
 logger = logging.getLogger(__name__)
 
-
-class ReviewSerializer(serializers.ModelSerializer):
-    checklist = serializers.ListField(child=serializers.CharField(max_length=100))
-
-    class Meta:
-        model = Review
-        fields = [
-            "id",
-            "author",
-            "products",
-            "checklist",
-            "additional_comments",
-            "created_at",
-            "score",
-        ]
-        read_only_fields = ["author", "created_at", "score"]
-
-    def create(self, validated_data):
-        # 리뷰를 먼저 생성한 후, score를 계산합니다.
-        checklist = validated_data.get("checklist", [])
-        review = Review.objects.create(**validated_data)
-        review.score = review.total_score()  # 총점 계산
-        review.save()
-        return review
-
-
+# [상품 목록 API] 상품 목록 CR
 class ProductListAPIView(ListCreateAPIView):
     pagination_class = ProductPagnation
     serializer_class = ProductListSerializer
@@ -89,7 +60,7 @@ class ProductListAPIView(ListCreateAPIView):
         order_by = self.request.query_params.get("order_by")
         queryset = Product.objects.all()
 
-        # 검색
+        # [검색] 상품 제목, 내용, 태그로 검색
         if search:
             queryset = queryset.filter(
                 Q(title__icontains=search)
@@ -97,7 +68,7 @@ class ProductListAPIView(ListCreateAPIView):
                 | Q(tags__name__icontains=search)
             ).distinct()
 
-        # 정렬
+        # [정렬] 좋아요, 조회순, 최신순 으로 정렬
         if order_by == "likes":
             queryset = queryset.annotate(likes_count=Count("likes")).order_by(
                 "-likes_count"
@@ -108,16 +79,21 @@ class ProductListAPIView(ListCreateAPIView):
             queryset = queryset.order_by("-created_at")
         return queryset
 
+     # [상품 목록 조회] 부모 클래스의 get 메서드를 호출
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
+    # [상품 생성 요청] 이미지를 포함한 상품 생성 요청을 처리
     def post(self, request, *args, **kwargs):
         self.serializer_class = ProductCreateSerializer
         images = request.FILES.getlist("images")
-        if not images:  # 이미지 key error 처리
+
+        if not images:
             return Response({"ERROR": "Image file is required."}, status=400)
+
         return super().post(request, *args, **kwargs)
 
+    # [상품 생성] 이미지 및 해시태그를 추가하고 저장
     def perform_create(self, serializer):
         images = self.request.FILES.getlist("images")
         tags_raw = self.request.data.get("tags")
@@ -128,12 +104,10 @@ class ProductListAPIView(ListCreateAPIView):
             Image.objects.create(product=product, image_url=image)
 
         for tag in tags:
-            hashtag, created = Hashtag.objects.get_or_create(
-                name=tag
-            )  # 해시태그가 존재하지 않으면 생성
-            product.tags.add(hashtag)  # 제품에 해시태그 추가
+            hashtag, created = Hashtag.objects.get_or_create(name=tag)
+            product.tags.add(hashtag)
 
-
+# [사용자 상품 목록 API] 특정 사용자가 작성한 상품 목록 조회
 class UserProductsListView(ListAPIView):
     serializer_class = ProductListSerializer
     permission_classes = [AllowAny]
@@ -143,52 +117,53 @@ class UserProductsListView(ListAPIView):
         return Product.objects.filter(author__username=username)
 
 
+# [상품 상세 API] 상품 조회, 수정, 삭제 처리
 class ProductDetailAPIView(UpdateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductDetailSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
+    # [상품 조회] 상품 ID(pk)로 단일 상품의 세부 정보 반환
     def get(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
         serializer = ProductDetailSerializer(product)
-        # print(f"product: {product}, PK {pk}")
-        # serializer = self.get_serializer(product)
-        # review_serializer = ReviewSerializer(reviews)
         return Response(serializer.data, status=200)
 
+    # [상품 수정] 이미지와 해시태그를 포함한 상품 정보 수정 처리
     def perform_update(self, serializer):
-        instance = serializer.instance  # 현재 수정 중인 객체
+        instance = serializer.instance  # 현재 수정 중인 상품 객체
         images_data = self.request.FILES.getlist("images")
         tags_raw = self.request.data.get("tags")
         tags = tags_raw.split(",")
 
-        # 요청에 이미지가 포함된 경우
+        # 이미지가 포함된 경우 기존 이미지를 삭제하고 새 이미지 저장
         if images_data:
-            # 기존 이미지 삭제
-            instance.images.all().delete()  # 기존 이미지를 먼저 삭제
-            # 새 이미지 저장
+            instance.images.all().delete()
             for image_data in images_data:
                 Image.objects.create(product=instance, image_url=image_data)
 
-        if tags is not None:  # 새로운 해시태그가 제공된 경우
-            # 기존 해시태그를 삭제하고 새로운 해시태그를 추가
-            instance.tags.clear()  # 기존 해시태그 삭제
+        # 새로운 해시태그가 제공된 경우 기존 태그를 지우고 새 태그 추가
+        if tags:
+            instance.tags.clear()
             for tag in tags:
                 hashtag, created = Hashtag.objects.get_or_create(name=tag)
-                instance.tags.add(hashtag)  # 제품에 해시태그 추가
+                instance.tags.add(hashtag)
 
-        serializer.save()  # 수정 후 저장
+        serializer.save()  # 수정된 상품 저장
 
+    # [상품 삭제] 상품 ID(pk)로 해당 상품 삭제
     def delete(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
         product.delete()
         return Response(status=204)
 
 
-# 상품 수정용 뷰 추가
+
+# [상품 수정 페이지 뷰] 상품 수정 템플릿에 필요한 데이터 제공
 class ProductEditPageView(TemplateView):
     template_name = "product_edit.html"
 
+    # [컨텍스트 데이터 제공] 상품 데이터를 템플릿에 전달
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         product = get_object_or_404(Product, pk=self.kwargs["pk"])
@@ -196,11 +171,12 @@ class ProductEditPageView(TemplateView):
         return context
 
 
+# [좋아요 API] 개별 상품에 대한 찜 상태 조회 및 처리
 class LikeAPIView(APIView):
     serializer_class = ProductListSerializer
     permission_classes = [IsAuthenticated]
 
-    # 개별 제품에 대한 찜 상태 반환
+    # [찜 상태 조회] 요청자가 해당 상품을 찜했는지 여부 반환
     def get(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
 
@@ -210,7 +186,7 @@ class LikeAPIView(APIView):
         # JSON 응답으로 is_liked 값을 반환
         return Response({"is_liked": is_liked}, status=200)
 
-    # 찜하기 기능 처리
+    # [찜하기 및 취소] 이미 찜한 경우 취소, 그렇지 않으면 찜하기 처리
     def post(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
 
@@ -224,10 +200,11 @@ class LikeAPIView(APIView):
         return Response({"message": "찜하기 했습니다."}, status=200)
 
 
-# 내가 찜한 상품 리스트보기
+# [찜한 상품 목록 조회 API] 특정 사용자가 찜한 상품 목록 반환
 class LikeListForUserAPIView(APIView):
     permission_classes = [AllowAny]
 
+    # 사용자가 찜한 상품 목록을 조회하고 반환
     def get(self, request, username):
         user = get_object_or_404(User, username=username)
         liked_products = Product.objects.filter(likes=user)
