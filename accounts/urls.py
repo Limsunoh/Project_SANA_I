@@ -8,7 +8,7 @@ from rest_framework_simplejwt.views import (
 
 app_name = "accounts"
 urlpatterns = [
-    # API 앤드포인트
+    # API 엔드포인트
     path("signup/", views.UserCreateView.as_view(), name="user-signup"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("users/activate/<pk>/<token>/", views.activate_user, name="activate_user"),
