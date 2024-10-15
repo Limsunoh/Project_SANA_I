@@ -1,7 +1,8 @@
 from rest_framework import generics, permissions, serializers
-from .models import Review
 from .serializers import ReviewSerializer
 from products.models import Product
+from .models import Review
+from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404
 
 
@@ -33,20 +34,18 @@ class ReviewListCreateView(generics.ListCreateAPIView):
         else:
             raise serializers.ValidationError("제품 ID가 필요합니다.")
         
-        # user_pk = self.kwargs['user_id'] 
-        # return Review.objects.filter(user__pk= user_pk)
-        # 점수 계산 후 저장
-        # serializer.save(author=self.request.user)
 
 # 리뷰 조회 및 삭제
 class ReviewDetailView(generics.RetrieveDestroyAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    
-    # def destroy(self, request, *args, **kwargs):
-    #     instance = self.get_object()
-    #     if instance:
-    #         print(f"Deleting review with id: {instance.id}") 
-    #     self.perform_destroy(instance)
-    #     return Response({"message": "리뷰가 성공적으로 삭제되었습니다."}, status=200)
+
+
+class ReviewCreateView(TemplateView):
+    template_name = 'review_create.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['product_id'] = kwargs.get('product_id')
+        return context

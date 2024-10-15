@@ -62,7 +62,7 @@ class ChatMessage(models.Model):
     room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages')
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
     image = models.ImageField(upload_to="images/", blank=True, null=True)
-    content = models.TextField()
+    content = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_read = models.BooleanField(default=False)  # 메시지를 읽었는지 여부
 

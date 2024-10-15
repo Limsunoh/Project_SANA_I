@@ -350,7 +350,12 @@ class ChatMessageCreateAPIView(APIView):
                 status=status.HTTP_403_FORBIDDEN,
             )
 
-        serializer = ChatMessageSerializer(data=request.data)
+        # 이미지가 포함된 경우에 request.FILES로부터 이미지 파일을 가져옴
+        data = request.data.copy()
+        if 'image' in request.FILES:
+            data['image'] = request.FILES['image']
+
+        serializer = ChatMessageSerializer(data=data)
         if serializer.is_valid():
             serializer.save(sender=request.user, room=room)
             return Response(serializer.data, status=201)
@@ -390,34 +395,15 @@ class TransactionStatusUpdateAPIView(APIView):
         room = get_object_or_404(ChatRoom, id=room_id)
         product_status, created = TransactionStatus.objects.get_or_create(room=room)
 
-        # 디버깅 로그 추가
-        print(f"User: {request.user}, Room: {room}, Created: {created}")
-
-        # 판매자일 경우 is_completed 업데이트
+        # 판매자 또는 구매자에 따라 거래 상태 업데이트
         if request.user == room.seller:
-            print("판매자 거래 완료 처리")
-            if request.data.get("is_completed") is not None:
-                product_status.is_completed = request.data.get("is_completed")
-            else:
-                product_status.is_completed = True
-            print(f"Updated is_completed: {product_status.is_completed}")
+            product_status.is_completed = request.data.get("is_completed", product_status.is_completed)
+        elif request.user == room.buyer:
+            product_status.is_sold = request.data.get("is_sold", product_status.is_sold)
 
-        # 구매자일 경우 is_sold 업데이트
-        if request.user == room.buyer:
-            print("구매자 거래 완료 처리")
-            if request.data.get("is_sold") is not None:
-                product_status.is_sold = request.data.get("is_sold")
-            else:
-                product_status.is_sold = True
-            print(f"Updated is_sold: {product_status.is_sold}")
-
-        try:
-            product_status.save()  # DB 저장
-            serializer = TransactionStatusSerializer(product_status)
-            return Response(serializer.data, status=200)
-        except Exception as e:
-            print(f"Error saving transaction status: {e}")  # 에러 로그
-            return Response({"error": str(e)}, status=500)
+        product_status.save()
+        serializer = TransactionStatusSerializer(product_status)
+        return Response(serializer.data)
 
 
 # 새로운 메시지 알림 확인 API
@@ -643,8 +629,8 @@ class ChatRoomDetailHTMLView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        product = get_object_or_404(Product, id=self.kwargs["product_id"])
         context["room_id"] = self.kwargs["room_id"]  # URL에서 room_id를 가져와서 전달
-        context["product_id"] = self.kwargs[
-            "product_id"
-        ]  # URL에서 product_id를 가져와서 전달
+        context["product_id"] = self.kwargs["product_id"]  # URL에서 product_id를 가져와서 전달
+        context["product_title"] = product.title
         return context
