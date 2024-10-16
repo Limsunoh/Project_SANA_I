@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}딸기 마켓 - 사용자 받은 후기 목록{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div id="profile-info" data-username="{{ profile_user.username }}">
+    </div>
+    
+    <h2>{{ profile_user.username }}님이 받은 후기 목록</h2>
+    <div id="user-received-reviews-list" class="review-list d-flex flex-wrap mt-4">
+        <!-- 받은 후기 목록이 채워질 예정 -->
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/received_reviews.js' %}"></script>
+{% endblock %}
