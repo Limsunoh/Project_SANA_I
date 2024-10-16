@@ -9,7 +9,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import serializers
 from products.models import Product
 from products.serializers import ProductListSerializer, ChatRoomSerializer
-from products.models import Review
+from reviews.models import Review
 from reviews.serializers import ReviewSerializer
 from .validata import passwordValidation
 from .models import User
@@ -33,6 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
     mainaddress = serializers.CharField()
     subaddress = serializers.CharField()
     profile_image = serializers.SerializerMethodField()
+    total_score = serializers.FloatField(read_only=True)  # total_score 필드 추가
 
     class Meta:
         model = User
@@ -53,8 +54,9 @@ class UserSerializer(serializers.ModelSerializer):
             "profile_image",
             "introduce",
             "created_at",
+            "total_score",  # 필드에 total_score 추가
         )
-        read_only_fields = ("id", "created_at")
+        read_only_fields = ("id", "created_at", "total_score")
         write_only_fields = ("image",)
 
     # [데이터 유효성 검사] 이메일 입력 여부와 비밀번호 일치 여부 확인.
@@ -90,6 +92,7 @@ class UserSerializer(serializers.ModelSerializer):
         )
         user.set_password(validated_data["password"])
         user.is_active = False
+        user.total_score = 30  # 기본 점수 설정
         # 이메일 인증 후 계정 사용 가능하게 처리 (is_active = True)
 
         user.save() # 상태 저장
@@ -145,7 +148,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     followers = serializers.SerializerMethodField()
     reviews = serializers.SerializerMethodField()
     profile_image = serializers.SerializerMethodField()
-    review_score_total = serializers.FloatField(source='total_review_score', read_only=True)
+    total_score = serializers.FloatField(read_only=True)  # 여기에 total_score 추가
     created_at = serializers.DateTimeField(format="%Y-%m-%d", read_only=True)
 
     class Meta:
@@ -165,7 +168,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "followings",
             "followers",
             "reviews",
-            "review_score_total",
+            "total_score",
         )
 
     def get_profile_image(self, obj):
