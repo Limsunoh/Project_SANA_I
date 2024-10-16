@@ -22,6 +22,7 @@ class User(AbstractUser):
         upload_to="images/", blank=True, default="images/default_profile.jpg"
     )
     introduce = models.TextField(max_length=255)
+    total_score = models.FloatField(default=30)  # 매너점수 30점에서 시작
 
     # [팔로우 기능] 비대칭 관계를 가지는 사용자 간 팔로우 관계 정의
     followings = models.ManyToManyField(
@@ -35,6 +36,3 @@ class User(AbstractUser):
         else:  # 프로필 이미지가 없을 시 static 내 default_image 반환
             return static("images/default_profile.jpg")
 
-    # [리뷰 점수 합산] 사용자가 받은 리뷰의 총 점수를 계산, 기본값은 25
-    def total_review_score(self):
-        return self.reviews.aggregate(Sum('score'))['score__sum'] or 25

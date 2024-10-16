@@ -152,7 +152,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
 
     def get_reviews(self, obj):
         # [리뷰 정보 반환] 해당 상품의 리뷰 목록 반환
-        reviews = Review.objects.filter(products=obj)
+        reviews = Review.objects.filter(product=obj)
         print(f"product: {obj.id}")
         print(f"review_score: {Review.score}")
         return ReviewSerializer(reviews, many=True).data
