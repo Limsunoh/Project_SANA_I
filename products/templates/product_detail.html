@@ -10,13 +10,11 @@
 <div class="container">
     <div class="product-detail">
         <!-- 이미지 섹션 -->
-        <div id="image-gallery" class="images">
-        </div>
+        <div id="image-gallery" class="images"></div>
 
         <!-- 제품 정보 섹션 -->
         <div class="product-info">
             <div class="author-info">
-
                 <!-- 작성자 프로필 이미지 링크 -->
                 <a href="#" class="nav-link author-link" data-author="{{ author_username }}">
                     <img src="{% static 'images/default_profile.jpg' %}" alt="Author Image" class="author-profile" id="author-profile-img">
@@ -51,8 +49,7 @@
             </div>
 
             <!-- 해시태그 섹션 -->
-            <div id="hashtags" class="hashtags">
-            </div>
+            <div id="hashtags" class="hashtags"></div>
         </div>
 
         <!-- 찜하기 버튼 -->
@@ -68,6 +65,12 @@
             <button id="edit-button" class="btn btn-warning">수정</button>
             <button id="delete-button" class="btn btn-danger">삭제</button>
         </div>
+    </div>
+
+    <!-- 상품 후기 섹션 - 상품 세부 정보 아래로 이동 -->
+    <div id="product-review" class="product-review-container">
+        <h3>상품 후기</h3>
+        <!-- 후기가 여기 채워질 예정 -->
     </div>
 </div>
 

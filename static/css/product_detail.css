@@ -122,3 +122,16 @@
     color: #ff0000;  /* 찜하기 했을 때의 색상 */
 }
 
+.product-review-container {
+    width: 100%;
+    max-width: 985px; 
+    margin: 30px auto; 
+    padding: 20px; 
+    border: 1px solid #ddd; 
+    border-radius: 8px; 
+    background-color: #f9f9f9; 
+}
+.card {
+    width: calc(100% - 40px);
+    margin: 20px auto;
+}
