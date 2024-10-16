@@ -33,6 +33,12 @@ body {
     color: #ff5722;
 }
 
+.cropped-banner {
+    height: 300px; /* 원하는 높이로 설정 */
+    object-fit: cover; /* 이미지의 비율을 유지하면서 잘라냄 */
+    width: 100%; /* 전체 너비로 설정 */
+}
+
 /* '내 상점'과 '1:1 채팅' 스타일 */
 .mypage-link .nav-link,
 .chat-link .nav-link {
