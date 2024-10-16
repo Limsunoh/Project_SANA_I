@@ -148,7 +148,9 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         # [조회수 증가] 상품 조회 시 조회수 (hits) 증가
         instance.hits += 1
         instance.save(update_fields=["hits"])
-        return super().to_representation(instance)
+        rep = super().to_representation(instance)
+        rep["status_display"] = instance.get_status_display()  # status의 디스플레이 값을 추가
+        return rep
 
     def get_reviews(self, obj):
         # [리뷰 정보 반환] 해당 상품의 리뷰 목록 반환
@@ -236,3 +238,23 @@ class TransactionStatusSerializer(serializers.ModelSerializer):
     class Meta:
         model = TransactionStatus
         fields = ['id', 'room', 'is_sold', 'is_completed', 'updated_at', 'seller', 'buyer']
+    
+    def update(self, instance, validated_data):
+        request = self.context['request']  # 요청 객체 가져오기
+        room = instance.room
+        
+        # 판매자 또는 구매자에 따라 거래 상태 업데이트
+        if request.user == room.seller:
+            instance.is_completed = validated_data.get('is_completed', instance.is_completed)
+        elif request.user == room.buyer:
+            instance.is_sold = validated_data.get('is_sold', instance.is_sold)
+
+        instance.save()
+
+        # 판매자와 구매자가 모두 거래 완료를 누른 경우 제품 상태를 complete로 변경
+        if instance.is_sold and instance.is_completed:
+            product = instance.room.product  # 연결된 채팅방의 제품 가져오기
+            product.status = 'complete'  # 제품 상태를 'complete'로 변경
+            product.save(update_fields=['status'])  # 변경된 상태 저장
+
+        return instance
