@@ -17,16 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // 모달 요소
     const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
 
-    // 버튼과 아이콘이 제대로 선택되는지 확인
-    if (!likeButton || !heartIcon) {
-        console.error("likeButton 또는 heartIcon 요소를 찾을 수 없습니다.");
-        return;
-    }
-
-    console.log("likeButton 요소 찾음:", likeButton);
-
     // 1. 제품 상세 정보 가져오기
-    // 제품 상세 정보 가져오기
     fetch(apiUrl)
         .then(response => {
             if (!response.ok) {
@@ -71,34 +62,26 @@ document.addEventListener('DOMContentLoaded', function () {
                 hashtagContainer.appendChild(tagElement);
             });
 
-            // 작성자와 현재 로그인한 유저의 닉네임이 같으면 찜하기, 채팅하기 버튼 숨기기
-            const currentUserNickname = localStorage.getItem('current_username');
-            if (currentUserNickname && currentUserNickname.trim() === data.author.trim()) {
-                likeButton.style.display = 'none';
-                chatButton.style.display = 'none';
-            } else {
-                chatButton.style.display = 'inline-block'; // 작성자가 아닌 경우에만 채팅 버튼 표시
-            }
-
-            // 작성자 프로필 링크에 데이터 추가 및 클릭 이벤트 설정
-            authorLinks.forEach(function (link) {
-                link.dataset.author = data.author;
-                link.addEventListener("click", function (event) {
-                    event.preventDefault();  // 기본 링크 동작 방지
-                    const authorUsername = link.dataset.author;
-
-                    if (authorUsername) {
-                        // 작성자 프로필 페이지로 이동
-                        window.location.href = `/api/accounts/profile-page/${authorUsername}/`;
-                    }
-                });
-            });
-
-            // 작성자와 현재 사용자가 다를 경우 수정 및 삭제 버튼 숨기기
-            if (currentUserNickname && currentUserNickname.trim() !== data.author.trim()) {
-                editButton.style.display = 'none';
-                deleteButton.style.display = 'none';
-                console.log("작성자와 사용자가 다름, 수정/삭제 버튼 숨김");
+            // 후기 가져오기 - 상품 설명 하단에 위치
+            const productReviewContainer = document.getElementById("product-review");
+            if (productReviewContainer) {
+                if (data.reviews && data.reviews.length > 0) {
+                    const review = data.reviews[0];  // 하나의 상품에 하나의 후기만 표시
+                    const reviewCard = `
+                        <div class="card mt-3 w-100">
+                            <div class="card-body">
+                                <h5 class="card-title">${review.product_title}</h5>
+                                <p class="card-text">체크리스트: ${review.checklist.join(', ')}</p>
+                                <p class="card-text">추가 코멘트: ${review.additional_comments}</p>
+                                <p class="card-text">점수: ${review.score}</p>
+                                <p class="card-text">작성일: ${new Date(review.created_at).toLocaleDateString("ko-KR")}</p>
+                            </div>
+                        </div>
+                    `;
+                    productReviewContainer.insertAdjacentHTML("beforeend", reviewCard);
+                } else {
+                    productReviewContainer.innerHTML = "<p>아직 후기가 없습니다.</p>";
+                }
             }
         })
         .catch(error => {

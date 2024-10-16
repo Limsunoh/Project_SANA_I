@@ -2,17 +2,18 @@ from django.db import models
 from sbmarket import settings
 from multiselectfield import MultiSelectField
 
+# 한글로 된 체크리스트 옵션
 CHECKLIST_OPTIONS = (
-    ("quality", "품질이 우수해요"),
-    ("good_value", "합리적인 가격이에요"),
-    ("durability", "내구성이 뛰어나요"),
-    ("customer_service", "친절하고 매너가 좋아요"),
-    ("good_delivery", "거래약속을 잘 지켜요"),
-    ("bad_quality", "사진과 너무 달라요"),
-    ("bad_value", "돈이 아까워요"),
-    ("broken", "못 쓸 걸 팔았어요"),
-    ("bad_service", "불친절하게 느껴졌어요"),
-    ("bad_delivery", "시간을 안 지켜요"),
+    ("품질이 우수해요", "품질이 우수해요"),
+    ("합리적인 가격이에요", "합리적인 가격이에요"),
+    ("내구성이 뛰어나요", "내구성이 뛰어나요"),
+    ("친절하고 매너가 좋아요", "친절하고 매너가 좋아요"),
+    ("거래약속을 잘 지켜요", "거래약속을 잘 지켜요"),
+    ("사진과 너무 달라요", "사진과 너무 달라요"),
+    ("돈이 아까워요", "돈이 아까워요"),
+    ("못 쓸 걸 팔았어요", "못 쓸 걸 팔았어요"),
+    ("불친절하게 느껴졌어요", "불친절하게 느껴졌어요"),
+    ("시간을 안 지켜요", "시간을 안 지켜요"),
 )
 
 class Review(models.Model):
@@ -29,17 +30,18 @@ class Review(models.Model):
     is_score_assigned = models.BooleanField(default=False) 
     
     def total_score(self):
+        # 한글 키에 맞춰 score_mapping 업데이트
         score_mapping = {
-            "quality": 0.5,
-            "good_value": 0.5,
-            "durability": 0.5,
-            "customer_service": 0.5,
-            "good_delivery": 0.5,
-            "bad_quality": -1,
-            "bad_value": -1,
-            "broken": -1,
-            "bad_service": -1,
-            "bad_delivery": -1,
+            "품질이 우수해요": 0.5,
+            "합리적인 가격이에요": 0.5,
+            "내구성이 뛰어나요": 0.5,
+            "친절하고 매너가 좋아요": 0.5,
+            "거래약속을 잘 지켜요": 0.5,
+            "사진과 너무 달라요": -1,
+            "돈이 아까워요": -1,
+            "못 쓸 걸 팔았어요": -1,
+            "불친절하게 느껴졌어요": -1,
+            "시간을 안 지켜요": -1,
         }
         score = 0
 
@@ -63,4 +65,4 @@ class Review(models.Model):
         self.save()
 
     def __str__(self):
-        return f"{self.author.username} 의 {self.product.name} 에 대한 리뷰입니다"
+        return f"{self.author.username} 의 {self.product.title} 에 대한 리뷰입니다"

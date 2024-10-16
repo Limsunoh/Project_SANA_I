@@ -9,7 +9,7 @@ async function loadLikedProducts(username) {
     showLoading(); // 로딩 표시
 
     try {
-        const response = await fetch(`/api/products/likes/${username}/`, {
+        const response = await fetch(`/api/accounts/likes/${username}/`, {
             headers: {
                 "Content-Type": "application/json"
             }

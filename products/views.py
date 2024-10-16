@@ -79,7 +79,7 @@ class ProductListAPIView(ListCreateAPIView):
             queryset = queryset.order_by("-created_at")
         return queryset
 
-     # [상품 목록 조회] 부모 클래스의 get 메서드를 호출
+    # [상품 목록 조회] 부모 클래스의 get 메서드를 호출
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
@@ -106,15 +106,6 @@ class ProductListAPIView(ListCreateAPIView):
         for tag in tags:
             hashtag, created = Hashtag.objects.get_or_create(name=tag)
             product.tags.add(hashtag)
-
-# [사용자 상품 목록 API] 특정 사용자가 작성한 상품 목록 조회
-class UserProductsListView(ListAPIView):
-    serializer_class = ProductListSerializer
-    permission_classes = [AllowAny]
-
-    def get_queryset(self):
-        username = self.kwargs.get("username")
-        return Product.objects.filter(author__username=username)
 
 
 # [상품 상세 API] 상품 조회, 수정, 삭제 처리
@@ -198,18 +189,6 @@ class LikeAPIView(APIView):
         # 찜하기 추가
         product.likes.add(request.user)
         return Response({"message": "찜하기 했습니다."}, status=200)
-
-
-# [찜한 상품 목록 조회 API] 특정 사용자가 찜한 상품 목록 반환
-class LikeListForUserAPIView(APIView):
-    permission_classes = [AllowAny]
-
-    # 사용자가 찜한 상품 목록을 조회하고 반환
-    def get(self, request, username):
-        user = get_object_or_404(User, username=username)
-        liked_products = Product.objects.filter(likes=user)
-        serializer = ProductListSerializer(liked_products, many=True)
-        return Response(serializer.data, status=200)
 
 
 # ------------------------------------------------------------------------------
@@ -551,37 +530,6 @@ class ProductDetailPageView(DetailView):
 # 상품 작성 template
 class ProductCreateView(TemplateView):
     template_name = "product_create.html"
-
-
-# 상품 수정 template
-class ProductupdateView(TemplateView):
-    template_name = "product_update.html"
-
-
-# 내가 작성한 상품 리스트 template
-class UserProductsListPageView(TemplateView):
-    template_name = "user_products.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        username = self.kwargs.get("username")  # URL에서 username 가져오기
-        profile_user = get_object_or_404(
-            User, username=username
-        )  # username으로 사용자 객체 가져오기
-        context["profile_user"] = profile_user  # 템플릿에 profile_user 추가
-        return context
-
-
-# 내가 찜한 리스트 template
-class LikeProductsPageView(TemplateView):
-    template_name = "liked_products.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        username = self.kwargs.get("username")
-        profile_user = get_object_or_404(User, username=username)
-        context["profile_user"] = profile_user
-        return context
 
 
 # 상품 수정 template
