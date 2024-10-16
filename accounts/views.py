@@ -1,6 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import (CreateAPIView, 
+                                    RetrieveUpdateDestroyAPIView, 
+                                    ListAPIView,
+                                    )
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly,
@@ -23,6 +26,10 @@ from .permissions import IsOwnerOrReadOnly
 from django.views.generic import TemplateView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import CustomTokenObtainPairSerializer, UserListSerializer
+from products.serializers import ProductListSerializer
+from reviews.serializers import ReviewSerializer, PurchaseSerializer
+
+from reviews.models import Review
 
 
 # [사용자 생성 뷰] 새로운 사용자 계정을 생성
@@ -166,32 +173,90 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
 
-# [회원가입 페이지] 회원가입 템플릿을 렌더링
+# [찜한 상품 목록 조회 API] 사용자가 찜한 상품 목록 반환
+class LikeListForUserAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    # 사용자가 찜한 상품 목록을 조회하고 반환
+    def get(self, request, username):
+        user = get_object_or_404(User, username=username)
+        liked_products = Product.objects.filter(likes=user)
+        serializer = ProductListSerializer(liked_products, many=True)
+        return Response(serializer.data, status=200)
+
+
+# [사용자 상품 목록 API] 사용자가 작성한 상품 목록 조회
+class UserProductsListView(ListAPIView):
+    serializer_class = ProductListSerializer
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        username = self.kwargs.get("username")
+        return Product.objects.filter(author__username=username)
+
+
+# [사용자 구매 내역 API] 사용자가 구매한 상품 목록 조회
+class PurchaseHistoryListView(ListAPIView):
+    serializer_class = PurchaseSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Product.objects.filter(chatrooms__buyer=user, chatrooms__status__is_sold=True)
+
+
+# [사용자 작성한 후기 API] 사용자가 작성한 후기 목록 조회
+class UserReviewListView(ListAPIView):
+    serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        username = self.kwargs.get('username')
+        user = get_object_or_404(User, username=username)
+        return Review.objects.filter(author=user, is_deleted=False)
+
+
+# [사용자 받은 후기 API] 사용자가 받은 후기 조회 (매너점수 클릭 시)
+class ReceivedReviewListView(ListAPIView):
+    serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        username = self.kwargs.get('username')
+        user = get_object_or_404(User, username=username)
+        return Review.objects.filter(product__author=user, is_deleted=False)
+
+
+
+# ------------------------------------------------------------------------------
+# Template View 
+
+# [회원가입 페이지] 회원가입 template
 class SignupPageView(TemplateView):
     template_name = "signup.html"
 
 
-# [로그인 페이지] 로그인 템플릿을 렌더링
+# [로그인 페이지] 로그인 template
 class LoginPageView(TemplateView):
     template_name = "login.html"
 
 
-# [프로필 페이지] 프로필 템플릿을 렌더링
+# [프로필 페이지] 프로필 template
 class ProfileView(TemplateView):
     template_name = "profile.html"
 
 
-# [프로필 수정 페이지] 프로필 수정 템플릿을 렌더링
+# [프로필 수정 페이지] 프로필 수정 template
 class Profile_editView(TemplateView):
     template_name = "profile_edit.html"
 
 
-# [비밀번호 변경 페이지] 비밀번호 변경 템플릿을 렌더링
+# [비밀번호 변경 페이지] 비밀번호 변경 template
 class ChangePasswordPageView(TemplateView):
     template_name = "change_password.html"
 
 
-# [팔로잉 목록 페이지] 팔로잉 목록 템플릿을 렌더링
+# [팔로잉 목록 페이지] 팔로잉 목록 template
 class FollowingsPageView(TemplateView):
     template_name = "followings.html"
 
@@ -205,7 +270,7 @@ class FollowingsPageView(TemplateView):
         return context
 
 
-# [팔로워 목록 페이지] 팔로워 목록 템플릿을 렌더링
+# [팔로워 목록 페이지] 팔로워 목록 template
 class FollowersPageView(TemplateView):
     template_name = "followers.html"
 
@@ -216,4 +281,72 @@ class FollowersPageView(TemplateView):
         profile_user = get_object_or_404(User, username=username)
         context['profile_user'] = profile_user
         context['followers'] = profile_user.followers.all()
+        return context
+
+
+# 사용자가 찜한 리스트 template
+class LikeProductsPageView(TemplateView):
+    template_name = "liked_products.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        username = self.kwargs.get("username")
+        profile_user = get_object_or_404(User, username=username)
+        context["profile_user"] = profile_user
+        return context
+
+
+# 사용자가 작성한 상품 리스트 template
+class UserProductsListPageView(TemplateView):
+    template_name = "user_products.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        username = self.kwargs.get("username")  # URL에서 username 가져오기
+        profile_user = get_object_or_404(
+            User, username=username
+        )  # username으로 사용자 객체 가져오기
+        context["profile_user"] = profile_user  # 템플릿에 profile_user 추가
+        return context
+
+
+# 사용자가 구매한 제품 목록 template
+class PurchaseHistoryListViewTemplate(TemplateView):
+    template_name = "purchase_history_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        username = self.kwargs.get("username")  # URL에서 username 가져오기
+        profile_user = get_object_or_404(
+            User, username=username
+        )  # username으로 사용자 객체 가져오기
+        context["profile_user"] = profile_user  # 템플릿에 profile_user 추가
+        return context
+
+
+# 사용자가 작성한 후기 목록 template
+class UserReviewListViewTemplate(TemplateView):
+    template_name = "user_review_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        username = self.kwargs.get("username")  # URL에서 username 가져오기
+        profile_user = get_object_or_404(
+            User, username=username
+        )  # username으로 사용자 객체 가져오기
+        context["profile_user"] = profile_user  # 템플릿에 profile_user 추가
+        return context
+
+
+# 사용자가 받은 후기 목록 template(매너온도 클릭 시)
+class ReceivedReviewListViewTemplate(TemplateView):
+    template_name = "received_review_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        username = self.kwargs.get("username")  # URL에서 username 가져오기
+        profile_user = get_object_or_404(
+            User, username=username
+        )  # username으로 사용자 객체 가져오기
+        context["profile_user"] = profile_user  # 템플릿에 profile_user 추가
         return context

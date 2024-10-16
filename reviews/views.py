@@ -1,15 +1,16 @@
-from rest_framework import generics, permissions, serializers
+from rest_framework import generics, serializers
 from .serializers import ReviewSerializer
 from products.models import Product
 from .models import Review
 from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404
 from reviews.models import CHECKLIST_OPTIONS
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
 # 리뷰 목록 조회 및 생성
 class ReviewListCreateView(generics.ListCreateAPIView):
     serializer_class = ReviewSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         user_id = self.kwargs.get('user_id')
@@ -42,11 +43,6 @@ class ReviewListCreateView(generics.ListCreateAPIView):
             review = serializer.save(product=product, author=self.request.user)
             review.score = review.total_score()
             review.save()
-            
-            # 판매자 점수 업데이트
-            seller = product.author  # 상품의 판매자
-            seller.total_score += review.score
-            seller.save()
 
             # 리뷰 점수 반영 여부 업데이트
             review.is_score_assigned = True
@@ -56,12 +52,21 @@ class ReviewListCreateView(generics.ListCreateAPIView):
 class ReviewDetailView(generics.RetrieveDestroyAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def perform_destroy(self, instance):
         if instance.is_score_assigned:
+            product_id = instance.product.id
+            product_title = instance.product.title
             instance.delete()  # 리뷰를 삭제해도 점수는 유지됨
+            print(f"리뷰가 삭제되었습니다. 제품 ID: {product_id}, 제품 제목: {product_title}")
 
+
+
+
+
+# ------------------------------------------------------------------------------
+# 리뷰 작성하는 template
 class ReviewCreateView(TemplateView):
     template_name = 'review_create.html'
 
@@ -70,3 +75,6 @@ class ReviewCreateView(TemplateView):
         context['product_id'] = kwargs.get('product_id')
         context['checklist_options'] = CHECKLIST_OPTIONS
         return context
+
+
+
