@@ -1,7 +1,6 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 from accounts.models import User
-from reviews.models import Review
 
 # [해시태그 모델] 해시태그 정보를 저장
 class Hashtag(models.Model):
@@ -33,7 +32,6 @@ class Product(models.Model):
     hits = models.PositiveIntegerField(blank=True, default=0) # 조회수
     likes = models.ManyToManyField(User, related_name='like_products', blank=True) # 좋아요
     tags = models.ManyToManyField(Hashtag, related_name= "products", blank=True) # 해시태그
-    reviews = models.ForeignKey(Review, on_delete=models.CASCADE, related_name= "product_reviews", null= True, blank= True) # 리뷰
 
     def __str__(self):
         return f"User:{self.author} (Status:{self.status})"

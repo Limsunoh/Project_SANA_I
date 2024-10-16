@@ -23,7 +23,9 @@ function removeTokens() {
 async function fetchWithAuth(url, options = {}) {
     const access_token = getAccessToken();
 
+    // 토큰이 없는 경우 처리
     if (!access_token) {
+        console.error("Access token not found, redirecting to login page");
         window.location.href = "/api/accounts/login-page/";
         return;
     }
@@ -33,23 +35,48 @@ async function fetchWithAuth(url, options = {}) {
         "Authorization": `Bearer ${access_token}`,
     };
 
-    let response = await fetch(url, options);
+    // 첫 번째 요청 보내기
+    let response;
+    try {
+        response = await fetch(url, options);
+    } catch (error) {
+        console.error("Initial fetch request failed:", error);
+        return;
+    }
 
+    console.log("Initial fetch response status:", response.status); // 첫 번째 요청 상태 로그
+
+    // 만료된 토큰의 경우 처리 (401 Unauthorized)
     if (response.status === 401) {
-        const refreshResponse = await fetch("/api/accounts/token/refresh/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ refresh: getRefreshToken() }),
-        });
+        try {
+            const refreshResponse = await fetch("/api/accounts/token/refresh/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ refresh: getRefreshToken() }),
+            });
 
-        if (refreshResponse.ok) {
-            const data = await refreshResponse.json();
-            setAccessToken(data.access);
-            options.headers["Authorization"] = `Bearer ${data.access}`;
-            response = await fetch(url, options);
-        } else {
-            removeTokens();
-            window.location.href = "/api/accounts/login-page/";
+            console.log("Refresh response status:", refreshResponse.status); // 리프레시 요청 상태 로그
+
+            if (refreshResponse.ok) {
+                const data = await refreshResponse.json();
+                setAccessToken(data.access); // 새 액세스 토큰 저장
+                options.headers["Authorization"] = `Bearer ${data.access}`;
+
+                try {
+                    response = await fetch(url, options); // 두 번째 요청
+                } catch (error) {
+                    console.error("Fetch request after refreshing token failed:", error);
+                    return;
+                }
+            } else {
+                console.error("Failed to refresh token, removing tokens and redirecting to login page");
+                removeTokens();
+                window.location.href = "/api/accounts/login-page/";
+                return;
+            }
+        } catch (error) {
+            console.error("Refresh token request failed:", error);
+            return;
         }
     }
 
