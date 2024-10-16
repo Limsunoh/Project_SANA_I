@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const mainaddress = data.mainaddress;
             const shortenedAddress = mainaddress.split(" ").slice(0, 2).join(" ");
             document.getElementById('product-location').textContent = shortenedAddress || '지역명 없음';
-            document.getElementById('product-status').textContent = data.status || '상태 정보 없음';
+            document.getElementById('product-status').textContent = data.status_display || '상태 정보 없음';
             document.getElementById('product-price').textContent = `${data.price}원`;
             document.getElementById('product-hits').textContent = `${data.hits}`;
             document.getElementById('product-likes').textContent = `${data.likes_count}`;
@@ -80,6 +80,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 chatButton.style.display = 'inline-block'; // 작성자가 아닌 경우에만 채팅 버튼 표시
             }
 
+            if (data.status_display.trim() === '판매완료') {
+                chatButton.style.display = 'none';
+            }
+
             // 작성자 프로필 링크에 데이터 추가 및 클릭 이벤트 설정
             authorLinks.forEach(function (link) {
                 link.dataset.author = data.author;
@@ -93,12 +97,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 });
             });
+            console.log("currentUserNickname:", currentUserNickname);
+            console.log("data.author:", data.author);
 
             // 작성자와 현재 사용자가 다를 경우 수정 및 삭제 버튼 숨기기
-            if (currentUserNickname && currentUserNickname.trim() !== data.author.trim()) {
+            if (!currentUserNickname || currentUserNickname.trim() !== data.author.trim()) {
                 editButton.style.display = 'none';
                 deleteButton.style.display = 'none';
-                console.log("작성자와 사용자가 다름, 수정/삭제 버튼 숨김");
+                console.log("작성자가 아니거나 로그인이 되어있지 않음, 수정/삭제 버튼 숨김");
             }
         })
         .catch(error => {
