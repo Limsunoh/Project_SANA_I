@@ -209,7 +209,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     const purchaseCard = `
                         <div class="card m-2" style="width: 18rem;">
                             <img src="${purchase.product_image}" class="card-img-top" alt="${purchase.title}">
-                            <div class="card-body">
+                            <div class="card-body">g
                                 <h5 class="card-title">${purchase.title}</h5>
                                 <p class="card-text">가격: ${purchase.price}원</p>
                                 <a href="/api/products/detail-page/${purchase.id}/" class="btn btn-primary">자세히 보기</a>
@@ -218,13 +218,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     `;
                     purchaseHistoryContainer.insertAdjacentHTML("beforeend", purchaseCard);
                 });
-            } else {
-                purchaseHistoryContainer.innerHTML = "<p>구매한 상품이 없습니다.</p>";
-            }
+            } 
         })
         .catch(error => {
             console.error("구매 내역을 불러오는 중 오류 발생:", error);
-            purchaseHistoryContainer.innerHTML = "<p>구매 내역을 불러올 수 없습니다.</p>";
+            alert("구매내역 정보를 불러올 수 없습니다.");
         });
     }
 
