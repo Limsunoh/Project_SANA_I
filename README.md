@@ -1,8 +1,9 @@
 # 🍓StrawBerryMarket
+![image]()
 
 # 📝프로젝트 소개
   - 한 줄 정리 :  당근마켓을 오마주로 한 딸기마켓
-  -       내용 :  중고거래를 핵심으로 하는 웹 앱  및 API
+  - 내용 :  중고거래를 핵심으로 하는 웹 앱  및 API
 - 프로젝트 핵심 기술
     - AI 기술을 기반한 상품추천 및 다양한 커뮤니티 기술을 첨가한 이커머스
 <br/>
@@ -16,13 +17,16 @@
 
 <br/>
 
-- 
+- 임선오 [@Limsunoh] (https://github.com/Limsunoh)
+- 이광열 [@kwang1215] (https://github.com/kwang1215)
+- 류홍규 [@YesYesMe0321[ (https://github.com/YesYesMe0321)
+- 이상현 [@sanghyun-Lee2002] (https://github.com/sanghyun-Lee2002)
 
 <br/>
 <br/>
 
 # 🏗️ 서비스 아키텍처
-
+![image]()
 
 
 # ⚙️사용 환경 설정
@@ -76,7 +80,7 @@
 
 - Amazon EC2: 서버 호스팅 <br/>
 - Amazon S3: 스토리지 서비스 <br/>
-- Amazon Route53: DNS 및 도메인 이름 관리 서비스 <br/>
+- 내도메인.한국 : DNS 및 도메인 이름 관리 서비스 <br/>
 
 </div>
 </details>
@@ -94,7 +98,7 @@
 
 
 # 🛠️ ERD
-
+![image]()
 
 <br/>
 
@@ -111,19 +115,12 @@
 <div markdown="1">
 
 - feat : 새로운 기능에 대한 커밋
-- fix : 버그 수정에 대한
-- build : build 관련 파일 수정에 대한 커밋
-- chore : 그 외 수정에 대한 커밋
-- ci : CI 관련 설정 수정에 대한 커밋
-- docs : 문서 수정에 대한 커밋
-- style : 코드 스타일 혹은 포맷 등에 대한 커밋
-- refactor : 코드 리팩도링에 대한 커밋
-- test : 테스트 코드 수정에 대한 커밋
-- design : CSS 등 사용자 UI 디자인 변경
+- fix : 일반적인 수정
+- bugfix : 버그 내용에 대한 수정
+- refactor : 코드 스타일 및 리팩도링에 대한 커밋
 - rename : 파일 명 혹은 폴더명 수정 작업
 - remove : 파일의 삭제 작업을 수행하는 경우
-- setting: 초기 세팅 작업을 수행하는 경우
-- assets: assets(image, font...) 관련 작업을 수행하는 경우
+
 
 </div>
 </details>
