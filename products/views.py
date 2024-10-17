@@ -351,15 +351,12 @@ class TransactionStatusUpdateAPIView(APIView):
         room = get_object_or_404(ChatRoom, id=room_id)
         product_status, created = TransactionStatus.objects.get_or_create(room=room)
 
-        # 판매자 또는 구매자에 따라 거래 상태 업데이트
-        if request.user == room.seller:
-            product_status.is_completed = request.data.get("is_completed", product_status.is_completed)
-        elif request.user == room.buyer:
-            product_status.is_sold = request.data.get("is_sold", product_status.is_sold)
-
-        product_status.save()
-        serializer = TransactionStatusSerializer(product_status)
-        return Response(serializer.data)
+        # 시리얼라이저를 통해 상태 업데이트 처리
+        serializer = TransactionStatusSerializer(product_status, data=request.data, partial=True, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
 
 
 # 새로운 메시지 알림 확인 API

@@ -128,6 +128,7 @@ document.addEventListener("DOMContentLoaded", function () {
         logoutForm.addEventListener("submit", function (event) {
             event.preventDefault();
             removeTokens();
+            localStorage.removeItem('current_username');  // current_username 제거
             alert("로그아웃되었습니다.");
             window.location.href = "/api/accounts/login-page/";
             updateButtonDisplay();
@@ -175,12 +176,8 @@ document.addEventListener("DOMContentLoaded", function () {
         searchButton.addEventListener("click", function () {
             const query = searchInput.value.trim();
             if (query) {
-                const newUrl = `/?search=${query}`;
-                window.history.pushState({ path: newUrl }, "", newUrl);
-
-                if (typeof loadProductList === "function") {
-                    loadProductList("created_at", query);
-                }
+                const newUrl = `/?search=${query}&order_by=created_at&page=1`; // 루트 URL로 리디렉션
+                window.location.href = newUrl; // 검색 쿼리와 함께 홈 페이지로 이동
             }
         });
 
@@ -188,12 +185,8 @@ document.addEventListener("DOMContentLoaded", function () {
             if (event.key === "Enter") {
                 const query = searchInput.value.trim();
                 if (query) {
-                    const newUrl = `/home-page/?search=${query}`;
-                    window.history.pushState({ path: newUrl }, "", newUrl);
-
-                    if (typeof loadProductList === "function") {
-                        loadProductList("created_at", query);
-                    }
+                    const newUrl = `/?search=${query}&order_by=created_at&page=1`; // 루트 URL로 리디렉션
+                    window.location.href = newUrl; // 검색 쿼리와 함께 홈 페이지로 이동
                 }
             }
         });
