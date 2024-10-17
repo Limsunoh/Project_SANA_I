@@ -1,7 +1,6 @@
 from django.db import models
 from sbmarket import settings
 from multiselectfield import MultiSelectField
-from django.db.models import Sum
 
 CHECKLIST_OPTIONS = (
     ('quality', '품질이 우수해요'),
@@ -20,7 +19,7 @@ class Review(models.Model):
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name='reviews', on_delete=models.CASCADE
     )
-    product = models.OneToOneField(  # 수정: 단수형으로 변경
+    product = models.ForeignKey(
         'products.Product', related_name='reviewed_products', on_delete=models.CASCADE
     )
     checklist = MultiSelectField(choices=CHECKLIST_OPTIONS)
@@ -30,7 +29,9 @@ class Review(models.Model):
     '''
     # 리뷰 점수 관리 로직 모음
     '''
-    score = models.FloatField()  # 리뷰 점수
+    score = models.FloatField(default=0)  # 총점 계산
+    # score = models.FloatField(default=0)  # 리뷰 점수 (체크리스트에서 계산된 점수)
+    # base_score = models.FloatField(default=25)  # 기본 점수, 리뷰 앱에서 설정
 
     def total_score(self):
         score_mapping = { 
@@ -46,29 +47,54 @@ class Review(models.Model):
             'bad_delivery': -1
         } # 선택되지 않은 체크리스트 값 = 0
         score = 0
+        
 
-        # 리뷰 한 개 / 선택한 항목 점수를 합한 값 추가 로직
+        # 다중선택한 것들의 점수를 합치기
         for choice in self.checklist:
             score += score_mapping.get(choice, 0)
         return score
 
     def save(self, *args, **kwargs):
-        # 점수 계산
-        self.score = self.total_score()  # 리뷰 점수 계산
-
-        # 유저의 기본 점수 조정
-        if hasattr(self.author, 'base_score'):  # base_score 속성 체크
-            self.author.base_score = 25         # 유저 최초 리뷰점수
-        self.author.base_score += self.score    # 리뷰 점수를 유저 점수에 추가
-        self.author.save()  # 유저에 저장
+        # 리뷰를 생성할 때 Product 모델의 reviews 필드도 업데이트
+        super().save(*args, **kwargs)
+        product = self.product
+        product.reviews = self  # Product의 reviews 필드를 이 Review로 업데이트
+        product.save()  # Product 저장
         
-        # 리뷰에 저장
-        super().save(*args, **kwargs) 
+        '''
+         # 리뷰 점수 계산
+        total_score = self.base_score  # 기본 점수로 초기화
 
+        # 체크리스트에서 선택한 항목 점수 추가
+        for choice in self.checklist:
+            total_score += score_mapping.get(choice, 0)  # 체크리스트 선택 점수 추가
+        
+        return total_score
+
+    def save(self, *args, **kwargs):
+        # 체크리스트 점수 계산
+        self.score = self.calculate_review_score()
+        super().save(*args, **kwargs)
+
+        # 리뷰 작성자의 점수를 업데이트
+        if self.author != self.product.author:
+            product_author = self.product.author
+            
+            # 해당 작성자에게 리뷰 점수 추가
+            product_author.total_review_score += self.score  # 리뷰 점수 합산
+            product_author.save()
+
+    def calculate_review_score(self):
+        # 체크리스트 항목 점수 계산
+        return sum(self.checklist_items)  # 예시: 체크리스트 항목의 합계를 점수로 사용
+    '''
     def __str__(self):
         return f"{self.author.username}의 {self.product.name}에 대한 리뷰입니다"
 
     class Meta:
-        constraints = [ 
-            models.UniqueConstraint(fields=['author', 'product'], name='unique_review')
-        ]
+        unique_together = ('author', 'product')
+        
+    # class Meta:
+    #     constraints = [ 
+    #         models.UniqueConstraint(fields=['author', 'product'], name='unique_review')
+    #     ]

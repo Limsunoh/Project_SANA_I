@@ -80,16 +80,16 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
             return UserChangeSerializer
         return super().get_serializer_class()
     
-    # 사용자 프로필 반환
-    def get_queryset(self):
-        return User.objects.all()
+    # # 사용자 프로필 반환
+    # def get_queryset(self):
+    #     return User.objects.all()
 
     def get(self, request, *args, **kwargs):
         user = self.get_object()  # 현재 사용자 객체 가져오기
         serializer = self.get_serializer(user)
 
         # 유저의 총 점수 추가
-        total_score = user.total_review_score()  # 총 점수 계산
+        total_score = user.total_review_score  # 총 점수 계산
         data = serializer.data
         data['total_score'] = total_score  # 총 점수를 응답 데이터에 추가
 

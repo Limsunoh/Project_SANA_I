@@ -34,7 +34,7 @@ class Product(models.Model):
     # 해시태그 사용
     tags = models.ManyToManyField(Hashtag, related_name= "products", blank=True)
     # 리뷰 참조 사용 / foreignKey를 사용하기 때문에 필요 없음 related_name 사용 함
-    # reviews = models.ForeignKey(Review, on_delete=models.CASCADE, related_name= "products_reviews", null= True, blank= True)
+    reviews = models.ForeignKey(Review, on_delete=models.CASCADE, related_name= "product_reviews", null= True, blank= True) # 리뷰
     
     
     def __str__(self):
