@@ -44,6 +44,9 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('product-hits').textContent = `${data.hits}`;
             document.getElementById('product-likes').textContent = `${data.likes_count}`;
             document.getElementById('product-description').textContent = data.content;
+            document.getElementById('manner_score').textContent = data.author_total_score
+                ? data.author_total_score.toFixed(1)  // 소수점 첫째 자리까지 표시
+                : "0.0";  // 매너점수가 없는 경우 기본값으로 0.0 표시
 
             const imageGallery = document.getElementById('image-gallery');
             data.images.forEach(image => {

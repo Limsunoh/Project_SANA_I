@@ -109,6 +109,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     images = ImageSerializer(many=True, read_only=True)
     hashtag = HashtagSerializer(many=True, source="tags", required=False)
     author = serializers.StringRelatedField()
+    author_total_score = serializers.SerializerMethodField()
     author_profile_image_url = serializers.SerializerMethodField()
     mainaddress = serializers.CharField(
         source="author.mainaddress", read_only=True
@@ -124,6 +125,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
             "title",
             "content",
             "author",
+            "author_total_score",
             "author_profile_image_url",
             "mainaddress",
             "price",
@@ -139,6 +141,10 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     def get_likes_count(self, obj):
         # [좋아요 수 반환] 상품의 좋아요 수 반환
         return obj.likes.count()
+    
+    def get_author_total_score(self, obj):
+        # [작성자의 total_score를 반환]
+        return obj.author.total_score
 
     def get_author_profile_image_url(self, obj):
         # [작성자 프로필 이미지 URL 반환] 작성자의 프로필 이미지 URL 반환
