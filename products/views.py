@@ -197,7 +197,7 @@ class LikeAPIView(APIView):
 
 # 새로운 채팅방 만들기
 class ChatRoomCreateAPIView(APIView):
-    # permission_classes = [IsAuthenticated, SellerorBuyerOnly]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, product_id, *args, **kwargs):
         user = request.user

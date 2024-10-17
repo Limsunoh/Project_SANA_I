@@ -196,7 +196,7 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("작성한 후기 정보를 불러올 수 없습니다.");
         });
     }
-
+    // 구매 내역 
     if (document.getElementById("purchase-history")) {
         fetch(`/api/accounts/user/${profileUsername}/purchase-history/`, {
             headers: { "Authorization": `Bearer ${accessToken}` },
@@ -209,7 +209,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     const purchaseCard = `
                         <div class="card m-2" style="width: 18rem;">
                             <img src="${purchase.product_image}" class="card-img-top" alt="${purchase.title}">
-                            <div class="card-body">g
+                            <div class="card-body">
                                 <h5 class="card-title">${purchase.title}</h5>
                                 <p class="card-text">가격: ${purchase.price}원</p>
                                 <a href="/api/products/detail-page/${purchase.id}/" class="btn btn-primary">자세히 보기</a>
