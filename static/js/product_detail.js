@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const mainaddress = data.mainaddress;
             const shortenedAddress = mainaddress.split(" ").slice(0, 2).join(" ");
             document.getElementById('product-location').textContent = shortenedAddress || '지역명 없음';
-            document.getElementById('product-status').textContent = data.status || '상태 정보 없음';
+            document.getElementById('product-status').textContent = data.status_display || '상태 정보 없음';
             document.getElementById('product-price').textContent = `${data.price}원`;
             document.getElementById('product-hits').textContent = `${data.hits}`;
             document.getElementById('product-likes').textContent = `${data.likes_count}`;
@@ -81,6 +81,41 @@ document.addEventListener('DOMContentLoaded', function () {
                     productReviewContainer.insertAdjacentHTML("beforeend", reviewCard);
                 } else {
                     productReviewContainer.innerHTML = "<p>아직 후기가 없습니다.</p>";
+                }
+                // 작성자와 현재 로그인한 유저의 닉네임이 같으면 찜하기, 채팅하기 버튼 숨기기
+                const currentUserNickname = localStorage.getItem('current_username');
+                if (currentUserNickname && currentUserNickname.trim() === data.author.trim()) {
+                    likeButton.style.display = 'none';
+                    chatButton.style.display = 'none';
+                } else {
+                    chatButton.style.display = 'inline-block'; // 작성자가 아닌 경우에만 채팅 버튼 표시
+                }
+
+                if (data.status_display.trim() === '판매완료') {
+                    chatButton.style.display = 'none';
+                }
+
+                // 작성자 프로필 링크에 데이터 추가 및 클릭 이벤트 설정
+                authorLinks.forEach(function (link) {
+                    link.dataset.author = data.author;
+                    link.addEventListener("click", function (event) {
+                        event.preventDefault();  // 기본 링크 동작 방지
+                        const authorUsername = link.dataset.author;
+
+                    if (authorUsername) {
+                        // 작성자 프로필 페이지로 이동
+                        window.location.href = `/api/accounts/profile-page/${authorUsername}/`;
+                    }
+                });
+            });
+            console.log("currentUserNickname:", currentUserNickname);
+            console.log("data.author:", data.author);
+
+                // 작성자와 현재 사용자가 다를 경우 수정 및 삭제 버튼 숨기기
+                if (!currentUserNickname || currentUserNickname.trim() !== data.author.trim()) {
+                    editButton.style.display = 'none';
+                    deleteButton.style.display = 'none';
+                    console.log("작성자가 아니거나 로그인이 되어있지 않음, 수정/삭제 버튼 숨김");
                 }
             }
         })
