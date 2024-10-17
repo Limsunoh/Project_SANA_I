@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="review-container" data-product-id="{{ product_id }}">
+    <h2>리뷰 작성하기</h2>
+
+    <!-- 체크리스트 항목 -->
+    <form id="review-form">
+        <div class="checklist-section">
+            <h4>체크리스트:</h4>
+            {% for value, label in checklist_options %}
+                <div>
+                    <input type="checkbox" name="checklist" value="{{ value }}" id="{{ value }}">
+                    <label for="{{ value }}">{{ label }}</label>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- 추가 코멘트 -->
+        <div class="comments-section">
+            <label for="additional-comments">추가 코멘트:</label>
+            <textarea id="additional-comments" name="additional_comments" rows="4" cols="50"></textarea>
+        </div>
+
+        <button type="submit" id="submit-review">리뷰 작성</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/review_create.js' %}"></script>
+{% endblock %}

@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // 상품 목록을 가져오는 로직 추가
-    fetch(`/api/products/user-products/${profileUsername}/`)
+    fetch(`/api/accounts/user-products/${profileUsername}/`)
         .then(response => response.json())
         .then(products => {
             if (products.length > 0) {
