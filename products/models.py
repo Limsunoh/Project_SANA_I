@@ -25,7 +25,7 @@ class Product(models.Model):
     author = models.ForeignKey(User,on_delete=models.CASCADE, related_name="author_product")  # 작성자
     title = models.CharField(max_length=50)
     content = models.TextField()
-    price = models.CharField(max_length=50)
+    price = models.DecimalField(max_digits=20, decimal_places=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=50,choices=CHOICE_PRODUCT)
