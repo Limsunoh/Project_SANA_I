@@ -147,6 +147,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     followers = serializers.SerializerMethodField()
     reviews = serializers.SerializerMethodField()
     profile_image = serializers.SerializerMethodField()
+    review_score_total = serializers.SerializerMethodField()
     created_at = serializers.DateTimeField(format="%Y-%m-%d", read_only=True)
     
     class Meta:
@@ -166,6 +167,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "followings",
             "followers",
             "reviews",
+            "review_score_total",
         )
         
     def get_profile_image(self, obj):
@@ -191,6 +193,15 @@ class UserProfileSerializer(serializers.ModelSerializer):
         reviews = Review.objects.filter(author=obj)
         return ReviewSerializer(reviews, many=True).data
     
+        # 유저가 작성한 제품에 대한 리뷰 점수의 총합 계산
+    def get_review_score_total(self, obj):
+        total_score = 0
+        products = Product.objects.filter(author=obj)  # 유저가 작성한 제품 가져오기
+        # 각 제품에 연결된 리뷰의 점수를 합산
+        for product in products:
+            if product.reviews:  # 리뷰가 존재할 경우
+                total_score += product.reviews.score  # 해당 제품의 리뷰 점수 합산
+        return total_score
 
 class UserChangeSerializer(serializers.ModelSerializer):
     profile_image = serializers.SerializerMethodField()
