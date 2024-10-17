@@ -1,13 +1,23 @@
 // 이미지 미리보기 함수
+var FileSizeNum = 10;  //최대 용량 설정
+
 function previewImages(event) {
     const imagePreviewContainer = document.getElementById('imagePreview');
     imagePreviewContainer.innerHTML = '';
 
     const files = event.target.files;
+    const maxFileSize = FileSizeNum * 1024 * 1024    // 업로드 파일 MB단위 용량 제한
+
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
-        const reader = new FileReader();
 
+        // 이미지 첨부 할 때 확인
+        if (file.size > maxFileSize) {
+            alert(`${file.name}파일의 크기가 ${FileSizeNum}MB를 초과했습니다.\n 용량을 확인해주세요.`);
+            continue;
+        }
+
+        const reader = new FileReader();
         reader.onload = function (e) {
             const img = document.createElement('img');
             img.src = e.target.result;
@@ -38,8 +48,18 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append("status", document.getElementById('status').value);
 
         const images = document.getElementById('image-upload').files;
+        const maxFileSize = FileSizeNum * 1024 * 1024;
+        
         for (let i = 0; i < images.length; i++) {
-            formData.append('images', images[i]);
+            const image = images[i];
+
+            // 등록하기 누를 때, 확인함
+            if (image.size > maxFileSize) { 
+                alert(`${image.name} 파일의 크기가 용량을 초과했습니다. 다른 파일을 선택하세요.`);
+                return;
+            }
+
+            formData.append('images', image);
         }
 
         try {
