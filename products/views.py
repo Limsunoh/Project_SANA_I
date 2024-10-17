@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django.db.models import Q, Count
-import time
+import time, logging
 from rest_framework import status, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -39,39 +39,17 @@ from .serializers import (
 from .serializers import ReviewSerializer
 from .pagnations import ProductPagnation
 from django.views.generic import TemplateView, DetailView
-# AI 관련 임포트
+
+# [AI 서비스 관련 임포트] OpenAI 관련 라이브러리
 import openai
 import json
 import logging
 import re
-from openai import AuthenticationError, RateLimitError, OpenAIError
+from sbmarket.config import OPENAI_API_KEY # GPT 키는 config 로 이전
 
-# config 안의 Open AI Key
-from sbmarket.config import OPENAI_API_KEY
-
-# 로깅 설정
 logger = logging.getLogger(__name__)
 
-
-# class ReviewSerializer(serializers.ModelSerializer):
-#     checklist = serializers.ListField(
-#         child=serializers.CharField(max_length=100)
-#     )
-    
-#     class Meta:
-#         model = Review
-#         fields = ['id', 'author', 'products', 'checklist', 'additional_comments', 'created_at', 'score']
-#         read_only_fields = ['author', 'created_at', 'score']
-
-#     def create(self, validated_data):
-#         # 리뷰를 먼저 생성한 후, score를 계산합니다.
-#         checklist = validated_data.get('checklist', [])
-#         review = Review.objects.create(**validated_data)
-#         review.score = review.total_score()  # 총점 계산
-#         review.save()
-#         return review
-
-
+# [상품 목록 API] 상품 목록 CR
 class ProductListAPIView(ListCreateAPIView):
     pagination_class = ProductPagnation
     serializer_class = ProductListSerializer
@@ -82,7 +60,7 @@ class ProductListAPIView(ListCreateAPIView):
         order_by = self.request.query_params.get("order_by")
         queryset = Product.objects.all()
 
-        # 검색
+        # [검색] 상품 제목, 내용, 태그로 검색
         if search:
             queryset = queryset.filter(
                 Q(title__icontains=search)
@@ -90,7 +68,7 @@ class ProductListAPIView(ListCreateAPIView):
                 | Q(tags__name__icontains=search)
             ).distinct()
 
-        # 정렬
+        # [정렬] 좋아요, 조회순, 최신순 으로 정렬
         if order_by == "likes":
             queryset = queryset.annotate(likes_count=Count("likes")).order_by(
                 "-likes_count"
@@ -101,99 +79,95 @@ class ProductListAPIView(ListCreateAPIView):
             queryset = queryset.order_by("-created_at")
         return queryset
 
+    # [상품 목록 조회] 부모 클래스의 get 메서드를 호출
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
+    # [상품 생성 요청] 이미지를 포함한 상품 생성 요청을 처리
     def post(self, request, *args, **kwargs):
         self.serializer_class = ProductCreateSerializer
         images = request.FILES.getlist("images")
-        if not images:  # 이미지 key error 처리
+
+        if not images:
             return Response({"ERROR": "Image file is required."}, status=400)
+
         return super().post(request, *args, **kwargs)
 
+    # [상품 생성] 이미지 및 해시태그를 추가하고 저장
     def perform_create(self, serializer):
         images = self.request.FILES.getlist("images")
         tags_raw = self.request.data.get("tags")
         tags = tags_raw.split(",")
         product = serializer.save(author=self.request.user)
-        
+
         for image in images:
             Image.objects.create(product=product, image_url=image)
-        
+
         for tag in tags:
-            hashtag, created = Hashtag.objects.get_or_create(
-                name=tag
-            )  # 해시태그가 존재하지 않으면 생성
-            product.tags.add(hashtag)  # 제품에 해시태그 추가
+            hashtag, created = Hashtag.objects.get_or_create(name=tag)
+            product.tags.add(hashtag)
 
 
-class UserProductsListView(ListAPIView):
-    serializer_class = ProductListSerializer
-    permission_classes = [AllowAny]
-
-    def get_queryset(self):
-        username = self.kwargs.get('username')
-        return Product.objects.filter(author__username=username)
-
-
+# [상품 상세 API] 상품 조회, 수정, 삭제 처리
 class ProductDetailAPIView(UpdateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductDetailSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
+    # [상품 조회] 상품 ID(pk)로 단일 상품의 세부 정보 반환
     def get(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
         serializer = ProductDetailSerializer(product)
-        # print(f"product: {product}, PK {pk}")
-        # serializer = self.get_serializer(product)
-        # review_serializer = ReviewSerializer(reviews)
-        return Response(serializer.data, status=200)     
+        return Response(serializer.data, status=200)
 
+    # [상품 수정] 이미지와 해시태그를 포함한 상품 정보 수정 처리
     def perform_update(self, serializer):
-        instance = serializer.instance  # 현재 수정 중인 객체
+        instance = serializer.instance  # 현재 수정 중인 상품 객체
         images_data = self.request.FILES.getlist("images")
         tags_raw = self.request.data.get("tags")
         tags = tags_raw.split(",")
 
-        # 요청에 이미지가 포함된 경우
+        # 이미지가 포함된 경우 기존 이미지를 삭제하고 새 이미지 저장
         if images_data:
-            # 기존 이미지 삭제
-            instance.images.all().delete()  # 기존 이미지를 먼저 삭제
-            # 새 이미지 저장
+            instance.images.all().delete()
             for image_data in images_data:
                 Image.objects.create(product=instance, image_url=image_data)
 
-        if tags is not None:  # 새로운 해시태그가 제공된 경우
-            # 기존 해시태그를 삭제하고 새로운 해시태그를 추가
-            instance.tags.clear()  # 기존 해시태그 삭제
+        # 새로운 해시태그가 제공된 경우 기존 태그를 지우고 새 태그 추가
+        if tags:
+            instance.tags.clear()
             for tag in tags:
                 hashtag, created = Hashtag.objects.get_or_create(name=tag)
-                instance.tags.add(hashtag)  # 제품에 해시태그 추가
+                instance.tags.add(hashtag)
 
-        serializer.save()  # 수정 후 저장
+        serializer.save()  # 수정된 상품 저장
 
-
+    # [상품 삭제] 상품 ID(pk)로 해당 상품 삭제
     def delete(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
         product.delete()
         return Response(status=204)
 
-# 상품 수정용 뷰 추가   
-class ProductEditPageView(TemplateView):
-    template_name = 'product_edit.html'
 
+
+# [상품 수정 페이지 뷰] 상품 수정 템플릿에 필요한 데이터 제공
+class ProductEditPageView(TemplateView):
+    template_name = "product_edit.html"
+
+    # [컨텍스트 데이터 제공] 상품 데이터를 템플릿에 전달
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        product = get_object_or_404(Product, pk=self.kwargs['pk'])
-        context['product'] = product
+        product = get_object_or_404(Product, pk=self.kwargs["pk"])
+        context["product"] = product
         return context
 
 
+# [좋아요 API] 개별 상품에 대한 찜 상태 조회 및 처리
 class LikeAPIView(APIView):
     serializer_class = ProductListSerializer
     permission_classes = [IsAuthenticated]
 
-    # 개별 제품에 대한 찜 상태 반환
+    # [찜 상태 조회] 요청자가 해당 상품을 찜했는지 여부 반환
     def get(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
 
@@ -203,7 +177,7 @@ class LikeAPIView(APIView):
         # JSON 응답으로 is_liked 값을 반환
         return Response({"is_liked": is_liked}, status=200)
 
-    # 찜하기 기능 처리
+    # [찜하기 및 취소] 이미 찜한 경우 취소, 그렇지 않으면 찜하기 처리
     def post(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
 
@@ -216,46 +190,45 @@ class LikeAPIView(APIView):
         product.likes.add(request.user)
         return Response({"message": "찜하기 했습니다."}, status=200)
 
-# 내가 찜한 상품 리스트보기 
-class LikeListForUserAPIView(APIView):
-    permission_classes = [AllowAny] 
 
-    def get(self, request, username):
-        user = get_object_or_404(User, username=username)
-        liked_products = Product.objects.filter(likes=user)
-        serializer = ProductListSerializer(liked_products, many=True)
-        return Response(serializer.data, status=200)
+# ------------------------------------------------------------------------------
+# 채팅 관련 View
 
-'''
-───────────────────────────────────────────────────────────────────────────────────────────────────────────
-# Chat 기능 구현
-'''
 
 # 새로운 채팅방 만들기
 class ChatRoomCreateAPIView(APIView):
-    permission_classes = [IsAuthenticated, SellerorBuyerOnly]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, product_id, *args, **kwargs):
         user = request.user
 
         # 요청한 유저가 참여 중인 채팅방 중에서 해당 상품과 관련된 채팅방을 가져옵니다
-        chat_room = ChatRoom.objects.filter(product__id=product_id).filter(Q(seller=user) | Q(buyer=user)).first()
+        chat_room = (
+            ChatRoom.objects.filter(product__id=product_id)
+            .filter(Q(seller=user) | Q(buyer=user))
+            .first()
+        )
 
         if not chat_room:
-            return Response({"detail": "참여 중인 채팅방이 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"detail": "참여 중인 채팅방이 없습니다."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
         serializer = ChatRoomSerializer(chat_room)
         return Response(serializer.data, status=status.HTTP_200_OK)
-        
+
     def post(self, request, product_id, *args, **kwargs):
         product = get_object_or_404(Product, id=product_id)
 
         # 요청한 유저가 해당 상품에 대해 이미 생성한 채팅방이 있는지 확인합니다.
-        existing_room = ChatRoom.objects.filter(product=product, buyer=request.user).first()
+        existing_room = ChatRoom.objects.filter(
+            product=product, buyer=request.user
+        ).first()
         if existing_room:
             return Response(
                 {"detail": "해당 상품에 대해 이미 생성된 채팅방이 있습니다."},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # 새로운 채팅방 생성 (처음 생성되는 경우에만)
@@ -268,6 +241,7 @@ class ChatRoomCreateAPIView(APIView):
         serializer = ChatRoomSerializer(chat_room)
         return Response(serializer.data, status=201)
 
+
 # 채팅 메시지 조회 및 생성
 class ChatMessageCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -278,18 +252,21 @@ class ChatMessageCreateAPIView(APIView):
         # 해당 유저가 참여 중인 채팅방인지 확인합니다.
         room = get_object_or_404(ChatRoom, id=room_id)
         if room.seller != user and room.buyer != user:
-            return Response({"detail": "이 채팅방에 접근할 수 있는 권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"detail": "이 채팅방에 접근할 수 있는 권한이 없습니다."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         # 메시지 조회 로직
         last_message_id = request.query_params.get("last_message_id", None)
-        new_messages = []
 
-        # 디버깅 출력: 요청 시 받은 last_message_id
-        # print("받은 last_message_id:", last_message_id)
+        # 채팅방 입장 시, 해당 방의 모든 읽지 않은 메시지를 읽음 처리
+        unread_messages = ChatMessage.objects.filter(room=room, is_read=False).exclude(sender=user)
+        unread_messages.update(is_read=True)
 
         # 최초 조회 시 전체 메시지 반환
         if last_message_id is None:
-            all_messages = ChatMessage.objects.filter(room=room).order_by('created_at')
+            all_messages = ChatMessage.objects.filter(room=room).order_by("created_at")
             serializer = ChatMessageSerializer(all_messages, many=True)
             return Response(serializer.data)
 
@@ -297,21 +274,20 @@ class ChatMessageCreateAPIView(APIView):
         timeout = 30
         start_time = time.time()
 
+        new_messages = []
         while (time.time() - start_time) < timeout:
             # 새 메시지 확인
             new_messages = ChatMessage.objects.filter(
                 room=room, id__gt=last_message_id
-            ).order_by('created_at')  # 새 메시지만 가져옴
-
-            # print("현재 시간:", time.time(), "타임아웃:", timeout, "새 메시지 개수:", new_messages.count())
+            ).order_by("created_at")  # 새 메시지만 가져옴
 
             if new_messages.exists():
-                print("새 메시지가 존재합니다.")
+                logger.info("새 메시지가 존재합니다.")
                 break
 
-            time.sleep(5)  # 5초마다 새 메시지 확인
+            time.sleep(3)  # 3초마다 새 메시지 확인
 
-        # 읽음 처리
+        # 새 메시지 읽음 처리
         for message in new_messages:
             if message.sender != user and not message.is_read:
                 message.is_read = True
@@ -320,66 +296,113 @@ class ChatMessageCreateAPIView(APIView):
         serializer = ChatMessageSerializer(new_messages, many=True)
         return Response(serializer.data)
 
-
     def post(self, request, room_id, *args, **kwargs):
         room = get_object_or_404(ChatRoom, id=room_id)
 
         # 해당 유저가 채팅방에 참여 중인지 확인합니다.
         if room.seller != request.user and room.buyer != request.user:
-            return Response({"detail": "이 채팅방에 접근할 수 있는 권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"detail": "이 채팅방에 접근할 수 있는 권한이 없습니다."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
-        serializer = ChatMessageSerializer(data=request.data)
+        # 이미지가 포함된 경우에 request.FILES로부터 이미지 파일을 가져옴
+        data = request.data.copy()
+        if 'image' in request.FILES:
+            data['image'] = request.FILES['image']
+
+        serializer = ChatMessageSerializer(data=data)
         if serializer.is_valid():
             serializer.save(sender=request.user, room=room)
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
-    
+
+
 # 채팅방 리스트 확인하는 API
 class ChatRoomListView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, username, *args, **kwargs):  # username을 받도록 수정
-        user = get_object_or_404(User, username=username)  # username을 기반으로 유저 조회
+        user = get_object_or_404(
+            User, username=username
+        )  # username을 기반으로 유저 조회
         chat_rooms = ChatRoom.objects.filter(Q(seller=user) | Q(buyer=user))
         serializer = ChatRoomSerializer(chat_rooms, many=True)
         return Response(serializer.data, status=200)
+
+
 
 # 거래 상태를 업데이트하는 API
 class TransactionStatusUpdateAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, room_id, *args, **kwargs):
+    def get(self, request, room_id, *args, **kwargs):
         room = get_object_or_404(ChatRoom, id=room_id)
-        status = get_object_or_404(TransactionStatus, room=room)
 
-        # 판매 완료 및 구매 완료 상태 업데이트
-        if request.data.get("is_sold") is not None:
-            status.is_sold = request.data.get("is_sold")
-        if request.data.get("is_completed") is not None:
-            status.is_completed = request.data.get("is_completed")
+        # TransactionStatus가 없을 때 새로 생성
+        product_status, created = TransactionStatus.objects.get_or_create(room=room)
+        if created:
+            print(f"New TransactionStatus created for room {room_id}")  # 디버깅용 로그
 
-        status.save()
-        serializer = TransactionStatusSerializer(status)
+        serializer = TransactionStatusSerializer(product_status)
         return Response(serializer.data)
 
-# 채팅방 HTML 페이지를 보내주는 View
-class ChatRoomDetailHTMLView(TemplateView):
-    template_name = "chat_room.html"
+    def post(self, request, room_id, *args, **kwargs):
+        room = get_object_or_404(ChatRoom, id=room_id)
+        product_status, created = TransactionStatus.objects.get_or_create(room=room)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["room_id"] = self.kwargs["room_id"]  # URL에서 room_id를 가져와서 전달
-        context["product_id"] = self.kwargs[
-            "product_id"
-        ]  # URL에서 product_id를 가져와서 전달
-        return context
+        # 시리얼라이저를 통해 상태 업데이트 처리
+        serializer = TransactionStatusSerializer(product_status, data=request.data, partial=True, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
 
-'''
-───────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+# 새로운 메시지 알림 확인 API
+
+logger = logging.getLogger(__name__)
+
+class NewMessageAlertAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            logger.error("User is not authenticated.")
+            return Response(
+                {"detail": "User is not authenticated."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        user = request.user
+
+        try:
+            unread_messages = (
+                ChatMessage.objects.filter(
+                    Q(room__buyer=user) | Q(room__seller=user), is_read=False
+                )
+                .exclude(sender=user)
+            )
+            unread_count = unread_messages.count()
+
+            # 읽지 않은 메시지들의 ID와 내용을 로그에 출력
+            for message in unread_messages:
+                logger.info(f"Unread message for user {user.username}: ID={message.id}, Content='{message.content}'")
+
+            return Response({"new_messages_count": unread_count}, status=200)
+        except Exception as e:
+            logger.error(f"Error while counting unread messages: {str(e)}")
+            return Response(
+                {"detail": "An error occurred."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
+# ------------------------------------------------------------------------------
 # aisearch 기능 구현
-- 목적: 사용자가 원하는 '요청'에 부합하는 물건 중 적합한 것 5개를 상품 목록에서 찾아 나열해주는 AI 상품 추천 서비스
-- 검색 범위를 너무 넓히지 않기 위해 최근 생성된 20개의 상품만 상품 목록에 넣을 것
-'''
+# 목적: 사용자가 원하는 '요청'에 부합하는 물건 중 적합한 것 12개를 상품 목록에서 찾아 나열해주는 AI 상품 추천 서비스
+# 검색 범위를 너무 넓히지 않기 위해 최근 생성된 50개의 상품만 상품 목록에 넣을 것
+
 
 class AISearchAPIView(APIView):
     permission_classes = [AllowAny]
@@ -403,14 +426,18 @@ class AISearchAPIView(APIView):
         # 각 상품의 정보를 딕셔너리 형태로 리스트에 추가
         for product in products:
             product_info = {
-                'id': product.id,
-                'title': product.title,
-                'price': str(product.price),
-                'preview_image': f"/media/{product.images.first().image_url}" if product.images.exists() else "/media/default-image.jpg",
-                'author': product.author.username,
-                'tags': [tag.name for tag in product.tags.all()],
-                'likes_count': product.likes.count(),
-                'hits': product.hits
+                "id": product.id,
+                "title": product.title,
+                "price": str(product.price),
+                "preview_image": (
+                    f"/media/{product.images.first().image_url}"
+                    if product.images.exists()
+                    else "/media/default-image.jpg"
+                ),
+                "author": product.author.username,
+                "tags": [tag.name for tag in product.tags.all()],
+                "likes_count": product.likes.count(),
+                "hits": product.hits,
             }
             product_list.append(product_info)
 
@@ -443,7 +470,7 @@ class AISearchAPIView(APIView):
         """
 
         # OpenAI API 호출
-        
+
         response = openai.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
@@ -461,7 +488,9 @@ class AISearchAPIView(APIView):
         logger.debug(f"AI 응답 원본: {raw_response}")
 
         # 마크다운 코드 블록 제거
-        cleaned_response = raw_response.replace("```json", "").replace("```", "").strip()
+        cleaned_response = (
+            raw_response.replace("```json", "").replace("```", "").strip()
+        )
 
         # JSON 파싱 시도
         try:
@@ -473,61 +502,57 @@ class AISearchAPIView(APIView):
         # AI의 응답을 그대로 반환
         return Response({"response": ai_response}, status=200)
 
+
+# ------------------------------------------------------------------------------
+# Html TemplateView
+
+
 # 상품 목록 template
 class HomePageView(TemplateView):
     template_name = "home.html"
 
+
 # 상품 세부 template
 class ProductDetailPageView(DetailView):
     model = Product
-    template_name = 'product_detail.html'
-    context_object_name = 'product'
+    template_name = "product_detail.html"
+    context_object_name = "product"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['images'] = self.object.images.all()  # 여러 이미지를 가져옴
+        context["images"] = self.object.images.all()  # 여러 이미지를 가져옴
         return context
+
 
 # 상품 작성 template
 class ProductCreateView(TemplateView):
     template_name = "product_create.html"
-    
+
+
 # 상품 수정 template
-class ProductupdateView(TemplateView):
-    template_name = "product_update.html"
-    
-# 내가 작성한 상품 리스트 template
-class UserProductsListPageView(TemplateView):
-    template_name = "user_products.html"
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        username = self.kwargs.get('username')  # URL에서 username 가져오기
-        profile_user = get_object_or_404(User, username=username)  # username으로 사용자 객체 가져오기
-        context['profile_user'] = profile_user  # 템플릿에 profile_user 추가
-        return context
-
-# 내가 찜한 리스트 template
-class LikeProductsPageView(TemplateView):
-    template_name = "liked_products.html"
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        username = self.kwargs.get('username')
-        profile_user = get_object_or_404(User, username=username)
-        context['profile_user'] = profile_user
-        return context
-
-# 상품 수정용 뷰 추가   
 class ProductEditPageView(TemplateView):
-    template_name = 'product_edit.html'
+    template_name = "product_edit.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        product = get_object_or_404(Product, pk=self.kwargs['pk'])
-        context['product'] = product
+        product = get_object_or_404(Product, pk=self.kwargs["pk"])
+        context["product"] = product
         return context
 
 
+# 채팅방 리스트 template
 class ChatRoomListHTMLView(TemplateView):
     template_name = "chat_room_list.html"
+
+
+# 채팅화면 template
+class ChatRoomDetailHTMLView(TemplateView):
+    template_name = "chat_room.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        product = get_object_or_404(Product, id=self.kwargs["product_id"])
+        context["room_id"] = self.kwargs["room_id"]  # URL에서 room_id를 가져와서 전달
+        context["product_id"] = self.kwargs["product_id"]  # URL에서 product_id를 가져와서 전달
+        context["product_title"] = product.title
+        return context

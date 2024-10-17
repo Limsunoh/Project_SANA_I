@@ -26,7 +26,18 @@
     margin-bottom: 15px;
 }
 
+<<<<<<< HEAD
 /* 프로필 이미지 */
+=======
+.message-image {
+    max-width: 200px;  /* 이미지 크기 제한 */
+    max-height: 200px;
+    margin-top: 10px;
+    border-radius: 5px;
+    object-fit: cover;
+}
+
+>>>>>>> 90f94e525cb4612884f5521543ce88cd7ea3aeb7
 .message .profile-img {
     width: 40px;
     height: 40px;
@@ -84,12 +95,21 @@
 /* 메시지 전송 버튼 */
 .chat-form button {
     height: 50px;
+<<<<<<< HEAD
     width: 50px;
     border-radius: 50%;
     background-color: #007bff;
     border: none;
     color: white;
     font-size: 20px;
+=======
+    width: 100px;
+    border-radius: 50%;
+    background-color: #b88e2f; 
+    border: none; /* 테두리 제거 */
+    color: white; /* 아이콘 색상 */
+    font-size: 15px; /* 아이콘 크기 */
+>>>>>>> 90f94e525cb4612884f5521543ce88cd7ea3aeb7
     display: flex;
     align-items: center;
     justify-content: center;
@@ -97,6 +117,7 @@
 }
 
 .chat-form button:hover {
+<<<<<<< HEAD
     background-color: #0056b3;
 }
 
@@ -128,4 +149,7 @@
 
 #write-review-btn:hover {
     background-color: #218838; /* 호버 시 색상 변경 */
+=======
+    background-color: #99751f; /* 호버 시 배경색 */
+>>>>>>> 90f94e525cb4612884f5521543ce88cd7ea3aeb7
 }

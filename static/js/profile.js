@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (profileImage) profileImage.src = profileData.profile_image || "/static/images/default_profile.jpg";
-        if (mannerScoreDisplay) mannerScoreDisplay.textContent = profileData.manner_score ? profileData.manner_score.toFixed(1) : "0.0";
+        if (mannerScoreDisplay) mannerScoreDisplay.textContent = profileData.total_score ? profileData.total_score.toFixed(1) : "0.0";
         if (followingsCountDisplay) followingsCountDisplay.textContent = profileData.followings ? profileData.followings.length : "0";
         if (followersCountDisplay) followersCountDisplay.textContent = profileData.followers ? profileData.followers.length : "0";
         if (likeProductsCountDisplay) likeProductsCountDisplay.textContent = profileData.like_products ? profileData.like_products.length : "0";
@@ -167,6 +167,65 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // 내가 작성한 후기 리스트 추가
+    if (document.getElementById("my-reviews")) {
+        fetch(`/api/accounts/user/${profileUsername}/reviews/`, {
+            headers: { "Authorization": `Bearer ${accessToken}` },
+        })
+        .then(response => response.json())
+        .then(reviews => {
+            if (reviews.length > 0) {
+                const myReviewsContainer = document.getElementById("my-reviews");
+                reviews.slice(0, 4).forEach(review => {
+                    const reviewCard = `
+                    <div class="card m-2" style="width: 18rem;">
+                        <img src="${review.product_image}" class="card-img-top" alt="${review.product_title}">
+                        <div class="card-body">
+                            <h5 class="card-title">${review.product_title}</h5>
+                            <p class="card-text">리뷰 작성일: ${new Date(review.created_at).toLocaleDateString("ko-KR")}</p>
+                            <a href="/api/products/detail-page/${review.product_id}/" class="btn btn-primary">자세히 보기</a>
+                        </div>
+                    </div>
+                    `;
+                    myReviewsContainer.insertAdjacentHTML("beforeend", reviewCard);
+                });
+            }
+        })
+        .catch(error => {
+            console.error("작성한 후기 정보를 불러오는 중 오류 발생:", error);
+            alert("작성한 후기 정보를 불러올 수 없습니다.");
+        });
+    }
+    // 구매 내역 
+    if (document.getElementById("purchase-history")) {
+        fetch(`/api/accounts/user/${profileUsername}/purchase-history/`, {
+            headers: { "Authorization": `Bearer ${accessToken}` },
+        })
+        .then(response => response.json())
+        .then(purchases => {
+            if (purchases.length > 0) {
+                const purchaseHistoryContainer = document.getElementById("purchase-history");
+                purchases.slice(0, 4).forEach(purchase => {
+                    const purchaseCard = `
+                        <div class="card m-2" style="width: 18rem;">
+                            <img src="${purchase.product_image}" class="card-img-top" alt="${purchase.title}">
+                            <div class="card-body">
+                                <h5 class="card-title">${purchase.title}</h5>
+                                <p class="card-text">가격: ${purchase.price}원</p>
+                                <a href="/api/products/detail-page/${purchase.id}/" class="btn btn-primary">자세히 보기</a>
+                            </div>
+                        </div>
+                    `;
+                    purchaseHistoryContainer.insertAdjacentHTML("beforeend", purchaseCard);
+                });
+            } 
+        })
+        .catch(error => {
+            console.error("구매 내역을 불러오는 중 오류 발생:", error);
+            alert("구매내역 정보를 불러올 수 없습니다.");
+        });
+    }
+
     // 클릭 가능한 통계 항목 설정
     addClickEventsToStats(profileUsername);
 
@@ -179,7 +238,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (mannerScoreDisplay) {
             mannerScoreDisplay.addEventListener("click", () => {
-                alert("매너점수 페이지로 이동합니다."); 
+                window.location.href = `/api/accounts/user/${username}/received-reviews`; 
             });
         }
 
@@ -197,7 +256,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (likeProductsCountDisplay) {
             likeProductsCountDisplay.addEventListener("click", () => {
-                window.location.href = `/api/products/user/${username}/like-products/`;
+                window.location.href = `/api/accounts/user/${username}/like-products/`;
             });
         }
     }
@@ -218,7 +277,30 @@ document.addEventListener("DOMContentLoaded", function () {
     const seeMoreProductsBtn = document.getElementById("see-more-products");
     if (seeMoreProductsBtn) {
         seeMoreProductsBtn.addEventListener("click", () => {
-            window.location.href = `/api/products/user-products-page/${profileUsername}`;
+            window.location.href = `/api/accounts/user-products-page/${profileUsername}`;
+        });
+    }
+
+    // 작성한 후기 더보기 버튼 클릭 시
+    const seeMoreReviewsBtn = document.getElementById("see-more-reviews");
+    if (seeMoreReviewsBtn) {
+        seeMoreReviewsBtn.addEventListener("click", () => {
+            window.location.href = `/api/accounts/user/${profileUsername}/reviews-page/`;
+        });
+    }
+
+    // 구매 내역 더보기 버튼 클릭 시
+    const seeMorePurchaseBtn = document.getElementById("see-more-purchase");
+    if (seeMorePurchaseBtn) {
+        seeMorePurchaseBtn.addEventListener("click", () => {
+            window.location.href = `/api/accounts/user/${profileUsername}/purchase-history-page/`;
+        });
+    }
+
+    // 매너 점수 클릭 시 받은 후기 목록으로 이동
+    if (mannerScoreDisplay) {
+        mannerScoreDisplay.addEventListener("click", () => {
+            window.location.href = `/api/accounts/user/${profileUsername}/received-reviews-page/`;
         });
     }
 });

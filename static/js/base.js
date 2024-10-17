@@ -23,7 +23,9 @@ function removeTokens() {
 async function fetchWithAuth(url, options = {}) {
     const access_token = getAccessToken();
 
+    // 토큰이 없는 경우 처리
     if (!access_token) {
+        console.error("Access token not found, redirecting to login page");
         window.location.href = "/api/accounts/login-page/";
         return;
     }
@@ -33,23 +35,48 @@ async function fetchWithAuth(url, options = {}) {
         "Authorization": `Bearer ${access_token}`,
     };
 
-    let response = await fetch(url, options);
+    // 첫 번째 요청 보내기
+    let response;
+    try {
+        response = await fetch(url, options);
+    } catch (error) {
+        console.error("Initial fetch request failed:", error);
+        return;
+    }
 
+    console.log("Initial fetch response status:", response.status); // 첫 번째 요청 상태 로그
+
+    // 만료된 토큰의 경우 처리 (401 Unauthorized)
     if (response.status === 401) {
-        const refreshResponse = await fetch("/api/accounts/token/refresh/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ refresh: getRefreshToken() }),
-        });
+        try {
+            const refreshResponse = await fetch("/api/accounts/token/refresh/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ refresh: getRefreshToken() }),
+            });
 
-        if (refreshResponse.ok) {
-            const data = await refreshResponse.json();
-            setAccessToken(data.access);
-            options.headers["Authorization"] = `Bearer ${data.access}`;
-            response = await fetch(url, options);
-        } else {
-            removeTokens();
-            window.location.href = "/api/accounts/login-page/";
+            console.log("Refresh response status:", refreshResponse.status); // 리프레시 요청 상태 로그
+
+            if (refreshResponse.ok) {
+                const data = await refreshResponse.json();
+                setAccessToken(data.access); // 새 액세스 토큰 저장
+                options.headers["Authorization"] = `Bearer ${data.access}`;
+
+                try {
+                    response = await fetch(url, options); // 두 번째 요청
+                } catch (error) {
+                    console.error("Fetch request after refreshing token failed:", error);
+                    return;
+                }
+            } else {
+                console.error("Failed to refresh token, removing tokens and redirecting to login page");
+                removeTokens();
+                window.location.href = "/api/accounts/login-page/";
+                return;
+            }
+        } catch (error) {
+            console.error("Refresh token request failed:", error);
+            return;
         }
     }
 
@@ -101,6 +128,7 @@ document.addEventListener("DOMContentLoaded", function () {
         logoutForm.addEventListener("submit", function (event) {
             event.preventDefault();
             removeTokens();
+            localStorage.removeItem('current_username');  // current_username 제거
             alert("로그아웃되었습니다.");
             window.location.href = "/api/accounts/login-page/";
             updateButtonDisplay();
@@ -128,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (chatLink) {
         chatLink.addEventListener("click", function (event) {
             event.preventDefault();  // 기본 동작 방지
-            event.stopPropagation()
+            event.stopPropagation();
             const accessToken = getAccessToken();
             const currentUsername = localStorage.getItem("current_username");
 
@@ -143,18 +171,13 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-
     // 검색 기능 구현
     if (searchButton && searchInput) {
         searchButton.addEventListener("click", function () {
             const query = searchInput.value.trim();
             if (query) {
-                const newUrl = `/?search=${query}`;
-                window.history.pushState({ path: newUrl }, "", newUrl);
-
-                if (typeof loadProductList === "function") {
-                    loadProductList("created_at", query);
-                }
+                const newUrl = `/?search=${query}&order_by=created_at&page=1`; // 루트 URL로 리디렉션
+                window.location.href = newUrl; // 검색 쿼리와 함께 홈 페이지로 이동
             }
         });
 
@@ -162,12 +185,8 @@ document.addEventListener("DOMContentLoaded", function () {
             if (event.key === "Enter") {
                 const query = searchInput.value.trim();
                 if (query) {
-                    const newUrl = `/home-page/?search=${query}`;
-                    window.history.pushState({ path: newUrl }, "", newUrl);
-
-                    if (typeof loadProductList === "function") {
-                        loadProductList("created_at", query);
-                    }
+                    const newUrl = `/?search=${query}&order_by=created_at&page=1`; // 루트 URL로 리디렉션
+                    window.location.href = newUrl; // 검색 쿼리와 함께 홈 페이지로 이동
                 }
             }
         });
@@ -277,4 +296,34 @@ document.addEventListener("DOMContentLoaded", function () {
             sendButton.click();
         }
     });
+
+    // 알림 배지를 업데이트하는 함수
+    async function updateChatAlertBadge() {
+        try {
+            const response = await fetchWithAuth("/api/products/chatroom/new_messages/");
+            if (!response.ok) throw new Error("새 메시지 확인 실패");
+
+            const data = await response.json();
+            const newMessagesCount = data.new_messages_count;
+
+            const chatLink = document.getElementById("chat-link");
+
+            if (newMessagesCount > 0) {
+                chatLink.classList.add("new-message-alert");
+                chatLink.innerHTML = `내 채팅방 <span class="badge bg-danger">${newMessagesCount}</span>`;
+            } else {
+                chatLink.classList.remove("new-message-alert");
+                chatLink.innerHTML = "내 채팅방";
+            }
+        } catch (error) {
+            console.error("새 메시지 확인 실패:", error);
+        }
+    }
+
+    // 페이지 로드 후 10초마다 새 메시지 체크 (비동기적, 로그인 상태 확인)
+    setInterval(() => {
+        if (getAccessToken()) {
+            updateChatAlertBadge();
+        }
+    }, 10000);
 });

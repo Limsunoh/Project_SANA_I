@@ -6,30 +6,28 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
     <!-- product_id 및 room_id 데이터를 포함한 chat-container 요소 -->
     <div class="chat-container" data-product-id="{{ product_id }}" data-room-id="{{ room_id }}">
-        <h1>채팅방</h1>
-        
-        <!-- 판매자일 경우에만 리뷰 요청 버튼 표시 -->
-        {% if request.user == room.seller %}
-        <button id="request-review-btn" class="btn btn-warning mb-3">리뷰 요청</button>
-        {% endif %}
-        
-        <!-- 구매자일 경우에만 리뷰 작성 버튼 표시 -->
-        {% if request.user == room.buyer %}
-        <button id="write-review-btn" class="btn btn-success mb-3">리뷰 작성</button>
-        {% endif %}
-        
+        <h1>{{ product_title }}</h1>
         <div id="chat-messages" class="chat-messages">
             <!-- 메시지 목록이 여기에 표시됩니다 -->
         </div>
-        <form id="send-message-form" class="chat-form">
+
+        <!-- 거래 완료 및 리뷰 작성 섹션 -->
+        <div class="transaction-section">
+            <!-- 판매자와 구매자가 서로 거래 완료 버튼을 누를 수 있음 -->
+            <button id="complete-transaction-btn" class="btn btn-success">거래 완료</button>
+
+            <!-- 리뷰 작성 버튼, 거래 완료 시에만 활성화됨 -->
+            <button id="write-review-btn" class="btn btn-primary" disabled>리뷰 작성</button>
+        </div>
+
+        <form id="send-message-form" class="chat-form" enctype="multipart/form-data">
             <textarea id="message-content" class="form-control" rows="3" placeholder="메시지를 입력하세요..."></textarea>
-            <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i></button>
+            <input type="file" id="message-image" accept="image/*"> <!-- 이미지 파일 첨부 -->
+            <button type="submit" class="btn btn-primary">전송<i class="fas fa-paper-plane"></i></button>
         </form>
     </div>
-</div>
 {% endblock %}
 
 {% block scripts %}

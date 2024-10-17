@@ -62,6 +62,11 @@
                 </div>
             </div>
         </div>
+
+            <!-- 배너 이미지 추가 -->
+        <div class="container-fluid p-0">
+            <img src="{% static 'images/banner.png' %}" alt="배너 이미지" class="img-fluid cropped-banner" style="width: 100%; height: 400px; object-fit: cover;">
+        </div>
     </header>
 
     <!-- 각 페이지별 내용이 들어갈 위치 -->
@@ -81,7 +86,7 @@
     <div id="chat-popup" class="chat-popup">
         <div class="chat-header">AI 1대1 문의</div>
         <div class="chat-body" id="chat-body">
-            <!-- 대화 내역 -->
+            <!-- 대화 내역 -->  
         </div>
         <div class="chat-footer">
             <input type="text" id="chat-input" class="chat-input" placeholder="문의 내용을 입력" />
