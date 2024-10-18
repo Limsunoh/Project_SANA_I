@@ -1,6 +1,8 @@
 # 🍓StrawBerryMarket
 ![image]()
-
+ https://sbmarket.kro.kr/
+ 
+<br/>
 # 📝프로젝트 소개
   - 한 줄 정리 :  당근마켓을 오마주로 한 딸기마켓
   - 내용 :  중고거래를 핵심으로 하는 웹 앱  및 API
@@ -68,7 +70,7 @@
 
 - Django: 백엔드 프레임워크 <br/>
 - Gunicorn: WSGI HTTP 서버 <br/>
-- PostgreSQL: 데이터베이스 관리 시스템 <br/>
+- MySQL: 데이터베이스 관리 시스템 <br/>
 - Nginx: HTTP 및 리버스 프록시 서버
 
 </div>
@@ -79,7 +81,6 @@
 <div>
 
 - Amazon EC2: 서버 호스팅 <br/>
-- Amazon S3: 스토리지 서비스 <br/>
 - 내도메인.한국 : DNS 및 도메인 이름 관리 서비스 <br/>
 
 </div>
@@ -90,11 +91,10 @@
 <div>
 
 - GitHub: 소스 코드 관리 및 협업 도구 <br/>
-- ChatGPT: 챗봇 서비스 <br/>
+- GPT AI: 챗봇 서비스 <br/>
 
 </div>
 </details>
-
 
 
 # 🛠️ ERD
@@ -108,8 +108,6 @@
 <br/>
 
 
-
-
 <details>
 <summary><h2>🌟 git commit 규칙</h2></summary>
 <div markdown="1">
@@ -120,7 +118,6 @@
 - refactor : 코드 스타일 및 리팩도링에 대한 커밋
 - rename : 파일 명 혹은 폴더명 수정 작업
 - remove : 파일의 삭제 작업을 수행하는 경우
-
 
 </div>
 </details>
