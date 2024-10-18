@@ -151,9 +151,6 @@ class ProductDetailSerializer(serializers.ModelSerializer):
         return obj.author.get_profile_image_url()
 
     def to_representation(self, instance):
-        # [조회수 증가] 상품 조회 시 조회수 (hits) 증가
-        instance.hits += 1
-        instance.save(update_fields=["hits"])
         rep = super().to_representation(instance)
         rep["status_display"] = instance.get_status_display()  # status의 디스플레이 값을 추가
         return rep

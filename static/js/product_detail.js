@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
 
     // 1. 제품 상세 정보 가져오기
-    fetch(apiUrl)
+    fetchWithOptionalAuth(apiUrl)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Failed to fetch product details');
@@ -208,6 +208,8 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        likeButton.disabled = true; // 찜하기 버튼 비활성화 (중복 클릭 방지)
+
         fetchWithAuth(likeApiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' } })
             .then(response => response.json())
             .then(data => {
@@ -223,7 +225,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     likesCountElement.textContent = currentLikesCount - 1;
                 }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);
+                alert('처리 중 오류가 발생했습니다. 다시 시도해 주세요.');
+            })
+            .finally(() => {
+                // 오류가 있든 없든, 처리 완료 후 버튼 다시 활성화
+                likeButton.disabled = false;
+            });
     });
 
     // 게시글 수정 페이지로 이동
