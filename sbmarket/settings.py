@@ -31,7 +31,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "localhost",
-    "3.36.112.248",
+    "52.78.43.100",
     "127.0.0.1",
     "sbmarket.kro.kr",
     ]
