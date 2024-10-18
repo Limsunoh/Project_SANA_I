@@ -11,13 +11,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const imageInput = document.getElementById("image");
     const profileImagePreview = document.getElementById("profile_image_preview");
 
+    const FILE_SIZE_LIMIT_MB = 10; 
+    const MAX_PROFILE_IMAGE_SIZE = FILE_SIZE_LIMIT_MB * 1024 * 1024; // MB 단위
+
     // 현재 로그인된 사용자의 아이디 불러오기
     let username = localStorage.getItem("current_username");
     let accessToken = localStorage.getItem("access_token");
 
     if (!username) {
         if (accessToken) {
-            
             // 서버에서 사용자 정보 요청하여 username 설정
             fetch("/api/accounts/profile/", {
                 headers: {
@@ -56,10 +58,17 @@ document.addEventListener("DOMContentLoaded", function () {
         }).open();
     });
 
-    // 이미지 미리보기 업데이트
+    // 이미지 미리보기 업데이트 및 용량 체크
     imageInput.addEventListener("change", function () {
         const file = imageInput.files[0];
         if (file) {
+            // 용량 체크
+            if (file.size > MAX_PROFILE_IMAGE_SIZE) {
+                alert(`프로필 사진 용량은 ${FILE_SIZE_LIMIT_MB}MB 이하로 제한됩니다.`);
+                imageInput.value = ""; // 파일 선택 초기화
+                profileImagePreview.src = "/static/images/default_image.jpg"; // 기본 이미지로 설정
+                return;
+            }
             const reader = new FileReader();
             reader.onload = function (e) {
                 profileImagePreview.src = e.target.result;

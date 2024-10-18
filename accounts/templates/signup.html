@@ -40,8 +40,8 @@
         <input type="email" id="email" name="email" required>
     </div>
     <div class="input-group">
-        <label for="image">image</label>
-        <input type="file" id="image" name="image">
+        <label for="image">Profile Image</label>
+        <input type="file" id="profile-image-input" name="image" accept="image/*">
     </div>
     <div class="input-group">
         <label for="sample6_postcode">Address</label>
@@ -57,10 +57,9 @@
     </div>
     <button type="submit">회원가입</button>
 </form>
-{% block scripts %}
-<!-- 필요한 자바스크립트 파일 연결 -->
-<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-<script src="{% static 'js/signup.js' %}"></script>
 {% endblock %}
 
+{% block scripts %}
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script src="{% static 'js/signup.js' %}"></script>
 {% endblock %}

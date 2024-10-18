@@ -36,7 +36,7 @@ from reviews.models import Review
 class UserCreateView(CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permisson_classes = [AllowAny]
+    permission_classes = [AllowAny]
 
     def create(self, request, *args, **kwargs):
         # [데이터 검증] 사용자가 입력한 데이터의 유효성 체크
