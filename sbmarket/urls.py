@@ -21,7 +21,10 @@ from django.shortcuts import redirect
 from django.conf.urls.static import static
 from django.conf import settings
 from products.views import HomePageView
-from products import views
+
+
+def trigger_error(request):
+    division_by_zero = 1 / 0
 
 
 urlpatterns = [
@@ -31,5 +34,6 @@ urlpatterns = [
     path("api/accounts/", include("accounts.urls")),
     path("api/manager/", include("manager.urls")),
     path("api/reviews/", include("reviews.urls")),
+    path('sentry-debug/', trigger_error),
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
