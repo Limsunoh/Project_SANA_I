@@ -23,7 +23,9 @@ async function loadProductList(order_by = '', search = '', page = 1) {
         let apiUrl = `/api/products/?search=${search}&order_by=${order_by}&page=${page}`;
         console.log(`API 호출 URL: ${apiUrl}`);  // URL 로그 출력
 
-        const response = await fetch(apiUrl);
+        // fetchWithOptionalAuth 사용
+        const response = await fetchWithOptionalAuth(apiUrl);
+
         if (!response.ok) {
             throw new Error('상품 목록을 불러오는데 실패했습니다.');
         }
@@ -191,12 +193,16 @@ async function aiSearch() {
     showLoading();
 
     try {
-        const response = await fetch('/api/products/aisearch/', {
+        const apiUrl = '/api/products/aisearch/';
+        const requestBody = JSON.stringify({ query: query });
+
+        // fetchWithOptionalAuth 사용
+        const response = await fetchWithOptionalAuth(apiUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ query: query }),
+            body: requestBody,
         });
 
         if (!response.ok) {
