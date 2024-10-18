@@ -20,7 +20,8 @@ async function loadProductList(order_by = '', search = '', page = 1) {
     
 
     try {
-        let apiUrl = `/api/products?search=${search}&order_by=${order_by}&page=${page}`;
+        let apiUrl = `/api/products/?search=${search}&order_by=${order_by}&page=${page}`;
+        console.log(`API 호출 URL: ${apiUrl}`);  // URL 로그 출력
 
         const response = await fetch(apiUrl);
         if (!response.ok) {
