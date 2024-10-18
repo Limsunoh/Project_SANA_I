@@ -1,3 +1,21 @@
+const FILE_SIZE_LIMIT_MB = 10; 
+const MAX_PROFILE_IMAGE_SIZE = FILE_SIZE_LIMIT_MB * 1024 * 1024; // MB 단위
+
+document.addEventListener('DOMContentLoaded', function () {
+    const messageImageInput = document.getElementById('message-image');
+
+    // 이미지 선택 시 용량 제한 확인
+    if (messageImageInput) {
+        messageImageInput.addEventListener('change', function () {
+            const messageImage = messageImageInput.files[0];
+            if (messageImage && messageImage.size > MAX_PROFILE_IMAGE_SIZE) {
+                alert(`${messageImage.name} 파일 크기가 ${FILE_SIZE_LIMIT_MB}MB를 초과했습니다.`);
+                // 파일 선택 초기화 (초과한 파일이 선택되지 않도록)
+                messageImageInput.value = '';
+            }
+        });
+    }})
+
 document.addEventListener('DOMContentLoaded', function () {
     const chatContainer = document.querySelector('.chat-container');
     const productId = chatContainer ? chatContainer.getAttribute('data-product-id') : null;
@@ -5,9 +23,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const currentUser = localStorage.getItem('current_username');
     const messageInput = document.getElementById('message-content');
     const sendMessageButton = document.querySelector('#send-message-form button[type="submit"]');
-    
-    const FileSizeNum = 10;
-    const MaxFileSize = FileSizeNum * 1024 * 1024; // MB 단위
 
     if (!productId || !roomId) {
         console.error("productId 또는 roomId를 찾을 수 없습니다. 데이터를 확인해 주세요.");
@@ -194,8 +209,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     
         // 이미지 파일 크기 체크
-        if (messageImage && messageImage.size > MaxFileSize) {
-            alert(`${messageImage.name}파일 크기가 ${FileSizeNum}MB를 초과했습니다.`);
+        if (messageImage && messageImage.size > MAX_PROFILE_IMAGE_SIZE) {
+            alert(`${messageImage.name}파일 크기가 ${FILE_SIZE_LIMIT_MB}MB를 초과했습니다.`);
             return;
         }
     
