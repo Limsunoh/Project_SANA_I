@@ -21,7 +21,6 @@ async function loadProductList(order_by = '', search = '', page = 1) {
 
     try {
         let apiUrl = `/api/products?search=${search}&order_by=${order_by}&page=${page}`;
-        console.log(`API 호출 URL: ${apiUrl}`);  // URL 로그 출력
 
         const response = await fetch(apiUrl);
         if (!response.ok) {
@@ -33,28 +32,54 @@ async function loadProductList(order_by = '', search = '', page = 1) {
 
         const productList = products.results;
         productList.forEach(product => {
-            const productCard = `
-                <div class="product-item" onclick="window.location.href='/api/products/detail-page/${product.id}/'" style="cursor: pointer;">
-                    <div class="product-image">
-                        <img src="${product.preview_image}" alt="${product.title}">
-                    </div>
-                    <div class="product-info">
-                        <h3>${product.title}</h3>
-                        <p>판매자: ${product.author}</p>
-                        <p class="product-price">${product.price}원</p>
-                        <p>찜수: ${product.likes_count}</p>
-                        <p>조회수: ${product.hits}</p>
-                    </div>
-                </div>
-            `;
-            productListContainer.insertAdjacentHTML('beforeend', productCard);
+            // HTML에 텍스트를 안전하게 삽입하기 위해 텍스트 부분을 textContent로 처리
+            const productCard = document.createElement('div');
+            productCard.classList.add('product-item');
+            productCard.onclick = function () {
+                window.location.href = `/api/products/detail-page/${product.id}/`;
+            };
+            
+            const productImage = document.createElement('div');
+            productImage.classList.add('product-image');
+            const img = document.createElement('img');
+            img.src = product.preview_image;
+            img.alt = product.title;
+            productImage.appendChild(img);
+
+            const productInfo = document.createElement('div');
+            productInfo.classList.add('product-info');
+
+            const title = document.createElement('h3');
+            title.textContent = product.title; // textContent 사용
+            productInfo.appendChild(title);
+
+            const author = document.createElement('p');
+            author.textContent = `판매자: ${product.author}`; // textContent 사용
+            productInfo.appendChild(author);
+
+            const price = document.createElement('p');
+            price.classList.add('product-price');
+            price.textContent = `${product.price}원`; // textContent 사용
+            productInfo.appendChild(price);
+
+            const likes = document.createElement('p');
+            likes.textContent = `찜수: ${product.likes_count}`; // textContent 사용
+            productInfo.appendChild(likes);
+
+            const hits = document.createElement('p');
+            hits.textContent = `조회수: ${product.hits}`; // textContent 사용
+            productInfo.appendChild(hits);
+
+            productCard.appendChild(productImage);
+            productCard.appendChild(productInfo);
+            productListContainer.appendChild(productCard);
         });
 
         currentPage = page;
         totalPages = Math.ceil(products.count / 12); // 한 페이지에 12개의 상품이 보이도록 설정
         updatePaginationControls(search, order_by);
     } catch (error) {
-        console.error('에러 발생:', error); // 에러 로그 확인
+        console.error('에러 발생:', error);
         alert('상품 목록을 불러올 수 없습니다.');
     }
 }
@@ -62,11 +87,18 @@ async function loadProductList(order_by = '', search = '', page = 1) {
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
     const searchQuery = urlParams.get('search') || '';
+    const hashtagQuery = urlParams.get('hashtag') || '';
     const orderByParam = urlParams.get('order_by') || 'created_at';
     currentPage = parseInt(urlParams.get('page') || 1, 10);
 
     checkAIRecommendationStatus(); // 페이지 로드 시 AI 상태 체크
-    loadProductList(orderByParam, searchQuery, currentPage);
+
+    // 해시태그가 있으면 해시태그로 필터링, 없으면 일반 검색어로 필터링
+    if (hashtagQuery) {
+        loadProductList(orderByParam, hashtagQuery, currentPage);
+    } else {
+        loadProductList(orderByParam, searchQuery, currentPage);
+    }
 
     // 정렬 버튼 클릭 시 호출
     document.querySelectorAll('.dropdown-item').forEach(item => {
@@ -90,8 +122,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 const newUrl = `/?ai_search=${aiSearchQuery}&order_by=${orderByParam}&page=1`;
                 window.history.pushState({ path: newUrl }, '', newUrl);
                 sortAIRecommendations(orderByParam);  // AI 추천 상품 정렬
+            } else if (hashtagQuery) {
+                // 해시태그 필터링
+                const newUrl = `/?hashtag=${hashtagQuery}&order_by=${orderByParam}&page=1`;
+                window.history.pushState({ path: newUrl }, '', newUrl);
+                loadProductList(orderByParam, '', 1, hashtagQuery);
             } else {
-                // 일반 검색일 경우, search 파라미터 사용
+                // 일반 검색어 필터링
                 const newUrl = `/?search=${searchQuery}&order_by=${orderByParam}&page=1`;
                 window.history.pushState({ path: newUrl }, '', newUrl);
                 loadProductList(orderByParam, searchQuery, 1);
@@ -150,7 +187,7 @@ async function aiSearch() {
         return;
     }
 
-    showLoading(); // 로딩창 표시
+    showLoading();
 
     try {
         const response = await fetch('/api/products/aisearch/', {
@@ -179,7 +216,7 @@ async function aiSearch() {
         console.error('에러 발생:', error);
         alert('AI 추천을 불러오는데 문제가 발생했습니다.');
     } finally {
-        hideLoading(); // 로딩창 숨김
+        hideLoading();
     }
 }
 
@@ -205,30 +242,58 @@ function displayProductRecommendations(products) {
 
     if (isAIRecommendationActive) {
         recommendationMessage.textContent = "AI가 추천하는 상품입니다.";
-        recommendationMessage.style.display = 'block'; // 문구 표시
+        recommendationMessage.style.display = 'block';
     }
 
     products.forEach(product => {
-        console.log("Product Data:", product); // `product` 객체를 로그로 확인
         if (!product.id) {
             console.error("상품 ID가 누락되었습니다.", product);
+            return;
         }
 
-        const productCard = `
-        <div class="product-item" onclick="window.location.href='/api/products/detail-page/${product.id}/'" style="cursor: pointer;">
-            <div class="product-image">
-                <img src="${product.preview_image}" alt="${product.title}">
-            </div>
-            <div class="product-info">
-                <h3>${product.title}</h3>
-                <p>판매자: ${product.author}</p>
-                <p class="product-price">${product.price}원</p>
-                <p>찜수: ${product.likes_count}</p>
-                <p>조회수: ${product.hits}</p>
-            </div>
-        </div>
-    `;
-    productListContainer.insertAdjacentHTML('beforeend', productCard);
+        // 안전한 DOM 조작을 사용하여 상품 정보를 삽입
+        const productItem = document.createElement('div');
+        productItem.classList.add('product-item');
+        productItem.style.cursor = 'pointer';
+        productItem.addEventListener('click', () => {
+            window.location.href = `/api/products/detail-page/${product.id}/`;
+        });
+
+        const productImage = document.createElement('div');
+        productImage.classList.add('product-image');
+        const img = document.createElement('img');
+        img.src = product.preview_image;  // 이미지 경로는 신뢰된 데이터일 경우만 사용
+        img.alt = product.title;  // 안전한 DOM 삽입
+        productImage.appendChild(img);
+
+        const productInfo = document.createElement('div');
+        productInfo.classList.add('product-info');
+
+        const titleElement = document.createElement('h3');
+        titleElement.textContent = product.title;  // HTML 엔티티 인코딩 대신 DOM 사용
+        const authorElement = document.createElement('p');
+        authorElement.textContent = `판매자: ${product.author}`;  // 안전하게 textContent 사용
+        const priceElement = document.createElement('p');
+        priceElement.classList.add('product-price');
+        priceElement.textContent = `${product.price}원`;
+        const likesElement = document.createElement('p');
+        likesElement.textContent = `찜수: ${product.likes_count}`;
+        const hitsElement = document.createElement('p');
+        hitsElement.textContent = `조회수: ${product.hits}`;
+
+        // 상품 정보를 product-info에 추가
+        productInfo.appendChild(titleElement);
+        productInfo.appendChild(authorElement);
+        productInfo.appendChild(priceElement);
+        productInfo.appendChild(likesElement);
+        productInfo.appendChild(hitsElement);
+
+        // product-item에 이미지와 정보를 추가
+        productItem.appendChild(productImage);
+        productItem.appendChild(productInfo);
+
+        // 최종적으로 productListContainer에 삽입
+        productListContainer.appendChild(productItem);
     });
 
     currentPage = 1;

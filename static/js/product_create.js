@@ -20,7 +20,6 @@ function previewImages(event) {
     }
 }
 
-// DOMContentLoaded 이벤트 리스너
 document.addEventListener('DOMContentLoaded', () => {
     const productForm = document.getElementById('product-create-form');
 
@@ -36,6 +35,20 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append("content", document.getElementById('content').value);
         formData.append("tags", document.getElementById('tags').value);
         formData.append("status", document.getElementById('status').value);
+
+        // 해시태그 입력값을 처리 (빈 해시태그를 방지)
+        let tagsInput = document.getElementById('tags').value.trim();
+
+        // 쉼표로 구분된 해시태그 목록을 분리하고, 빈 문자열을 제거함
+        const tagsArray = tagsInput.split(',')
+                                   .map(tag => tag.trim()) // 각 해시태그 양쪽 공백 제거
+                                   .filter(tag => tag !== ''); // 빈 해시태그 필터링
+
+        // 유효한 해시태그를 쉼표로 연결
+        const validTags = tagsArray.join(',');
+        
+        // 유효한 태그만 formData에 추가
+        formData.append("tags", validTags);
 
         const images = document.getElementById('image-upload').files;
         for (let i = 0; i < images.length; i++) {
@@ -56,11 +69,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const responseData = await response.json();
                 const productPk = responseData.id; // 서버 응답에서 생성된 제품의 pk 값을 추출
                 window.location.href = `/api/products/detail-page/${productPk}/`;
-                console.log("제품이 성공적으로 등록되었습니다.");
+                alert("제품이 성공적으로 등록되었습니다.");
             } else {
                 console.error("제품 등록에 실패했습니다.");
                 const errorData = await response.json();
-                console.log("에러 메시지:", errorData);
             }
         } catch (error) {
             console.error("서버와 통신 중 문제가 발생했습니다.", error);

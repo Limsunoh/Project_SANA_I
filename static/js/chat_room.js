@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const chatContainer = document.querySelector('.chat-container');
     const productId = chatContainer ? chatContainer.getAttribute('data-product-id') : null;
     const roomId = chatContainer ? chatContainer.getAttribute('data-room-id') : null;
-    const currentUser = localStorage.getItem('current_username');  // 현재 로그인한 유저 이름
+    const currentUser = localStorage.getItem('current_username');
     const messageInput = document.getElementById('message-content');
     const sendMessageButton = document.querySelector('#send-message-form button[type="submit"]');
 
@@ -31,48 +31,38 @@ document.addEventListener('DOMContentLoaded', function () {
                 "Authorization": `Bearer ${token}`
             },
             success: function (response) {
-                console.log("거래 상태:", response);
     
-                const currentUser = localStorage.getItem('current_username');  // 현재 로그인된 사용자 정보 확인
-                console.log("현재 로그인된 사용자:", currentUser);  // 로그로 확인
+                const currentUser = localStorage.getItem('current_username');
     
                 const isBuyer = response.buyer === currentUser;
                 const isSeller = response.seller === currentUser;
-    
-                console.log(`is_sold: ${response.is_sold}, is_completed: ${response.is_completed}, isBuyer: ${isBuyer}, isSeller: ${isSeller}`);
-                
+                    
                 // 전역 변수 transactionStatus 업데이트
                 transactionStatus = response;
                 
                 if (isSeller) {
                     // 판매자는 리뷰 작성 버튼을 숨김
                     if (writeReviewBtn) {
-                        writeReviewBtn.style.display = 'none';  // 버튼 계속 숨기기
+                        writeReviewBtn.style.display = 'none';
                     }
-                    console.log("판매자는 리뷰 작성 버튼을 볼 수 없습니다.");
                 }
                 else if (response.is_sold && response.is_completed && isBuyer) {
                     writeReviewBtn.disabled = false;  // 구매자만 리뷰 작성 가능
-                    console.log("리뷰 작성 버튼 활성화");
                 } else {
                     writeReviewBtn.disabled = true;
-                    console.log("리뷰 작성 버튼 비활성화");
                 }
 
                 writeReviewBtn.addEventListener('click', function () {
-                    // create_review.html로 이동 (URL에 productId를 포함)
                     window.location.href = `/api/reviews/products/${productId}/create/`;
                 });
     
                 // 판매자와 구매자를 기준으로 버튼 텍스트 설정
                 if (isSeller) {
-                    // 판매자일 경우 "판매 완료" 또는 "판매 완료 취소" 표시
                     completeTransactionBtn.textContent = response.is_completed ? "판매 완료 취소" : "판매 완료";
                 } else if (isBuyer) {
-                    // 구매자일 경우 "거래 완료" 또는 "거래 완료 취소" 표시
                     completeTransactionBtn.textContent = response.is_sold ? "거래 완료 취소" : "거래 완료";
                 } else {
-                    console.log("판매자 또는 구매자가 아닌 사용자입니다.");
+                    alert("판매자 또는 구매자가 아닌 사용자입니다.");
                 }
             },
             error: function (xhr, status, error) {
@@ -84,24 +74,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 거래 완료 버튼 클릭 이벤트 (판매자와 구매자 역할에 따라 다르게 처리)
     completeTransactionBtn.addEventListener('click', function () {
-        const buttonText = completeTransactionBtn.textContent;
-        console.log("버튼 텍스트:", buttonText);
-    
+        const buttonText = completeTransactionBtn.textContent;    
         const isBuyer = buttonText.includes("거래");
         const isSeller = buttonText.includes("판매");
     
         // 현재 거래 상태를 기반으로 상태 반전
         let data = {};
         if (isSeller) {
-            console.log("판매자가 거래 완료/취소를 시도합니다.");
-            data = { is_completed: !transactionStatus.is_completed };  // 판매자가 완료/취소 시 is_completed 반전
+            data = { is_completed: !transactionStatus.is_completed };
         } else if (isBuyer) {
-            console.log("구매자가 거래 완료/취소를 시도합니다.");
-            data = { is_sold: !transactionStatus.is_sold };  // 구매자가 완료/취소 시 is_sold 반전
+            data = { is_sold: !transactionStatus.is_sold };
         }
-    
-        console.log("전송할 데이터:", data);  // 서버로 보내는 데이터 확인
-    
+        
         $.ajax({
             url: transactionStatusUrl,
             type: "POST",
@@ -111,7 +95,6 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             data: JSON.stringify(data),
             success: function (response) {
-                console.log("응답:", response);  // 서버 응답 확인
                 alert(isSeller ? "판매 상태가 업데이트되었습니다." : "거래 상태가 업데이트되었습니다.");
                 transactionStatus = response;  // 서버 응답을 기반으로 상태 업데이트
                 checkTransactionStatus();  // 상태 업데이트 후 다시 확인
@@ -156,9 +139,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     const messageClass = msg.sender_username === localStorage.getItem('current_username') ? 'my-message' : '';
                     const timestamp = msg.created_at ? new Date(msg.created_at).toLocaleString('ko-KR', { hour12: false }) : "알 수 없음";
                     
-                    console.log("Profile Image URL:", msg.sender_image);
-                    console.log("Timestamp:", msg.created_at);
-
                     let imageElement = '';
                     if (msg.image) {
                         imageElement = `<img src="${msg.image}" class="message-image" alt="Image">`;
@@ -182,7 +162,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 // 마지막 메시지 ID 업데이트
                 if (response.length > 0) {
                     lastMessageId = response[response.length - 1].id;
-                    console.log("업데이트된 lastMessageId:", lastMessageId);
                 }
 
                 polling = false;
@@ -204,16 +183,16 @@ document.addEventListener('DOMContentLoaded', function () {
     // 엔터키로도 메시지 전송
     if (messageInput) {
         messageInput.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' && !e.shiftKey) {  // 엔터키를 누를 때 (Shift + Enter는 제외)
-                e.preventDefault();  // 기본 엔터키 동작 방지
-                sendMessage();  // 전송 함수 호출
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();  
+                sendMessage();
             }
         });
     }
 
     function sendMessage() {
         const messageContent = $('#message-content').val().trim();
-        const messageImage = $('#message-image')[0].files[0];  // 이미지 파일 선택
+        const messageImage = $('#message-image')[0].files[0];
 
         if (messageContent === "" && !messageImage) {
             alert("메시지나 이미지를 입력하세요.");
@@ -222,20 +201,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // FormData 객체를 사용해 메시지와 이미지를 함께 전송
         const formData = new FormData();
-        formData.append('content', messageContent);  // 메시지 내용 추가
+        formData.append('content', messageContent);
         if (messageImage) {
-            formData.append('image', messageImage);  // 이미지 파일 추가
+            formData.append('image', messageImage);
         }
 
         $.ajax({
             url: apiUrl,
             type: "POST",
             headers: {
-                "Authorization": `Bearer ${token}`  // 토큰은 헤더에 추가
+                "Authorization": `Bearer ${token}`
             },
             data: formData,
-            contentType: false,  // FormData를 사용할 때는 false로 설정
-            processData: false,  // FormData를 사용할 때는 false로 설정
+            contentType: false,
+            processData: false,
             success: function (response) {
                 $('#message-content').val('');  // 입력 필드 초기화
                 $('#message-image').val('');    // 이미지 필드 초기화
