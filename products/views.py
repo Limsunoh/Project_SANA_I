@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from django.core.cache import cache
 from django.db.models import Q, Count
 import time, logging
 from rest_framework import status, serializers
@@ -10,6 +11,8 @@ from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly,
     AllowAny,
 )
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from accounts.permissions import (
     IsOwnerOrReadOnly,
@@ -119,11 +122,58 @@ class ProductDetailAPIView(UpdateAPIView):
     serializer_class = ProductDetailSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
-    # [상품 조회] 상품 ID(pk)로 단일 상품의 세부 정보 반환
     def get(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
-        serializer = ProductDetailSerializer(product)
-        return Response(serializer.data, status=200)
+        user = None
+
+        # JWT 인증 시도
+        jwt_auth = JWTAuthentication()
+        try:
+            user_auth_data = jwt_auth.authenticate(request)
+            if user_auth_data is not None:
+                user, token = user_auth_data
+                print(f"JWT 인증 성공: 사용자 {user.username}")
+            else:
+                print("JWT 인증 실패: 인증 정보가 없습니다.")
+        except AuthenticationFailed:
+            user = None
+            print("JWT 인증 실패: AuthenticationFailed 예외 발생")
+
+        # 로그인을 했을 때는 토큰 기반 조회수 처리
+        if user:
+            user_id = user.id
+            viewed_products_key = f"viewed_products_{user_id}"
+            viewed_products = cache.get(viewed_products_key, [])
+
+            print(f"로그인된 사용자 {user.username}의 조회 목록: {viewed_products}")
+
+            if pk not in viewed_products:
+                # 조회수 증가 처리
+                product.hits += 1
+                product.save(update_fields=['hits'])
+                viewed_products.append(pk)
+                cache.set(viewed_products_key, viewed_products, timeout=60 * 60 * 24)  # 24시간 동안 저장
+                print(f"조회수 증가. 사용자 {user.username}의 조회 목록에 추가된 상품 ID: {pk}, 총 조회수: {product.hits}")
+            else:
+                print("이미 조회한 상품입니다. 조회수 증가 없음.")
+        else:
+            # 비로그인 사용자에 대해서는 쿠키로 처리
+            viewed_products = request.COOKIES.get('viewed_products', '').split(',')
+            print(f"비로그인 사용자의 쿠키 조회 목록: {viewed_products}")
+
+            if str(pk) not in viewed_products:
+                product.hits += 1
+                product.save(update_fields=['hits'])
+                viewed_products.append(str(pk))
+                print(f"비로그인 사용자 조회수 증가, 총 조회수: {product.hits}")
+
+        response = Response(ProductDetailSerializer(product).data)
+
+        # 비로그인 사용자의 조회수 증가를 위해 쿠키 설정
+        if not user:
+            response.set_cookie('viewed_products', ','.join(viewed_products), max_age=60 * 60 * 24)
+
+        return response
 
     # [상품 수정] 이미지와 해시태그를 포함한 상품 정보 수정 처리
     def perform_update(self, serializer):

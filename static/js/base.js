@@ -79,6 +79,19 @@ async function fetchWithAuth(url, options = {}) {
     return response;
 }
 
+function fetchWithOptionalAuth(url, options = {}) {
+    const accessToken = localStorage.getItem("access_token");
+
+    // 로그인한 사용자인 경우 fetchWithAuth 사용
+    if (accessToken) {
+        return fetchWithAuth(url, options);
+    } 
+    // 비로그인 사용자라면 일반 fetch 사용
+    else {
+        return fetch(url, options);
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     const signupLink = document.querySelector("a[href='/api/accounts/signup-page/']");
     const loginLink = document.querySelector("a[href='/api/accounts/login-page/']");

@@ -4,9 +4,16 @@ function previewImages(event) {
     imagePreviewContainer.innerHTML = '';
 
     const files = event.target.files;
+    const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB
     for (let i = 0; i < files.length; i++) {
         const file = files[i];
         const reader = new FileReader();
+
+        // 파일 크기 확인
+        if (file.size > MAX_IMAGE_SIZE) {
+            alert("이미지 크기는 10MB 이하이어야 합니다.");
+            return; // 크기 초과 시 미리보기와 업로드 중단
+        }
 
         reader.onload = function (e) {
             const img = document.createElement('img');
