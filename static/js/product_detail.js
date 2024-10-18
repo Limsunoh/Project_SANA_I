@@ -59,8 +59,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const hashtagContainer = document.getElementById('hashtags');
             data.hashtag.forEach(tag => {
-                const tagElement = document.createElement('span');
-                tagElement.textContent = `#${tag.name}`;
+                const tagElement = document.createElement('a');
+                tagElement.href = `/?hashtag=${encodeURIComponent(tag.name)}`;
+                tagElement.textContent = `#${tag.name}`; // 화면에 표시할 때만 '#' 붙이기
                 tagElement.classList.add('hashtag');
                 hashtagContainer.appendChild(tagElement);
             });
@@ -91,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     likeButton.style.display = 'none';
                     chatButton.style.display = 'none';
                 } else {
-                    chatButton.style.display = 'inline-block'; // 작성자가 아닌 경우에만 채팅 버튼 표시
+                    chatButton.style.display = 'inline-block';
                 }
 
                 if (data.status_display.trim() === '판매완료') {
@@ -106,19 +107,15 @@ document.addEventListener('DOMContentLoaded', function () {
                         const authorUsername = link.dataset.author;
 
                     if (authorUsername) {
-                        // 작성자 프로필 페이지로 이동
                         window.location.href = `/api/accounts/profile-page/${authorUsername}/`;
                     }
                 });
             });
-            console.log("currentUserNickname:", currentUserNickname);
-            console.log("data.author:", data.author);
-
+            
                 // 작성자와 현재 사용자가 다를 경우 수정 및 삭제 버튼 숨기기
                 if (!currentUserNickname || currentUserNickname.trim() !== data.author.trim()) {
                     editButton.style.display = 'none';
                     deleteButton.style.display = 'none';
-                    console.log("작성자가 아니거나 로그인이 되어있지 않음, 수정/삭제 버튼 숨김");
                 }
             }
         })
@@ -229,17 +226,17 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(error => console.error('Error:', error));
     });
 
-    // 4. 게시글 수정 페이지로 이동
+    // 게시글 수정 페이지로 이동
     editButton.addEventListener('click', function () {
         window.location.href = `/api/products/edit-page/${productId}/`;  // 수정 페이지로 이동
     });
 
-    // 5. 삭제 버튼 클릭 시 모달 띄우기
+    // 삭제 버튼 클릭 시 모달 띄우기
     deleteButton.addEventListener('click', function () {
         deleteModal.show();
     });
 
-    // 6. 삭제 확인 버튼 클릭 시 삭제 요청
+    // 삭제 확인 버튼 클릭 시 삭제 요청
     confirmDeleteButton.addEventListener('click', async function () {
         try {
             const csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;

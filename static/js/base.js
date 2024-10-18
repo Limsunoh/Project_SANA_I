@@ -44,9 +44,7 @@ async function fetchWithAuth(url, options = {}) {
         return;
     }
 
-    console.log("Initial fetch response status:", response.status); // 첫 번째 요청 상태 로그
-
-    // 만료된 토큰의 경우 처리 (401 Unauthorized)
+    // 만료된 토큰의 경우 처리
     if (response.status === 401) {
         try {
             const refreshResponse = await fetch("/api/accounts/token/refresh/", {
@@ -55,15 +53,13 @@ async function fetchWithAuth(url, options = {}) {
                 body: JSON.stringify({ refresh: getRefreshToken() }),
             });
 
-            console.log("Refresh response status:", refreshResponse.status); // 리프레시 요청 상태 로그
-
             if (refreshResponse.ok) {
                 const data = await refreshResponse.json();
-                setAccessToken(data.access); // 새 액세스 토큰 저장
+                setAccessToken(data.access);
                 options.headers["Authorization"] = `Bearer ${data.access}`;
 
                 try {
-                    response = await fetch(url, options); // 두 번째 요청
+                    response = await fetch(url, options);
                 } catch (error) {
                     console.error("Fetch request after refreshing token failed:", error);
                     return;
@@ -128,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
         logoutForm.addEventListener("submit", function (event) {
             event.preventDefault();
             removeTokens();
-            localStorage.removeItem('current_username');  // current_username 제거
+            localStorage.removeItem('current_username');
             alert("로그아웃되었습니다.");
             window.location.href = "/api/accounts/login-page/";
             updateButtonDisplay();
@@ -141,8 +137,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const accessToken = getAccessToken();
             const currentUsername = localStorage.getItem("current_username");
 
-            if (!accessToken || !currentUsername) {  // 로그인 상태나 사용자 이름이 없는 경우
-                event.preventDefault();  // 기본 클릭 동작 방지
+            if (!accessToken || !currentUsername) {  // 로그아웃 상태나 사용자 이름이 없는 경우
+                event.preventDefault();
                 alert("로그인 후 이용할 수 있습니다.");
                 window.location.href = "/api/accounts/login-page/";
             } else {
@@ -155,7 +151,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // '내 채팅방' 클릭 시 로그인 상태 확인 후 채팅방 목록 페이지로 이동
     if (chatLink) {
         chatLink.addEventListener("click", function (event) {
-            event.preventDefault();  // 기본 동작 방지
+            event.preventDefault();
             event.stopPropagation();
             const accessToken = getAccessToken();
             const currentUsername = localStorage.getItem("current_username");
@@ -166,7 +162,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            // 채팅방 목록 페이지로 이동
             window.location.href = `/api/products/1on1-chat/${currentUsername}/`;
         });
     }
@@ -176,8 +171,8 @@ document.addEventListener("DOMContentLoaded", function () {
         searchButton.addEventListener("click", function () {
             const query = searchInput.value.trim();
             if (query) {
-                const newUrl = `/?search=${query}&order_by=created_at&page=1`; // 루트 URL로 리디렉션
-                window.location.href = newUrl; // 검색 쿼리와 함께 홈 페이지로 이동
+                const newUrl = `/?search=${query}&order_by=created_at&page=1`;
+                window.location.href = newUrl;
             }
         });
 
@@ -185,8 +180,8 @@ document.addEventListener("DOMContentLoaded", function () {
             if (event.key === "Enter") {
                 const query = searchInput.value.trim();
                 if (query) {
-                    const newUrl = `/?search=${query}&order_by=created_at&page=1`; // 루트 URL로 리디렉션
-                    window.location.href = newUrl; // 검색 쿼리와 함께 홈 페이지로 이동
+                    const newUrl = `/?search=${query}&order_by=created_at&page=1`;
+                    window.location.href = newUrl;
                 }
             }
         });
