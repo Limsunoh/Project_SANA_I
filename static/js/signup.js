@@ -1,3 +1,22 @@
+const FileSizeNum = 10; 
+const MAX_PROFILE_IMAGE_SIZE = FileSizeNum * 1024 * 1024; // MB 단위
+const profileImageInput = document.getElementById('profile-image-input');
+
+// 이미지 유무 확인
+if (profileImageInput) {
+    // 파일 선택 시 용량 체크
+    profileImageInput.addEventListener('change', function(event) {
+        const file = event.target.files[0];
+
+        if (file && !checkProfileImageSize(file)) {
+            // 용량 초과 시 파일 선택 초기화
+            event.target.value = ''; 
+        }
+    });
+} else {
+    console.error("Element not found: profile-image-input");
+}
+
 // CSRF 토큰을 가져오는 함수 추가
 function getCookie(name) {
     let cookieValue = null;
@@ -49,12 +68,26 @@ function sample6_execDaumPostcode() {
     }).open();
 }
 
+// 프로필 사진 용량 체크
+function checkProfileImageSize(file) {
+    if (file.size > MAX_PROFILE_IMAGE_SIZE) {
+        alert(`${file.name} 파일의 크기가 ${FileSizeNum}MB를 초과했습니다.\n 용량을 확인해주세요.`);
+        return false;
+    }
+    return true;
+}
 
+// 회원가입 폼 전송 이벤트 핸들러
 document.getElementById('signup-form').onsubmit = async function (event) {
     event.preventDefault();
 
     const formData = new FormData(event.target);
-    const formDataObj = Object.fromEntries(formData.entries());
+    
+    // 프로필 사진 파일 가져오기
+    const profileImage = profileImageInput ? profileImageInput.files[0] : null; 
+    if (profileImage && !checkProfileImageSize(profileImage)) {
+        return; // 용량 초과 시, 폼 제출 중단
+    }
 
     const response = await fetch('/api/accounts/signup/', {
         method: 'POST',
@@ -66,7 +99,7 @@ document.getElementById('signup-form').onsubmit = async function (event) {
 
     if (response.ok) {
         alert('회원가입이 완료되었습니다. 이메일 인증을 진행해주세요.');
-        window.location.href = '/api/accounts/login-page/';  // 회원가입 후 로그인 페이지로 이동
+        window.location.href = '/api/accounts/login-page/';  // 가입 후, 로그인 페이지로 이동
     } else {
         const errorData = await response.json();
         alert('회원가입 실패: ' + JSON.stringify(errorData));
