@@ -236,7 +236,7 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("작성한 후기 정보를 불러올 수 없습니다.");
         });
     }
-
+    // 구매 내역 
     if (document.getElementById("purchase-history")) {
         fetch(`/api/accounts/user/${profileUsername}/purchase-history/`, {
             headers: { "Authorization": `Bearer ${accessToken}` },
