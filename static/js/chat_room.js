@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const currentUser = localStorage.getItem('current_username');
     const messageInput = document.getElementById('message-content');
     const sendMessageButton = document.querySelector('#send-message-form button[type="submit"]');
+    
+    const FileSizeNum = 10;
+    const MaxFileSize = FileSizeNum * 1024 * 1024; // MB 단위
 
     if (!productId || !roomId) {
         console.error("productId 또는 roomId를 찾을 수 없습니다. 데이터를 확인해 주세요.");
@@ -109,13 +112,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // AJAX를 이용하여 채팅 메시지 목록 불러오기
     function loadMessages(initialLoad = false) {
-        if (polling) {
-            // 이미 요청이 진행 중이라면 중복된 요청을 보내지 않도록 합니다.
-            return;
-        }
+        if (polling) return;
 
         polling = true;
-
         let requestUrl = apiUrl;
         if (!initialLoad && lastMessageId) {
             requestUrl += `?last_message_id=${lastMessageId}`;
@@ -134,7 +133,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 response.forEach(msg => {
-                    // 프로필 이미지 URL 처리
                     const profileImgUrl = msg.sender_image ? msg.sender_image : '/static/images/default_profile.jpg';
                     const messageClass = msg.sender_username === localStorage.getItem('current_username') ? 'my-message' : '';
                     const timestamp = msg.created_at ? new Date(msg.created_at).toLocaleString('ko-KR', { hour12: false }) : "알 수 없음";
@@ -158,29 +156,25 @@ document.addEventListener('DOMContentLoaded', function () {
                     chatContainer.append(messageElement);
                 });
                 chatContainer.scrollTop(chatContainer[0].scrollHeight);
-
-                // 마지막 메시지 ID 업데이트
                 if (response.length > 0) {
                     lastMessageId = response[response.length - 1].id;
                 }
-
                 polling = false;
             },
             error: function (xhr, status, error) {
-                console.error("메시지 목록 불러오기 실패:", status, error);
                 alert("메시지 불러오기 실패. 서버 문제 또는 인증 문제일 수 있습니다.");
                 polling = false;
             }
         });
     }
 
-    // 폼 제출 시 AJAX를 사용하여 메시지 전송
+    // 메시지 전송 폼 처리
     $('#send-message-form').on('submit', function (e) {
         e.preventDefault();
         sendMessage();
     });
-
-    // 엔터키로도 메시지 전송
+    
+    // 엔터키로 메시지 전송
     if (messageInput) {
         messageInput.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -189,23 +183,29 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
-
+    
     function sendMessage() {
         const messageContent = $('#message-content').val().trim();
         const messageImage = $('#message-image')[0].files[0];
-
+    
         if (messageContent === "" && !messageImage) {
             alert("메시지나 이미지를 입력하세요.");
             return;
         }
-
+    
+        // 이미지 파일 크기 체크
+        if (messageImage && messageImage.size > MaxFileSize) {
+            alert(`${messageImage.name}파일 크기가 ${FileSizeNum}MB를 초과했습니다.`);
+            return;
+        }
+    
         // FormData 객체를 사용해 메시지와 이미지를 함께 전송
         const formData = new FormData();
         formData.append('content', messageContent);
         if (messageImage) {
             formData.append('image', messageImage);
         }
-
+    
         $.ajax({
             url: apiUrl,
             type: "POST",
@@ -220,12 +220,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 $('#message-image').val('');    // 이미지 필드 초기화
                 loadMessages(false);  // 새 메시지만 갱신
             },
-            error: function (xhr, status, error) {
-                console.error("메시지 전송 실패:", status, error);
+            error: function () {
                 alert("메시지 전송 실패. 서버 문제 또는 인증 문제일 수 있습니다.");
             }
         });
     }
+    
 
     // 페이지 로드 시 초기 메시지 목록을 불러옴
     $(document).ready(function () {

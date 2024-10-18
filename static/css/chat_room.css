@@ -1,3 +1,4 @@
+/* 채팅 컨테이너 스타일 */
 .chat-container {
     max-width: 800px;
     margin: 50px auto;
@@ -7,6 +8,7 @@
     background-color: #f8f9fa;
 }
 
+/* 채팅 메시지 창 */
 .chat-messages {
     height: 400px;
     overflow-y: scroll;
@@ -17,6 +19,7 @@
     border: 1px solid #ddd;
 }
 
+/* 메시지 */
 .message {
     display: flex;
     align-items: flex-start;
@@ -38,6 +41,7 @@
     margin-right: 15px;
 }
 
+/* 메시지 내용 */
 .message .content {
     max-width: 70%;
 }
@@ -56,6 +60,7 @@
     color: #777;
 }
 
+/* 나의 메시지 */
 .my-message {
     justify-content: flex-end;
 }
@@ -70,6 +75,7 @@
     margin-right: 0;
 }
 
+/* 채팅 폼 */
 .chat-form {
     display: flex;
     align-items: center;
@@ -82,7 +88,7 @@
     margin-right: 10px;
 }
 
-/* 메시지 전송 버튼 스타일 */
+/* 메시지 전송 버튼 */
 .chat-form button {
     height: 50px;
     width: 100px;
@@ -94,7 +100,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.3s ease; /* 호버 시 색상 변화 효과 */
+    transition: background-color 0.3s ease;
 }
 
 .chat-form button:hover {

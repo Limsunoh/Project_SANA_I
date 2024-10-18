@@ -1,10 +1,7 @@
 from django.urls import path
-from rest_framework.routers import DefaultRouter
-
 from . import views
 
-
-app_name = "products"
+# app_name = "products"     # products/app.py 에 명시됨
 
 urlpatterns = [
     # API 엔드포인트
