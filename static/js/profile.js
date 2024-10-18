@@ -49,7 +49,6 @@ document.addEventListener("DOMContentLoaded", function () {
     })
     .then(response => response.json())
     .then(profileData => {
-        console.log("프로필 데이터:", profileData);
         if (usernameDisplay) usernameDisplay.textContent = profileData.nickname || profileData.username;
         if (emailDisplay) emailDisplay.textContent = profileData.email;
 
@@ -147,17 +146,38 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(profileData => {
             if (profileData.products && profileData.products.length > 0) {
                 const myProductsContainer = document.getElementById("my-products");
+
                 profileData.products.slice(0, 4).forEach(product => {
-                    const productCard = `
-                    <div class="card m-2" style="width: 18rem; cursor:pointer;" onclick="products_detailpage(${product.id})" >
-                        <img src="${product.preview_image}" class="card-img-top" alt="${product.title}">
-                        <div class="card-body">
-                            <h5 class="card-title">${product.title}</h5>
-                            <p class="card-text">가격: ${product.price}원</p>
-                        </div>
-                    </div>
-                    `;
-                    myProductsContainer.insertAdjacentHTML("beforeend", productCard);
+                    const productCard = document.createElement("div");
+                    productCard.classList.add("card", "m-2");
+                    productCard.style.width = "18rem";
+                    productCard.style.cursor = "pointer";
+                    productCard.onclick = function () {
+                        products_detailpage(product.id);
+                    };
+
+                    const productImg = document.createElement("img");
+                    productImg.src = product.preview_image;
+                    productImg.classList.add("card-img-top");
+                    productImg.alt = product.title;
+
+                    const productBody = document.createElement("div");
+                    productBody.classList.add("card-body");
+
+                    const productTitle = document.createElement("h5");
+                    productTitle.classList.add("card-title");
+                    productTitle.textContent = product.title;
+
+                    const productPrice = document.createElement("p");
+                    productPrice.classList.add("card-text");
+                    productPrice.textContent = `가격: ${product.price}원`;
+
+                    productBody.appendChild(productTitle);
+                    productBody.appendChild(productPrice);
+                    productCard.appendChild(productImg);
+                    productCard.appendChild(productBody);
+
+                    myProductsContainer.appendChild(productCard);
                 });
             }
         })
@@ -167,7 +187,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // 내가 작성한 후기 리스트 추가
     if (document.getElementById("my-reviews")) {
         fetch(`/api/accounts/user/${profileUsername}/reviews/`, {
             headers: { "Authorization": `Bearer ${accessToken}` },
@@ -177,17 +196,38 @@ document.addEventListener("DOMContentLoaded", function () {
             if (reviews.length > 0) {
                 const myReviewsContainer = document.getElementById("my-reviews");
                 reviews.slice(0, 4).forEach(review => {
-                    const reviewCard = `
-                    <div class="card m-2" style="width: 18rem;">
-                        <img src="${review.product_image}" class="card-img-top" alt="${review.product_title}">
-                        <div class="card-body">
-                            <h5 class="card-title">${review.product_title}</h5>
-                            <p class="card-text">리뷰 작성일: ${new Date(review.created_at).toLocaleDateString("ko-KR")}</p>
-                            <a href="/api/products/detail-page/${review.product_id}/" class="btn btn-primary">자세히 보기</a>
-                        </div>
-                    </div>
-                    `;
-                    myReviewsContainer.insertAdjacentHTML("beforeend", reviewCard);
+                    const reviewCard = document.createElement("div");
+                    reviewCard.classList.add("card", "m-2");
+                    reviewCard.style.width = "18rem";
+
+                    const reviewImg = document.createElement("img");
+                    reviewImg.src = review.product_image;
+                    reviewImg.classList.add("card-img-top");
+                    reviewImg.alt = review.product_title;
+
+                    const reviewBody = document.createElement("div");
+                    reviewBody.classList.add("card-body");
+
+                    const reviewTitle = document.createElement("h5");
+                    reviewTitle.classList.add("card-title");
+                    reviewTitle.textContent = review.product_title;
+
+                    const reviewDate = document.createElement("p");
+                    reviewDate.classList.add("card-text");
+                    reviewDate.textContent = `리뷰 작성일: ${new Date(review.created_at).toLocaleDateString("ko-KR")}`;
+
+                    const detailLink = document.createElement("a");
+                    detailLink.href = `/api/products/detail-page/${review.product_id}/`;
+                    detailLink.classList.add("btn", "btn-primary");
+                    detailLink.textContent = "자세히 보기";
+
+                    reviewBody.appendChild(reviewTitle);
+                    reviewBody.appendChild(reviewDate);
+                    reviewBody.appendChild(detailLink);
+                    reviewCard.appendChild(reviewImg);
+                    reviewCard.appendChild(reviewBody);
+
+                    myReviewsContainer.appendChild(reviewCard);
                 });
             }
         })
@@ -206,19 +246,40 @@ document.addEventListener("DOMContentLoaded", function () {
             if (purchases.length > 0) {
                 const purchaseHistoryContainer = document.getElementById("purchase-history");
                 purchases.slice(0, 4).forEach(purchase => {
-                    const purchaseCard = `
-                        <div class="card m-2" style="width: 18rem;">
-                            <img src="${purchase.product_image}" class="card-img-top" alt="${purchase.title}">
-                            <div class="card-body">
-                                <h5 class="card-title">${purchase.title}</h5>
-                                <p class="card-text">가격: ${purchase.price}원</p>
-                                <a href="/api/products/detail-page/${purchase.id}/" class="btn btn-primary">자세히 보기</a>
-                            </div>
-                        </div>
-                    `;
-                    purchaseHistoryContainer.insertAdjacentHTML("beforeend", purchaseCard);
+                    const purchaseCard = document.createElement("div");
+                    purchaseCard.classList.add("card", "m-2");
+                    purchaseCard.style.width = "18rem";
+
+                    const purchaseImg = document.createElement("img");
+                    purchaseImg.src = purchase.product_image;
+                    purchaseImg.classList.add("card-img-top");
+                    purchaseImg.alt = purchase.title;
+
+                    const purchaseBody = document.createElement("div");
+                    purchaseBody.classList.add("card-body");
+
+                    const purchaseTitle = document.createElement("h5");
+                    purchaseTitle.classList.add("card-title");
+                    purchaseTitle.textContent = purchase.title;
+
+                    const purchasePrice = document.createElement("p");
+                    purchasePrice.classList.add("card-text");
+                    purchasePrice.textContent = `가격: ${purchase.price}원`;
+
+                    const detailLink = document.createElement("a");
+                    detailLink.href = `/api/products/detail-page/${purchase.id}/`;
+                    detailLink.classList.add("btn", "btn-primary");
+                    detailLink.textContent = "자세히 보기";
+
+                    purchaseBody.appendChild(purchaseTitle);
+                    purchaseBody.appendChild(purchasePrice);
+                    purchaseBody.appendChild(detailLink);
+                    purchaseCard.appendChild(purchaseImg);
+                    purchaseCard.appendChild(purchaseBody);
+
+                    purchaseHistoryContainer.appendChild(purchaseCard);
                 });
-            } 
+            }
         })
         .catch(error => {
             console.error("구매 내역을 불러오는 중 오류 발생:", error);

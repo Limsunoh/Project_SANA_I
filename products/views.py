@@ -57,6 +57,7 @@ class ProductListAPIView(ListCreateAPIView):
 
     def get_queryset(self):
         search = self.request.query_params.get("search")
+        hashtag = self.request.query_params.get("hashtag")
         order_by = self.request.query_params.get("order_by")
         queryset = Product.objects.all()
 
@@ -67,6 +68,10 @@ class ProductListAPIView(ListCreateAPIView):
                 | Q(content__icontains=search)
                 | Q(tags__name__icontains=search)
             ).distinct()
+
+        # [해시태그 필터링] 특정 해시태그가 있는 상품 필터링
+        if hashtag:
+            queryset = queryset.filter(tags__name__iexact=hashtag).distinct()
 
         # [정렬] 좋아요, 조회순, 최신순 으로 정렬
         if order_by == "likes":

@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 async function loadChatRooms() {
     const username = localStorage.getItem("current_username");
-    console.log("username:",username)
 
     try {
         const response = await fetchWithAuth(`/api/products/chatrooms/${username}/`);
@@ -36,7 +35,6 @@ function displayChatRooms(chatRooms) {
     // 채팅방 목록 생성
     chatRooms.forEach(room => {
         const roomElement = document.createElement('li');
-        console.log(`Product id: ${room.product_id}, Room ID: ${room.id}`);
         roomElement.innerHTML = `
             <strong>${room.product_title}</strong> - 판매자: ${room.seller_username}, 구매자: ${room.buyer_username}
             <a href="/api/products/${room.product_id}/chatrooms/${room.id}/">채팅방으로 이동</a>

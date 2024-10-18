@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
 async function loadLikedProducts(username) {
     const likeProductsListContainer = document.getElementById('like-products-list');
 
-    showLoading(); // 로딩 표시
+    showLoading();
 
     try {
         const response = await fetch(`/api/accounts/likes/${username}/`, {
@@ -44,7 +44,7 @@ async function loadLikedProducts(username) {
         console.error('에러 발생:', error);
         likeProductsListContainer.innerHTML = "<p>찜한 상품 목록을 불러올 수 없습니다.</p>";
     } finally {
-        hideLoading(); // 로딩 숨기기
+        hideLoading();
     }
 }
 

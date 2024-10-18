@@ -17,7 +17,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!username) {
         if (accessToken) {
-            console.log("current_username이 없으므로 API 요청을 통해 username을 가져옵니다.");
             
             // 서버에서 사용자 정보 요청하여 username 설정
             fetch("/api/accounts/profile/", {
@@ -29,7 +28,6 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 username = data.username;
                 localStorage.setItem("current_username", username);
-                console.log("API를 통해 가져온 사용자 이름:", username);
                 location.reload();  // 페이지를 새로고침하여 username 반영
             })
             .catch(error => {
@@ -38,7 +36,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 window.location.href = "/api/accounts/login-page/";
             });
         } else {
-            console.log("access_token이 없으므로 로그인 페이지로 이동합니다.");
             alert("로그인된 사용자의 정보를 찾을 수 없습니다. 로그인 페이지로 이동합니다.");
             window.location.href = "/api/accounts/login-page/";
             return;
@@ -108,14 +105,12 @@ document.addEventListener("DOMContentLoaded", function () {
     // 기존 프로필 데이터를 불러오는 함수
     async function loadProfileData() {
         const profileUrl = `/api/accounts/profile/${username}/`;
-        console.log("프로필 요청 URL:", profileUrl); // 디버그용 로그
 
         try {
             const response = await fetchWithAuth(profileUrl);
 
             if (response.ok) {
                 const data = await response.json();
-                console.log("불러온 프로필 데이터:", data);
 
                 // HTML 요소에 데이터 반영
                 nicknameInput.value = data.nickname || "";

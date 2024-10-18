@@ -20,7 +20,6 @@ function previewImages(event) {
     }
 }
 
-// DOMContentLoaded 이벤트 리스너
 document.addEventListener('DOMContentLoaded', () => {
     const productForm = document.getElementById('product-edit-form');
     const productId = window.location.pathname.split('/').slice(-2, -1)[0];
@@ -35,6 +34,13 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < images.length; i++) {
             formData.append('images', images[i]);
         }
+
+        // 해시태그에서 마지막 쉼표 제거
+        let tagsInput = document.getElementById("tags").value.trim();
+        if (tagsInput.endsWith(',')) {
+            tagsInput = tagsInput.slice(0, -1); // 마지막 쉼표 제거
+        }
+        formData.set('tags', tagsInput); // 수정된 해시태그 값을 formData에 설정
 
         try {
             const response = await fetch(`/api/products/${productId}/`, {
