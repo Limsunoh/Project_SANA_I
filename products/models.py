@@ -4,7 +4,7 @@ from accounts.models import User
 
 # [해시태그 모델] 해시태그 정보를 저장
 class Hashtag(models.Model):
-    name= models.TextField(unique=True)  # 해시태그 이름
+    name = models.CharField(max_length=50, unique=True)  # 해시태그 이름
     
     def __str__(self):
         return self.name
