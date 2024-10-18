@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const currentUser = localStorage.getItem('current_username');
     const messageInput = document.getElementById('message-content');
     const sendMessageButton = document.querySelector('#send-message-form button[type="submit"]');
+    
+    const FileSizeNum = 10;
+    const MaxFileSize = FileSizeNum * 1024 * 1024; // MB 단위
 
     if (!productId || !roomId) {
         console.error("productId 또는 roomId를 찾을 수 없습니다. 데이터를 확인해 주세요.");
@@ -17,8 +20,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let lastMessageId = null;
     let polling = false;
 
-<<<<<<< HEAD
-=======
     const completeTransactionBtn = document.getElementById('complete-transaction-btn');
     const writeReviewBtn = document.getElementById('write-review-btn');
     let transactionStatus = { is_sold: false, is_completed: false };
@@ -110,7 +111,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // AJAX를 이용하여 채팅 메시지 목록 불러오기
->>>>>>> 90f94e525cb4612884f5521543ce88cd7ea3aeb7
     function loadMessages(initialLoad = false) {
         if (polling) return;
 
@@ -173,8 +173,8 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault();
         sendMessage();
     });
-
-    // 엔터키로도 메시지 전송
+    
+    // 엔터키로 메시지 전송
     if (messageInput) {
         messageInput.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -183,37 +183,35 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
-
+    
     function sendMessage() {
         const messageContent = $('#message-content').val().trim();
         const messageImage = $('#message-image')[0].files[0];
-
+    
         if (messageContent === "" && !messageImage) {
             alert("메시지나 이미지를 입력하세요.");
             return;
         }
-
+    
+        // 이미지 파일 크기 체크
+        if (messageImage && messageImage.size > MaxFileSize) {
+            alert(`${messageImage.name}파일 크기가 ${FileSizeNum}MB를 초과했습니다.`);
+            return;
+        }
+    
         // FormData 객체를 사용해 메시지와 이미지를 함께 전송
         const formData = new FormData();
         formData.append('content', messageContent);
         if (messageImage) {
             formData.append('image', messageImage);
         }
-
+    
         $.ajax({
             url: apiUrl,
             type: "POST",
             headers: {
                 "Authorization": `Bearer ${token}`
             },
-<<<<<<< HEAD
-            data: JSON.stringify({
-                content: messageContent
-            }),
-            success: function () {
-                $('#message-content').val('');
-                loadMessages(false);
-=======
             data: formData,
             contentType: false,
             processData: false,
@@ -221,43 +219,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 $('#message-content').val('');  // 입력 필드 초기화
                 $('#message-image').val('');    // 이미지 필드 초기화
                 loadMessages(false);  // 새 메시지만 갱신
->>>>>>> 90f94e525cb4612884f5521543ce88cd7ea3aeb7
             },
             error: function () {
                 alert("메시지 전송 실패. 서버 문제 또는 인증 문제일 수 있습니다.");
             }
         });
     }
+    
 
-<<<<<<< HEAD
-    // 리뷰 요청 버튼 클릭 시
-    $('#request-review-btn').on('click', function () {
-        $.ajax({
-            url: `/api/chat/${roomId}/request-review/`,
-            type: 'POST',
-            headers: {
-                "Authorization": `Bearer ${token}`
-            },
-            success: function () {
-                alert("리뷰 요청을 보냈습니다.");
-            },
-            error: function () {
-                alert("리뷰 요청 중 오류가 발생했습니다.");
-            }
-        });
-    });
-
-    // 리뷰 작성 버튼 클릭 시
-    $('#write-review-btn').on('click', function () {
-        window.location.href = `/products/${productId}/write-review/`;
-    });
-
-    // 초기 메시지 로드
-    loadMessages(true);
-    setInterval(function () {
-        loadMessages(false);
-    }, 2000);
-=======
     // 페이지 로드 시 초기 메시지 목록을 불러옴
     $(document).ready(function () {
         loadMessages(true);
@@ -267,5 +236,4 @@ document.addEventListener('DOMContentLoaded', function () {
             loadMessages(false);
         }, 3000);
     });
->>>>>>> 90f94e525cb4612884f5521543ce88cd7ea3aeb7
 });
