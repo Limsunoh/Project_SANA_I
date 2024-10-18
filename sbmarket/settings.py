@@ -11,9 +11,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-from .config import SANAI_KEY, SENTRY_DSN, SANAI_PASSWORD
+from .config import SANAI_KEY, SENTRY_DSN, SANAI_PASSWORD, DBPASSWORD
 from datetime import timedelta
 import sentry_sdk
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -113,7 +114,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'sbmarket_db',  # 방금 생성한 데이터베이스 이름
         'USER': 'sbmarket',  # MySQL 사용자 이름
-        'PASSWORD': 'Sanai1234!',  # 설정한 비밀번호
+        'PASSWORD': DBPASSWORD,  # 설정한 비밀번호
         'HOST': '52.78.43.100',  # MySQL 서버 호스트 (로컬 서버라면 'localhost')
         'PORT': '3306',  # MySQL 포트 번호
     }
