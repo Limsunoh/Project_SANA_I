@@ -56,11 +56,9 @@ def activate_user(request, pk, token):
         # [사용자 ID 복원] pk를 디코딩하여 사용자 객체를 가져옴
         pk = force_str(urlsafe_base64_decode(pk))
         user = User.objects.get(pk=pk)
-        print(pk, user)
 
         # [토큰 유효성 검증] 제공된 토큰이 유효한지 확인
         token_obj = AccessToken(token)
-        print(token_obj)
 
         if token_obj and token_obj["user_id"] == user.id:
             user.is_active = True  # 사용자의 계정을 활성화
