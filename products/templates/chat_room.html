@@ -24,14 +24,14 @@
 
         <form id="send-message-form" class="chat-form" enctype="multipart/form-data">
             <textarea id="message-content" class="form-control" rows="3" placeholder="메시지를 입력하세요..."></textarea>
-            <input type="file" id="message-image" accept="image/*"> <!-- 이미지 파일 첨부 -->
+            <input type="file" id="message-image" accept="image/*" title="chat_room.js"> <!-- 이미지 파일 첨부 -->
             <button type="submit" class="btn btn-primary">전송<i class="fas fa-paper-plane"></i></button>
         </form>
     </div>
 {% endblock %}
 
 {% block scripts %}
-<link rel="stylesheet" href="{% static 'css/chat_romm.css' %}">
+<link rel="stylesheet" href="/static/css/chat_room.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery 추가 -->
 <script src="{% static 'js/chat_room.js' %}"></script>
 
