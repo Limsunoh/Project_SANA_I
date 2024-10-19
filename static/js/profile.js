@@ -27,8 +27,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let isFollowing = false;
 
     // URL에서 특정 profile username을 가져옴
-    const profileUsername = window.location.pathname.split('/').filter(Boolean).pop();
-
+    const profileUsername = decodeURI(window.location.pathname.split('/').filter(Boolean).pop());
+    
     if (!profileUsername || !accessToken) {
         alert("잘못된 접근입니다. 로그인 후 다시 시도해주세요.");
         window.location.href = "/api/accounts/login-page/";

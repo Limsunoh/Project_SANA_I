@@ -29,8 +29,8 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
-    const apiUrl = `http://127.0.0.1:8000/api/products/${productId}/chatrooms/${roomId}/messages/`;
-    const transactionStatusUrl = `http://127.0.0.1:8000/api/products/${productId}/chatrooms/${roomId}/transaction-status/`;
+    const apiUrl = `/api/products/${productId}/chatrooms/${roomId}/messages/`;
+    const transactionStatusUrl = `/api/products/${productId}/chatrooms/${roomId}/transaction-status/`;
     const token = localStorage.getItem("access_token");
     let lastMessageId = null;
     let polling = false;
