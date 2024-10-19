@@ -104,7 +104,7 @@ class UserSerializer(serializers.ModelSerializer):
             "accounts/accounts_activate_email.html",
             {
                 "user": user,
-                "domain": "127.0.0.1:8000",
+                "domain": "sbmarket.kro.kr",
                 "pk": force_str(urlsafe_base64_encode(force_bytes(user.pk))),
                 "token": tokens["access"],
             },

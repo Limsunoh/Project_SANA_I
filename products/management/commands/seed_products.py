@@ -203,7 +203,7 @@ class Command(BaseCommand):
             hashtag_objs[tag] = obj
 
         # 상품 생성
-        num_products = 100  # 생성할 상품 수
+        num_products = 20  # 생성할 상품 수
         for _ in range(num_products):
 
             # 상기한 카테고리 중 하나 랜덤 선택
@@ -237,7 +237,7 @@ class Command(BaseCommand):
             product.tags.set(tags)
 
             # 이미지 추가
-            image_path = 'media\images\default_image.jpg'
+            image_path = 'media/images/default_image.jpg'
             with open(image_path, 'rb') as img_file:
                 image = Image()
                 image.product = product
