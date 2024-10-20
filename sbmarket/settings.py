@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-from .config import SANAI_KEY, SENTRY_DSN, SANAI_PASSWORD, DBPASSWORD, DEBUG
+from .config import SANAI_KEY, SENTRY_DSN, SANAI_PASSWORD, DBPASSWORD, DEBUG, ACCESS_TOKEN_TIME
 from datetime import timedelta
 import sentry_sdk
 
@@ -177,7 +177,7 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=30),
+    "ACCESS_TOKEN_LIFETIME": ACCESS_TOKEN_TIME,
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
