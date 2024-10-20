@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // 현재 사용자의 액세스 토큰 및 제품 ID 가져오기
             const productId = document.querySelector('.review-container').getAttribute('data-product-id');
-            const apiUrl = `http://127.0.0.1:8000/api/reviews/products/${productId}/`;
+            const apiUrl = `/api/reviews/products/${productId}/`;
 
             try {
                 const response = await fetchWithAuth(apiUrl, {
