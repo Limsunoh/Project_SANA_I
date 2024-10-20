@@ -43,9 +43,9 @@ async function fetchWithAuth(url, options = {}) {
         console.error("Initial fetch request failed:", error);
         return;
     }
-
+    
     // 만료된 토큰의 경우 처리
-    if (response.status === 401) {
+    if (response.status === 403) {
         try {
             const refreshResponse = await fetch("/api/accounts/token/refresh/", {
                 method: "POST",
@@ -56,6 +56,7 @@ async function fetchWithAuth(url, options = {}) {
             if (refreshResponse.ok) {
                 const data = await refreshResponse.json();
                 setAccessToken(data.access);
+                setRefreshToken(data.refresh);
                 options.headers["Authorization"] = `Bearer ${data.access}`;
 
                 try {
@@ -67,7 +68,7 @@ async function fetchWithAuth(url, options = {}) {
             } else {
                 console.error("Failed to refresh token, removing tokens and redirecting to login page");
                 removeTokens();
-                window.location.href = "/api/accounts/login-page/";
+                // window.location.href = "/api/accounts/login-page/";
                 return;
             }
         } catch (error) {

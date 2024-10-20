@@ -85,11 +85,13 @@ class ProductListAPIView(ListCreateAPIView):
             queryset = queryset.order_by("-hits")
         else:  # 기본값은 최신순
             queryset = queryset.order_by("-created_at")
+            
+        
         return queryset
 
-    # [상품 목록 조회] 부모 클래스의 get 메서드를 호출
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
+    # # [상품 목록 조회] 부모 클래스의 get 메서드를 호출
+    # def get(self, request, *args, **kwargs):
+    #     return super().get(request, *args, **kwargs)
 
     # [상품 생성 요청] 이미지를 포함한 상품 생성 요청을 처리
     def post(self, request, *args, **kwargs):
