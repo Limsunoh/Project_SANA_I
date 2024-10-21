@@ -498,15 +498,41 @@ class AISearchAPIView(APIView):
             # 유해한 요청일 경우 즉시 빈 응답 반환
             return Response({}, status=204)
 
-        # 2. 두 번째 프롬프트: 정상적인 요청에 대해 제품 추천 처리
-        products = Product.objects.filter(status__in=["sell", "reservation"]).order_by(
-            "-created_at"
-        )[:50]
+        # 2. 두 번째 프롬프트: 요청에서 주요 키워드 추출
+        keyword_prompt = f"""
+        사용자의 요청은 '{query}'입니다.
+        이 요청에서 가장 중요한 핵심 키워드 1~2개를 추출해주세요.
+        키워드는 사용자가 찾고자 하는 제품과 관련이 있어야 하며, 반드시 단어나 짧은 구문만을 반환하세요.
+        다른 설명이나 문장은 포함하지 마세요.
+        """
+
+        # OpenAI API 호출 (두 번째 프롬프트)
+        keyword_response = openai.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "당신은 요청의 핵심 키워드를 추출하는 AI입니다."},
+                {"role": "user", "content": keyword_prompt},
+            ],
+            temperature=0.3,
+        )
+
+        # 추출된 핵심 키워드 확인
+        keyword = keyword_response.choices[0].message.content.strip()
+        logger.debug(f"추출된 키워드: {keyword}")
+
+        # 3. 키워드 기반으로 상품 목록 필터링
+        filtered_products = Product.objects.filter(
+            Q(title__icontains=keyword) | Q(tags__name__icontains=keyword)
+        ).distinct()
+
+        # 필터링된 상품 리스트가 없을 경우, 기본 상품 목록을 사용
+        if not filtered_products.exists():
+            filtered_products = Product.objects.filter(status__in=["sell", "reservation"]).order_by("-created_at")[:50]
 
         product_list = []
 
         # 각 상품의 정보를 딕셔너리 형태로 리스트에 추가
-        for product in products:
+        for product in filtered_products:
             product_info = {
                 "id": product.id,
                 "title": product.title,
@@ -523,12 +549,16 @@ class AISearchAPIView(APIView):
             }
             product_list.append(product_info)
 
-        # 두 번째 프롬프트: 정상적인 요청에 대한 상품 추천
+        logger.debug(f"필터링된 상품목록: {product_list}")
+        
+        # 4. 필터링된 상품을 AI에게 넘겨 추천 요청
         recommend_prompt = f"""
         당신은 사용자의 요청에 따라 제품을 추천해주는 AI 추천 서비스입니다.
-        아래의 사용자의 요청에 따라, 제품 목록에서 최대 12개의 제품을 JSON 형식으로 추천해주세요.
-        단 무리하게 12개를 추천하려고 하지 마십시오. 요청과 관련 없는 상품까지 추천되었다는 피드백이 있습니다.
-        각 제품은 다음과 같은 필드를 가져야 합니다:
+        사용자의 요청은 '{query}' 입니다. 요청과 의미적으로 연결되거나 '{keyword}'를 포함한 상품을 추천해주세요.
+        3개 이상은 무조건 추천해야합니다.
+        단 title 또는 tag가 무의미한 문자열 (예: 'asdasd', '12345') 인 경우 추천하지 마세요.
+        !! 또한 절대로 다른 설명이나 추가적인 문장은 포함하지 말고, JSON 형식의 데이터만 반환하세요. !!
+        JSON 형식 예시는 다음과 같습니다:
         [
             {{
                 "id": "상품 ID",
@@ -540,13 +570,11 @@ class AISearchAPIView(APIView):
                 "hits": "조회 수"
             }}...
         ]
-        사용자의 요청: "{query}"
-
         제품 목록:
-        {product_list[:12]}  # 최대 12개의 제품만 포함
+        {product_list[:12]}
         """
 
-        # OpenAI API 호출 (두 번째 프롬프트)
+        # OpenAI API 호출 (세 번째 프롬프트)
         response = openai.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
@@ -578,7 +606,6 @@ class AISearchAPIView(APIView):
 
         # AI의 응답을 그대로 반환
         return Response({"response": ai_response}, status=200)
-
 
 
 # ------------------------------------------------------------------------------

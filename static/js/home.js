@@ -248,7 +248,7 @@ function displayProductRecommendations(products) {
     const recommendationMessage = document.getElementById('ai-recommendation-message');
 
     if (isAIRecommendationActive) {
-        recommendationMessage.textContent = "AI가 추천하는 상품입니다.";
+        recommendationMessage.textContent = "AI가 요청 내 주요 키워드나 의도를 파악해 추천한 상품입니다.";
         recommendationMessage.style.display = 'block';
     }
 
