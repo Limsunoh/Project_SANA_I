@@ -115,9 +115,22 @@
 }
 
 .like-btn {
+    font-weight: 400;
+    line-height: 1.5;
     border: none;
-    background-color: transparent;
+    background-color: #f5f5f5;   /* 연한 배경색 추가 */
+    border-radius: 8px;
+    padding: 5px 10px;           /* 클릭 영역 확장 (아이콘과 텍스트 모두 포함) */
     cursor: pointer;
+    display: inline-flex;        /* 아이콘과 텍스트의 수평 정렬 */
+    align-items: center;         /* 수직 정렬 */
+    justify-content: center;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.like-btn:hover {
+    background-color: #ffe0e0;  /* 마우스 올렸을 때 색상 */
+    transform: scale(1.1);      /* 살짝 커지는 효과 */
 }
 
 /* 부트스트랩 하트 아이콘 크기 조정 */

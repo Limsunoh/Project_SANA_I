@@ -185,6 +185,49 @@ function hideLoading() {
     document.getElementById('loading-overlay').style.display = 'none';
 }
 
+// 페이지가 로드될 때 현재 URL을 확인하고 상태 복원
+window.onload = function () {
+    const currentUrl = window.location.href;
+
+    // URL에 ai_search 파라미터가 있으면 AI 추천 결과를 표시
+    const urlParams = new URLSearchParams(window.location.search);
+    const aiSearchQuery = urlParams.get('ai_search');
+    
+    if (aiSearchQuery) {
+        // AI 검색 쿼리가 있으면 해당 결과를 복원
+        isAIRecommendationActive = true;
+        isSearchActive = false;
+
+        // 서버에 저장된 aiRecommendedProducts를 사용해 제품 목록 표시
+        displayProductRecommendations(aiRecommendedProducts);
+    }
+};
+
+// 뒤로가기 또는 앞으로 가기 버튼을 눌렀을 때 상태 복원
+window.onpopstate = function (event) {
+    const currentUrl = window.location.href;
+
+    // URL에 ai_search 파라미터가 있으면 AI 추천 결과를 다시 로드
+    const urlParams = new URLSearchParams(window.location.search);
+    const aiSearchQuery = urlParams.get('ai_search');
+
+    if (aiSearchQuery) {
+        // AI 검색 쿼리가 있으면 해당 결과를 복원
+        isAIRecommendationActive = true;
+        isSearchActive = false;
+
+        // 서버에 저장된 aiRecommendedProducts를 사용해 제품 목록 표시
+        displayProductRecommendations(aiRecommendedProducts);
+    } else {
+        // AI 검색 쿼리가 없으면 일반 홈 상태로 전환
+        isAIRecommendationActive = false;
+        isSearchActive = true;
+
+        // 홈 페이지의 제품을 다시 표시
+        loadHomePageProducts();
+    }
+};
+
 // AI추천 관련
 async function aiSearch() {
     const query = document.getElementById('ai-search-input').value;
@@ -252,7 +295,7 @@ function displayProductRecommendations(products) {
     const recommendationMessage = document.getElementById('ai-recommendation-message');
 
     if (isAIRecommendationActive) {
-        recommendationMessage.textContent = "AI가 추천하는 상품입니다.";
+        recommendationMessage.textContent = "AI가 요청 내 주요 키워드나 의도를 파악해 추천한 상품입니다.";
         recommendationMessage.style.display = 'block';
     }
 
