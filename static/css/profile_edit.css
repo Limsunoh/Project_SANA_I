@@ -1,0 +1,26 @@
+.profile-edit-container {
+    max-width: 800px;
+    margin: 50px auto;
+}
+
+.profile-image-wrapper {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile-image-wrapper img {
+    border-radius: 50%; /* 이미지 둥글게 만들기 */
+    width: 150px;
+    height: 150px;
+    object-fit: cover; /* 이미지의 비율을 유지하면서 꽉 채우기 */
+    border: 2px solid #ddd; /* 이미지 테두리 */
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.btn-custom {
+    background-color: #2c2c2c;
+    color: #fff;
+}

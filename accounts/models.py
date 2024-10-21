@@ -11,9 +11,9 @@ class User(AbstractUser):
     # [사용자 정보 필드] 닉네임, 이름, 주소 등 사용자의 상세 정보를 저장
     nickname = models.CharField(max_length=50)
     name = models.CharField(max_length=50)
-    postcode = models.CharField(max_length=10, blank=True, null=True)
-    mainaddress = models.CharField(max_length=255, blank=True, null=True)
-    subaddress = models.CharField(max_length=255, blank=True, null=True)
+    postcode = models.CharField(max_length=10)
+    mainaddress = models.CharField(max_length=255)
+    subaddress = models.CharField(max_length=255)
     extraaddress = models.CharField(max_length=255, blank=True, null=True)
     birth = models.DateField()
     email = models.EmailField(max_length=30, unique=False, null=False, blank=False)
@@ -21,7 +21,7 @@ class User(AbstractUser):
     image = models.ImageField(
         upload_to="images/", blank=True, default="images/default_profile.jpg"
     )
-    introduce = models.TextField(max_length=255)
+    introduce = models.TextField(max_length=255,blank=True,null=True)
     total_score = models.FloatField(default=30)  # 매너점수 30점에서 시작
 
     # [팔로우 기능] 비대칭 관계를 가지는 사용자 간 팔로우 관계 정의

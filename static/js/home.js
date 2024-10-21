@@ -110,13 +110,17 @@ document.addEventListener('DOMContentLoaded', function () {
             let orderByParam = '';
             const urlParams = new URLSearchParams(window.location.search);
             const searchQuery = urlParams.get('search') || '';
+            const dropdownButton = document.querySelector('.dropdown-toggle');
 
             if (selectedOrder === '인기순') {
                 orderByParam = 'likes';
+                dropdownButton.textContent = '인기순';
             } else if (selectedOrder === '조회순') {
                 orderByParam = 'hits';
+                dropdownButton.textContent = '조회순';
             } else if (selectedOrder === '최신순') {
                 orderByParam = 'created_at';
+                dropdownButton.textContent = '최신순';
             }
 
             if (isAIRecommendationActive) {

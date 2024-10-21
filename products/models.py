@@ -28,7 +28,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=20, decimal_places=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    status = models.CharField(max_length=50,choices=CHOICE_PRODUCT)
+    status = models.CharField(max_length=50,choices=CHOICE_PRODUCT, default="sell")
     hits = models.PositiveIntegerField(blank=True, default=0) # 조회수
     likes = models.ManyToManyField(User, related_name='like_products', blank=True) # 좋아요
     tags = models.ManyToManyField(Hashtag, related_name= "products", blank=True) # 해시태그

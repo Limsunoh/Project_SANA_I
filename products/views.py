@@ -6,6 +6,7 @@ from rest_framework import status, serializers
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import ListCreateAPIView, UpdateAPIView, ListAPIView
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import (
     IsAuthenticated,
     IsAuthenticatedOrReadOnly,
@@ -89,10 +90,6 @@ class ProductListAPIView(ListCreateAPIView):
         
         return queryset
 
-    # # [상품 목록 조회] 부모 클래스의 get 메서드를 호출
-    # def get(self, request, *args, **kwargs):
-    #     return super().get(request, *args, **kwargs)
-
     # [상품 생성 요청] 이미지를 포함한 상품 생성 요청을 처리
     def post(self, request, *args, **kwargs):
         self.serializer_class = ProductCreateSerializer
@@ -106,16 +103,21 @@ class ProductListAPIView(ListCreateAPIView):
     # [상품 생성] 이미지 및 해시태그를 추가하고 저장
     def perform_create(self, serializer):
         images = self.request.FILES.getlist("images")
-        tags_raw = self.request.data.get("tags")
-        tags = tags_raw.split(",")
+        tags = self.request.data.get("tags").split(",")
         product = serializer.save(author=self.request.user)
 
+        # 이미지 저장
         for image in images:
             Image.objects.create(product=product, image_url=image)
 
+        # 빈 해시태그 필터링 및 유효성 검사 추가
         for tag in tags:
             hashtag, created = Hashtag.objects.get_or_create(name=tag)
-            product.tags.add(hashtag)
+            try:
+                hashtag.clean()  # 유효성 검사 수행
+                product.tags.add(hashtag)
+            except ValidationError as e:
+                raise serializers.ValidationError({"tags": str(e)})
 
 
 # [상품 상세 API] 상품 조회, 수정, 삭제 처리

@@ -32,8 +32,29 @@ function previewImages(event) {
 
 document.addEventListener('DOMContentLoaded', () => {
     const productForm = document.getElementById('product-create-form');
+    const tagsInput = document.getElementById('tags');
+    const tagsError = document.getElementById('tags-error');
 
     const accessToken = localStorage.getItem('access_token');
+
+    // 해시태그 유효성 검사 함수 (특수문자 및 공백 체크)
+    function validateTags(tagsArray) {
+        const invalidChars = /[#@!$%^&*()]/;  // 허용하지 않는 특수문자
+        return tagsArray.every(tag => {
+            return tag !== '' && !tag.includes(' ') && !invalidChars.test(tag);
+        });
+    }
+
+    // 실시간으로 해시태그 유효성 검사
+    tagsInput.addEventListener('input', function () {
+        const tagsArray = tagsInput.value.split(',');
+
+        if (!validateTags(tagsArray)) {
+            tagsError.style.display = 'block';  // 에러 메시지 표시
+        } else {
+            tagsError.style.display = 'none';  // 에러 메시지 숨김
+        }
+    });
 
     productForm.onsubmit = async function (e) {
         e.preventDefault(); // 기본 폼 제출 동작을 막음
@@ -43,22 +64,19 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append("title", document.getElementById('title').value);
         formData.append("price", document.getElementById('price').value);
         formData.append("content", document.getElementById('content').value);
-        formData.append("tags", document.getElementById('tags').value);
-        formData.append("status", document.getElementById('status').value);
 
-        // 해시태그 입력값을 처리 (빈 해시태그를 방지)
-        let tagsInput = document.getElementById('tags').value.trim();
+        // 해시태그 입력값
+        let tagsInputValue = tagsInput.value;
+        const tagsArray = tagsInputValue.split(',').filter(tag => tag !== '');
 
-        // 쉼표로 구분된 해시태그 목록을 분리하고, 빈 문자열을 제거함
-        const tagsArray = tagsInput.split(',')
-                                   .map(tag => tag.trim()) // 각 해시태그 양쪽 공백 제거
-                                   .filter(tag => tag !== ''); // 빈 해시태그 필터링
+        // 해시태그 유효성 검사 (제출 시)
+        if (!validateTags(tagsArray)) {
+            tagsError.style.display = 'block';
+            alert("해시태그가 잘못되었습니다. 해시태그에는 띄어쓰기와 특수문자를 포함할 수 없습니다.");
+            return;  // 유효하지 않으면 폼 제출 중단
+        }
 
-        // 유효한 해시태그를 쉼표로 연결
-        const validTags = tagsArray.join(',');
-        
-        // 유효한 태그만 formData에 추가
-        formData.append("tags", validTags);
+        formData.append("tags", tagsArray.join(','));
 
         const images = document.getElementById('image-upload').files;
         const maxFileSize = FileSizeNum * 1024 * 1024;
@@ -66,7 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < images.length; i++) {
             const image = images[i];
 
-            // 등록하기 누를 때, 확인함
             if (image.size > maxFileSize) { 
                 alert(`${image.name} 파일의 크기가 용량을 초과했습니다. 다른 파일을 선택하세요.`);
                 return;
@@ -79,22 +96,28 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch("/api/products/", {
                 method: "POST",
                 headers: {
-                    "X-CSRFToken": csrfToken,  // CSRF 토큰 설정
-                    "Authorization": `Bearer ${accessToken}`  // 인증 토큰 설정
+                    "X-CSRFToken": csrfToken,
+                    "Authorization": `Bearer ${accessToken}`
                 },
                 body: formData
             });
 
             if (response.ok) {
                 const responseData = await response.json();
-                const productPk = responseData.id; // 서버 응답에서 생성된 제품의 pk 값을 추출
-                window.location.href = `/api/products/detail-page/${productPk}/`;
+                const productPk = responseData.id;
                 alert("제품이 성공적으로 등록되었습니다.");
+                window.location.href = `/api/products/detail-page/${productPk}/`;
             } else {
-                console.error("제품 등록에 실패했습니다.");
                 const errorData = await response.json();
+                
+                if (errorData.ERROR && errorData.ERROR.includes('Image')) {
+                    alert("이미지는 필수 항목입니다. 최소 한 개의 이미지를 선택해주세요.");
+                } else {
+                    alert("제품 등록에 실패했습니다. 다시 시도해주세요.");
+                }
             }
         } catch (error) {
+            alert("서버와 통신 중 문제가 발생했습니다. 다시 시도해주세요.");
             console.error("서버와 통신 중 문제가 발생했습니다.", error);
         }
     };

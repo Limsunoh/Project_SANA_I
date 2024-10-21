@@ -77,6 +77,80 @@ function checkProfileImageSize(file) {
     return true;
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    const passwordInput = document.getElementById('password');
+    const checkPasswordInput = document.getElementById('check_password');
+    const passwordError = document.getElementById('password-error');
+    const checkPasswordError = document.getElementById('checkpassword-error');
+
+    // 비밀번호 입력 시 검증
+    passwordInput.addEventListener('input', function() {
+        const password = passwordInput.value;
+
+        // 비밀번호가 입력된 경우에만 검증 결과에 따른 메시지 표시
+        if (password.length > 0) {
+            const errorMessages = validatePassword(password);
+            if (errorMessages.length > 0) {
+                passwordError.style.display = 'block';
+                passwordError.innerText = errorMessages.join("\n");  // 여러 에러 메시지를 개행으로 구분하여 표시
+            } else {
+                passwordError.style.display = 'none';
+            }
+        } else {
+            // 비밀번호 입력란이 비어있는 경우 메시지 숨김
+            passwordError.style.display = 'none';
+        }
+
+        // 비밀번호 확인 필드와 비교
+        validatePasswordMatch();
+    });
+
+    // 비밀번호 확인 필드 입력 시 검증
+    checkPasswordInput.addEventListener('input', function() {
+        validatePasswordMatch();
+    });
+
+    function validatePassword(password) {
+        const errors = [];
+
+        // 1. 비밀번호 최소 길이 (8자 이상)
+        if (password.length < 8) {
+            errors.push("비밀번호가 너무 짧습니다. 최소 8 문자를 포함해야 합니다.");
+        }
+
+        // 2. 너무 일상적인 비밀번호인지 확인 (예시로 'password'와 같은 단어를 필터링)
+        const commonPasswords = ['password', '12345678', 'qwerty'];
+        if (commonPasswords.includes(password.toLowerCase())) {
+            errors.push("비밀번호가 너무 일상적인 단어입니다.");
+        }
+
+        // 3. 비밀번호가 숫자로만 이루어졌는지 확인
+        if (/^\d+$/.test(password)) {
+            errors.push("비밀번호가 전부 숫자로 되어 있습니다.");
+        }
+
+        return errors;
+    }
+
+    // 비밀번호와 확인용 비밀번호가 일치하는지 확인하는 함수
+    function validatePasswordMatch() {
+        const password = passwordInput.value;
+        const checkPassword = checkPasswordInput.value;
+
+        // 확인 비밀번호가 입력된 경우에만 검증
+        if (checkPassword.length > 0) {
+            if (password !== checkPassword) {
+                checkPasswordError.style.display = 'block';
+                checkPasswordError.innerText = "비밀번호가 일치하지 않습니다.";
+            } else {
+                checkPasswordError.style.display = 'none';
+            }
+        } else {
+            checkPasswordError.style.display = 'none';  // 입력이 없으면 메시지 숨김
+        }
+    }
+});
+
 // 회원가입 폼 전송 이벤트 핸들러
 document.getElementById('signup-form').onsubmit = async function (event) {
     event.preventDefault();
@@ -102,6 +176,19 @@ document.getElementById('signup-form').onsubmit = async function (event) {
         window.location.href = '/api/accounts/login-page/';  // 가입 후, 로그인 페이지로 이동
     } else {
         const errorData = await response.json();
-        alert('회원가입 실패: ' + JSON.stringify(errorData));
+    
+        // 에러 메시지를 필드별로 정리
+        let errorMessage = "회원가입 실패:\n";
+        if (errorData.postcode) {
+            errorMessage += " - 우편번호는 필수 항목입니다.\n";
+        }
+        if (errorData.mainaddress) {
+            errorMessage += " - 주소는 필수 항목입니다.\n";
+        }
+        if (errorData.subaddress) {
+            errorMessage += " - 상세 주소는 필수 항목입니다.\n";
+        }
+        alert(errorMessage);
     }
 };
+

@@ -8,8 +8,8 @@
     <h2>새제품 등록</h2>
 
     <div class="mb-3">
-        <label for="image-upload" class="form-label">이미지 첨부</label>
-        <input type="file" class="form-control" id="image-upload" name="images" multiple accept="image/*" onchange="previewImages(event)", title="product_create.js">
+        <small class="form-text text-muted">이미지 파일을 업로드하세요. (최대 5MB, JPG/PNG), 이미지를 여러개 추가하려면 이미지 추가할 때 ctrl을 누른 상태로 여러개 선택해주세요.</small>
+        <input type="file" class="form-control" id="image-upload" name="images" multiple accept="image/*" onchange="previewImages(event)">
         <div id="imagePreview" class="d-flex flex-wrap mb-3"></div>
     </div>
     
@@ -22,26 +22,18 @@
 
         <div class="mb-3">
             <label for="price">가격</label>
-            <input type="number" class="form-control" id="price" name=  "price" required>
+            <input type="number" class="form-control" id="price" name="price" required>
         </div>
 
         <div class="mb-3">
             <label for="content" class="form-label">내용</label>
             <textarea class="form-control" id="content" name="content" rows="3" required></textarea>
         </div>
-        
-        <div class="mb-3"></div>
-            <label for="status" class="form-label">상품상태</label>
-            <select name="status" id="status">
-                <option value="sell">판매중</option>
-                <option value="reservation">예약중</option>
-                <option value="complete">판매완료</option>
-                </select>
-        </div>
 
         <div class="mb-3">
             <label for="tags" class="form-label">해시태그 (쉼표로 구분)</label>
-            <input type="text" class="form-control" id="tags" name="tags">
+            <input type="text" class="form-control" id="tags" name="tags" placeholder="해시태그를 입력하세요">
+            <small id="tags-error" class="text-danger" style="display: none;">해시태그는 띄어쓰기와 특수문자를 포함할 수 없습니다.</small>
         </div>
 
         <button type="submit" class="btn btn-primary">등록</button>
