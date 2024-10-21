@@ -344,7 +344,7 @@ class ChatMessageCreateAPIView(APIView):
                 logger.info("새 메시지가 존재합니다.")
                 break
 
-            time.sleep(3)  # 3초마다 새 메시지 확인
+            time.sleep(0.5)  # 3초마다 새 메시지 확인
 
         # 새 메시지 읽음 처리
         for message in new_messages:
