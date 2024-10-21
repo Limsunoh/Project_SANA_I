@@ -89,9 +89,6 @@ class ProductListAPIView(ListCreateAPIView):
         
         return queryset
 
-    # # [상품 목록 조회] 부모 클래스의 get 메서드를 호출
-    # def get(self, request, *args, **kwargs):
-    #     return super().get(request, *args, **kwargs)
 
     # [상품 생성 요청] 이미지를 포함한 상품 생성 요청을 처리
     def post(self, request, *args, **kwargs):
@@ -355,6 +352,13 @@ class ChatMessageCreateAPIView(APIView):
 
     def post(self, request, room_id, *args, **kwargs):
         room = get_object_or_404(ChatRoom, id=room_id)
+        sender = request.user
+        receiver = room.seller if room.buyer == sender else room.buyer  
+
+        # 수신자가 나간 채팅방이라면 다시 참여시키기
+        if receiver in room.exited_users.all():
+            room.exited_users.remove(receiver)
+            room.save()
 
         # 해당 유저가 채팅방에 참여 중인지 확인합니다.
         if room.seller != request.user and room.buyer != request.user:
@@ -375,18 +379,38 @@ class ChatMessageCreateAPIView(APIView):
         return Response(serializer.errors, status=400)
 
 
+# 채팅방 나가기 API
+class LeaveChatRoomAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, room_id, *args, **kwargs):
+        room = get_object_or_404(ChatRoom, id=room_id)
+        user = request.user
+
+        # 사용자가 이미 채팅방을 나갔는지 확인
+        if room.exited_users.filter(id=user.id).exists():
+            return Response({"detail": "이미 채팅방을 나갔습니다."}, status=400)
+
+        # 사용자를 exited_users에 추가하여 목록에서 보이지 않게 하려고 함
+        room.exited_users.add(user)
+        room.save()
+
+        return Response({"detail": "채팅방에서 나갔습니다."}, status=200)
+
+
 # 채팅방 리스트 확인하는 API
 class ChatRoomListView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, username, *args, **kwargs):  # username을 받도록 수정
-        user = get_object_or_404(
-            User, username=username
-        )  # username을 기반으로 유저 조회
-        chat_rooms = ChatRoom.objects.filter(Q(seller=user) | Q(buyer=user))
+    def get(self, request, username, *args, **kwargs):
+        user = get_object_or_404(User, username=username)
+
+        # 나간 채팅방을 제외하고 반환
+        chat_rooms = ChatRoom.objects.filter(
+            (Q(seller=user) | Q(buyer=user)) & ~Q(exited_users=user)
+        )
         serializer = ChatRoomSerializer(chat_rooms, many=True)
         return Response(serializer.data, status=200)
-
 
 
 # 거래 상태를 업데이트하는 API
@@ -434,19 +458,27 @@ class NewMessageAlertAPIView(APIView):
         user = request.user
 
         try:
+            # 해당 유저가 참여 중인 채팅방 중 읽지 않은 메시지가 있는 방을 찾습니다.
             unread_messages = (
                 ChatMessage.objects.filter(
                     Q(room__buyer=user) | Q(room__seller=user), is_read=False
                 )
                 .exclude(sender=user)
             )
-            unread_count = unread_messages.count()
-
-            # 읽지 않은 메시지들의 ID와 내용을 로그에 출력
+            
+            # 각 채팅방 별로 읽지 않은 메시지 수를 집계합니다.
+            unread_rooms = {}
             for message in unread_messages:
-                logger.info(f"Unread message for user {user.username}: ID={message.id}, Content='{message.content}'")
+                room_id = message.room.id
+                if room_id not in unread_rooms:
+                    unread_rooms[room_id] = 0
+                unread_rooms[room_id] += 1
 
-            return Response({"new_messages_count": unread_count}, status=200)
+            # 각 채팅방별 새 메시지 개수를 응답에 포함합니다.
+            new_messages = [{"room_id": room_id, "unread_count": count} for room_id, count in unread_rooms.items()]
+
+
+            return Response({"new_messages": new_messages}, status=200)
         except Exception as e:
             logger.error(f"Error while counting unread messages: {str(e)}")
             return Response(

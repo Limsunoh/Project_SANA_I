@@ -26,6 +26,27 @@
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
 }
 
+.chat-room-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;  /* 구분선을 추가 */
+}
+
+.product-title {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.user-info {
+    color: #555;
+    margin-bottom: 10px;  /* 사용자 정보와 버튼 사이의 간격 */
+}
+
+.chat-room-actions {
+    display: flex;
+    justify-content: space-between;  /* 이동 링크와 나가기 버튼을 양 끝으로 배치 */
+    align-items: center;
+}
+
 .chat-room-list li a {
     text-decoration: none;
     color: #007bff;
@@ -34,4 +55,18 @@
 
 .chat-room-list li a:hover {
     text-decoration: underline;
+}
+
+.leave-chatroom-btn {
+    background-color: #f44336;  /* 빨간색 */
+    color: white;
+    border: none;
+    padding: 5px 10px;  /* 버튼 내부 여백 줄임 */
+    font-size: 14px;  /* 글자 크기 줄임 */
+    border-radius: 5px;  /* 모서리를 둥글게 */
+    cursor: pointer;
+}
+
+.leave-chatroom-btn:hover {
+    background-color: #d32f2f;  /* 호버 시 색상 변경 */
 }

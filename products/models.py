@@ -51,8 +51,8 @@ class ChatRoom(models.Model):
     buyer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chatrooms_as_buyer') # 구매자
     product = models.ForeignKey('Product', on_delete=models.CASCADE, related_name='chatrooms') # 해당 상품
     created_at = models.DateTimeField(auto_now_add=True)
-    review_requested = models.BooleanField(default= False)
-    status_complate = models.BooleanField(default= False)
+    exited_users = models.ManyToManyField(User, related_name='exited_chatrooms', blank=True)
+
 
     def __str__(self):
         return f"채팅방:{self.pk} 상품: {self.product.title} (판매자: {self.seller.username}, 구매자: {self.buyer.username})"
