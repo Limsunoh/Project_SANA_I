@@ -11,9 +11,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-from .config import SANAI_KEY
-from .config import SANAI_PASSWORD
+from .config import SANAI_KEY, SENTRY_DSN, SANAI_PASSWORD, DBPASSWORD, DEBUG, ACCESS_TOKEN_TIME
 from datetime import timedelta
+import sentry_sdk
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -27,12 +28,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = SANAI_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = DEBUG
 
-ALLOWED_HOSTS = ["localhost",
-                 "54.180.134.131",
-                 "127.0.0.1",
-                 "sbmarket.kro.kr",]
+ALLOWED_HOSTS = [
+    "localhost",
+    "52.78.43.100",
+    "127.0.0.1",
+    "sbmarket.kro.kr",
+    ]
 
 
 # Application definition
@@ -54,7 +57,9 @@ INSTALLED_APPS = [
 
     # Local
     "accounts",
-    "products",  
+    "products",
+    "reviews",
+    "manager",
 ]
 
 MIDDLEWARE = [
@@ -65,6 +70,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'accounts.middleware.SentryUserContextMiddleware',
 ]
 
 ROOT_URLCONF = "sbmarket.urls"
@@ -104,13 +110,17 @@ REST_FRAMEWORK = {
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'sbmarket_db',  # 방금 생성한 데이터베이스 이름
+        'USER': 'sbmarket',  # MySQL 사용자 이름
+        'PASSWORD': DBPASSWORD,  # 설정한 비밀번호
+        'HOST': '52.78.43.100',  # MySQL 서버 호스트 (로컬 서버라면 'localhost')
+        'PORT': '3306',  # MySQL 포트 번호
     }
 }
 
-AUTH_USER_MODEL = "accounts.user"
+AUTH_USER_MODEL = "accounts.User"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -167,10 +177,47 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=999),
+    "ACCESS_TOKEN_LIFETIME": ACCESS_TOKEN_TIME,
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
 }
 
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'WARNING',  # Django 기본 로그는 WARNING 이상만 표시
+            'propagate': True,
+        },
+        'products': {  # 해당 앱에서만 로그 표시 (앱 이름을 'products'로 가정)
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
+
+sentry_sdk.init(
+    dsn=SENTRY_DSN,
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for tracing.
+    traces_sample_rate=1.0,
+    # Set profiles_sample_rate to 1.0 to profile 100%
+    # of sampled transactions.
+    # We recommend adjusting this value in production.
+    profiles_sample_rate=1.0,
+)

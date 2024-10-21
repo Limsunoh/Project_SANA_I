@@ -1,0 +1,355 @@
+/* 기본 스타일 */
+body {
+    font-family: 'Poppins', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+}
+
+/* 공통 Header 스타일 */
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+}
+
+/* 로고 스타일 */
+.logo {
+    height: 50px;
+    cursor: pointer;
+}
+
+/* 네비게이션 메뉴 스타일 */
+.nav-link {
+    font-size: 18px;
+    font-weight: 500;
+    color: #333;
+}
+
+.nav-link:hover {
+    color: #ff5722;
+}
+
+.cropped-banner {
+    height: 300px; /* 원하는 높이로 설정 */
+    object-fit: cover; /* 이미지의 비율을 유지하면서 잘라냄 */
+    width: 100%; /* 전체 너비로 설정 */
+}
+
+/* '내 상점'과 '1:1 채팅' 스타일 */
+.mypage-link .nav-link,
+.chat-link .nav-link {
+    font-size: 20px;  /* 폰트 크기 조금 키움 */
+    font-weight: 600; /* 글씨 굵게 */
+    color: #333;
+}
+
+.mypage-link .nav-link:hover,
+.chat-link .nav-link:hover {
+    color: #ff5722;  /* hover 시 색상 */
+}
+
+/* 회원가입, 로그인, 상품등록 버튼 스타일 */
+.btn-primary  {
+    background-color: #b88e2f; /* 금색 계열 */
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #99751f;  /* Hover 시 더 어두운 금색 */
+}
+
+.btn-secondary {
+    background-color: #6c757d; /* 회색 계열 */
+    border: none;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268; /* Hover 시 더 어두운 회색 */
+}
+
+.btn-outline-dark {
+    color: #333;
+    border: 2px solid #333; 
+}
+
+.btn-outline-dark:hover {
+    color: #fff;
+    background-color: #333; /* Hover 시 배경색을 검정색으로 */
+}
+
+/* '상품 등록' 버튼 스타일 */
+.btn-danger {
+    background-color: #333; /* 검정색 계열 */
+    border: none;
+}
+
+.btn-danger:hover {
+    background-color: #000; /* Hover 시 더 어두운 검정색 */
+}
+
+/* 검색창 스타일 */
+.search-container {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* 검색창을 전체적으로 가운데 정렬 */
+    margin-left: 50px;
+}
+
+#search-input {
+    padding: 10px 16px;
+    border: 1px solid #ddd;
+    border-radius: 30px;
+    width: 300px;
+    margin-right: 8px;
+}
+
+#ai-search-input {
+    padding: 10px 16px;
+    border: 1px solid #ddd;
+    border-radius: 30px;
+    width: 500px;
+    margin-right: 8px;
+}
+
+#search-button {
+    padding: 10px 16px;
+    background-color: #f06292;
+    border: none;
+    border-radius: 30px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#search-button:hover {
+    background-color: #ec407a;
+}
+
+/* Container 공통 스타일 */
+.container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 40px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Footer 스타일 */
+footer {
+    text-align: center;
+    padding: 40px;
+    background-color: #fff;
+    color: #333;
+    border-top: 1px solid #ddd;
+    margin-top: 50px;
+    font-size: 16px;
+}
+
+footer p {
+    margin: 0;
+    color: #9f9f9f;
+}
+
+/* 로딩 오버레이 스타일 */
+#loading-overlay {
+    display: none; /* 기본적으로 숨김 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw; /* 전체 화면의 너비 */
+    height: 100vh; /* 전체 화면의 높이 */
+    background-color: rgba(255, 255, 255, 0.8); /* 불투명한 흰색 배경 */
+    z-index: 9999; /* 다른 모든 요소보다 위에 표시 */
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; /* 세로 방향 정렬 */
+}
+
+/* 로딩 스피너 스타일 */
+.spinner {
+    border: 8px solid #f3f3f3; /* 회색 테두리 */
+    border-top: 8px solid #3498db; /* 파란색 테두리 */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px; /* 스피너 아래 여백 추가 */
+}
+
+/* 메시지 스타일 */
+.loading-message {
+    font-size: 1.2em; /* 글씨 크기 조정 */
+    color: #333; /* 색상 */
+    text-align: center; /* 중앙 정렬 */
+}
+
+/* 톡(Talk) 버튼 고정 스타일 */
+#talk-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    background-color: #b88e2f;
+    color: white;
+    border: none;
+    padding: 20px;
+    border-radius: 50px;
+    font-size: 16px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#talk-button:hover {
+    background-color: #c0247f;
+}
+
+/* 톡(Talk) 버튼 말풍선 스타일 */
+#talk-button::after {
+    content: '1:1 문의';
+    position: absolute;
+    width: 100px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    bottom: 80px;
+    right: 0px; /* 오른쪽에서 좀 더 떨어지도록 조정 */
+    background-color: #333;
+    color: #fff;
+    padding: 5px 5px;
+    border-radius: 5px;
+    font-size: 16px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* 톡 버튼 호버 시 말풍선 표시, 단 팝업이 없을 때만 */
+#talk-button:not(.chat-active):hover::after {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 채팅 팝업 스타일 */
+.chat-popup {
+    display: none;
+    position: fixed;
+    bottom: 140px;
+    right: 20px;
+    width: 450px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1001;
+    flex-direction: column;
+    max-height: 1000px;
+    overflow: hidden;
+}
+
+.chat-header {
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    font-weight: bold;
+}
+
+.chat-body {
+    padding: 10px;
+    background-color: #fff;
+    height: 600px;
+    overflow-y: scroll;
+}
+
+.chat-footer {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+    background-color: #f8f9fa;
+}
+
+.chat-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 30px;
+    margin-right: 10px;
+}
+
+#send-button {
+    padding: 10px 20px;
+    background-color: #fc4242;
+    border: none;
+    border-radius: 30px;
+    color: white;
+    cursor: pointer;
+}
+
+#send-button:hover {
+    background-color: #2980b9;
+}
+
+/* 채팅창 팝업이 활성화되면 톡(Talk) 버튼에 말풍선 숨기기 */
+#talk-button.chat-active::after {
+    display: none;
+}
+
+/* 유저 메시지 스타일 */
+.user-message {
+    background-color: #3498db;
+    color: white;
+    padding: 10px;
+    border-radius: 15px;
+    display: inline-block;
+    margin: 10px 0;
+    max-width: 80%;
+    position: relative;
+    text-align: left;
+}
+
+.user-message::after {
+    content: '';
+    position: absolute;
+    right: -10px;
+    top: 10px;
+    border-width: 10px;
+    border-style: solid;
+    border-color: transparent transparent transparent #3498db;
+}
+
+/* AI 메시지 스타일 */
+.ai-message {
+    background-color: #e0e0e0;
+    color: black;
+    padding: 10px;
+    border-radius: 15px;
+    display: inline-block;
+    margin: 10px 0;
+    max-width: 80%;
+    position: relative;
+    text-align: left;
+}
+
+.ai-message::after {
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 10px;
+    border-width: 10px;
+    border-style: solid;
+    border-color: transparent #e0e0e0 transparent transparent;
+}
+
+/* 메시지 배치 정렬 */
+.user-container {
+    text-align: right;
+}
+
+.ai-container {
+    text-align: left;
+}

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}회원가입 - 딸기 마켓{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+{% endblock %}
+
+{% block content %}
+<h2>회원 가입</h2>
+<form id="signup-form" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="input-group">
+        <label for="username">ID</label>
+        <input type="text" id="username" name="username" required>
+    </div>
+    <div class="input-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+    </div>
+    <div class="input-group">
+        <label for="check_password">Check Password</label>
+        <input type="password" id="check_password" name="checkpassword" required>
+    </div>
+    <div class="input-group">
+        <label for="nickname">Nickname</label>
+        <input type="text" id="nickname" name="nickname" required>
+    </div>
+    <div class="input-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required>
+    </div>
+    <div class="input-group">
+        <label for="birth">Birth</label>
+        <input type="date" id="birth" name="birth" required>
+    </div>
+    <div class="input-group">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" name="email" required>
+    </div>
+    <div class="input-group">
+        <label for="image">Profile Image</label>
+        <input type="file" id="profile-image-input" name="image" accept="image/*">
+    </div>
+    <div class="input-group">
+        <label for="sample6_postcode">Address</label>
+        <input type="text" id="sample6_postcode" name="postcode" placeholder="우편번호" readonly>
+        <input type="button" onclick="sample6_execDaumPostcode()" value="우편번호 찾기"><br>
+        <input type="text" id="sample6_address" name="mainaddress" placeholder="주소" readonly><br>
+        <input type="text" id="sample6_detailAddress" name="subaddress" placeholder="상세주소">
+        <input type="text" id="sample6_extraAddress" name="extraaddress" placeholder="참고항목" readonly>
+    </div>
+    <div class="input-group">
+        <label for="introduce">Introduce</label>
+        <input type="text" id="introduce" name="introduce" required>
+    </div>
+    <button type="submit">회원가입</button>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script src="{% static 'js/signup.js' %}"></script>
+{% endblock %}
