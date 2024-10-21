@@ -46,6 +46,7 @@
         <div class="mb-3">
             <label for="tags" class="form-label">해시태그 (쉼표로 구분)</label>
             <input type="text" class="form-control" id="tags" name="tags" value="{% for tag in product.tags.all %}{{ tag.name }},{% endfor %}">
+            <small id="tags-error" class="text-danger" style="display: none;">해시태그는 띄어쓰기와 특수문자를 포함할 수 없습니다.</small> <!-- 해시태그 오류 메시지 추가 -->
         </div>
 
         <button type="submit" class="btn btn-primary">수정</button>

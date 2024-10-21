@@ -10,13 +10,29 @@ document.addEventListener("DOMContentLoaded", function () {
     const emailInput = document.getElementById("email");
     const imageInput = document.getElementById("image");
     const profileImagePreview = document.getElementById("profile_image_preview");
+    const removeProfileImageButton = document.getElementById("remove-profile-image"); //프로필이미지 삭제버튼 추가
+    const introduceInput = document.getElementById("introduce"); // introduce 요소 추가
 
     const FILE_SIZE_LIMIT_MB = 10; 
     const MAX_PROFILE_IMAGE_SIZE = FILE_SIZE_LIMIT_MB * 1024 * 1024; // MB 단위
+    let removeProfileImage = false;  // 프로필 이미지 삭제 여부 플래그
 
     // 현재 로그인된 사용자의 아이디 불러오기
     let username = localStorage.getItem("current_username");
     let accessToken = localStorage.getItem("access_token");
+
+    if (removeProfileImageButton) {
+        console.log("Remove Profile Image Button Found");
+    } else {
+        console.log("Remove Profile Image Button Not Found");
+    }
+    // 이미지 삭제 버튼 클릭 이벤트
+    removeProfileImageButton.addEventListener("click", function () {
+        profileImagePreview.src = "/static/images/default_image.jpg";  // 기본 이미지로 변경
+        removeProfileImage = true;  // 이미지 삭제 플래그 설정
+        imageInput.value = "";  // 파일 선택 초기화
+        alert("프로필 이미지가 삭제되었습니다.");  // 알림 메시지 띄우기
+    });
 
     if (!username) {
         if (accessToken) {
@@ -72,6 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const reader = new FileReader();
             reader.onload = function (e) {
                 profileImagePreview.src = e.target.result;
+                removeProfileImage = false; // 이미지 업로드 시 삭제 플래그 해제
             };
             reader.readAsDataURL(file);
         }
@@ -88,10 +105,19 @@ document.addEventListener("DOMContentLoaded", function () {
         formData.append("extraaddress", extraAddressInput.value);
         formData.append("birth", birthInput.value);
         formData.append("email", emailInput.value);
-        formData.append('introduce', document.getElementById('introduce').value);
+        formData.append('introduce', introduceInput.value);
 
-        if (imageInput.files[0]) {
-            formData.append("image", imageInput.files[0]);
+        // formData에 값이 제대로 추가되었는지 확인
+        for (var pair of formData.entries()) {
+            console.log(pair[0]+ ': ' + pair[1]); 
+        }
+
+        // 이미지 파일 또는 이미지 삭제 플래그 전송
+        if (removeProfileImage) {
+            formData.append("remove_image", true);  // 이미지 삭제 플래그 전송
+        } else if (imageInput.files[0]) {
+            formData.append("image", imageInput.files[0]);  // 새로운 이미지 파일 전송
+            console.log("Image added to formData:", imageInput.files[0]);
         }
 
         const response = await fetch(`/api/accounts/profile/${username}/`, {
@@ -104,7 +130,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (response.ok) {
             alert("프로필이 성공적으로 수정되었습니다.");
-            location.reload();
+            // 프로필 페이지로 리다이렉트
+            window.location.href = `/api/accounts/profile-page/${username}/`;
         } else {
             const errorData = await response.json();
             alert(`프로필 수정에 실패했습니다: ${errorData.detail}`);
@@ -117,9 +144,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         try {
             const response = await fetchWithAuth(profileUrl);
+            console.log("Response Status:", response.status); // 응답 상태 코드 확인
 
             if (response.ok) {
                 const data = await response.json();
+                console.log("Profile Data:", data); // 프로필 데이터 출력
 
                 // HTML 요소에 데이터 반영
                 nicknameInput.value = data.nickname || "";
@@ -130,6 +159,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 extraAddressInput.value = data.extraaddress || "";
                 birthInput.value = data.birth || "";
                 emailInput.value = data.email || "";
+                introduceInput.value = data.introduce || "";
                 profileImagePreview.src = data.profile_image || "/static/images/default_image.jpg"; // 이미지 미리보기 설정
             } else {
                 console.error("프로필 정보를 불러오는 데 실패했습니다:", await response.json());

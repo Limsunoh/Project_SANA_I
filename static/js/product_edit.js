@@ -43,9 +43,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const productForm = document.getElementById('product-edit-form');
     const productId = window.location.pathname.split('/').slice(-2, -1)[0];
 
-    // 파일 업로드 용량 제한 검사 및 미리보기 등록
     const imageUploadInput = document.getElementById('image-upload');
+    const tagsInput = document.getElementById('tags');
+    const tagsError = document.getElementById('tags-error');
+
+    // 파일 업로드 용량 제한 검사 및 미리보기 등록
     imageUploadInput.addEventListener('change', previewImages);
+
+    // 해시태그 유효성 검사 함수
+    function validateTags(tagsArray) {
+        const invalidChars = /[#@!$%^&*()]/;  // 허용하지 않는 특수문자
+        return tagsArray.every(tag => {
+            return tag !== '' && !tag.includes(' ') && !invalidChars.test(tag);
+        });
+    }
+
+    // 해시태그 입력 시 유효성 검사
+    tagsInput.addEventListener('input', function () {
+        const tags = tagsInput.value.split(',').map(tag => tag.trim());
+
+        if (!validateTags(tags)) {
+            tagsError.style.display = 'block';  // 에러 메시지 표시
+        } else {
+            tagsError.style.display = 'none';  // 에러 메시지 숨김
+        }
+    });
 
     productForm.onsubmit = async function (e) {
         e.preventDefault();
@@ -68,15 +90,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 파일 크기가 초과되었으면 폼 제출 중단
         if (fileSizeExceeded) {
+            alert("파일 크기가 너무 큽니다. 다시 시도해주세요.");
             return;
         }
 
         // 해시태그에서 마지막 쉼표 제거
-        let tagsInput = document.getElementById("tags").value.trim();
-        if (tagsInput.endsWith(',')) {
-            tagsInput = tagsInput.slice(0, -1); // 마지막 쉼표 제거
+        let tagsInputValue = tagsInput.value.trim();
+        const tagsArray = tagsInputValue.split(',').map(tag => tag.trim());
+
+        // 해시태그 유효성 검사 (제출 시)
+        if (!validateTags(tagsArray)) {
+            tagsError.style.display = 'block';
+            alert("해시태그가 유효하지 않습니다. 띄어쓰기나 특수문자는 허용되지 않습니다.");
+            return;  // 유효하지 않으면 폼 제출 중단
+        } else {
+            tagsError.style.display = 'none';  // 유효하면 에러 메시지 숨김
         }
-        formData.set('tags', tagsInput); // 수정된 해시태그 값을 formData에 설정
+
+        // 최종 유효한 해시태그만 formData에 추가
+        formData.set('tags', tagsArray.join(','));
 
         try {
             const response = await fetch(`/api/products/${productId}/`, {
@@ -89,13 +121,16 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (response.ok) {
+                alert("제품이 성공적으로 수정되었습니다.");
                 window.location.href = `/api/products/detail-page/${productId}/`;
             } else {
                 const errorData = await response.json();
-                console.error("에러 발생:", errorData);
+                alert("제품 수정에 실패했습니다: " + JSON.stringify(errorData));
             }
         } catch (error) {
             console.error("서버 통신 중 오류 발생:", error);
+            alert("서버와 통신 중 문제가 발생했습니다. 나중에 다시 시도해주세요.");
         }
     };
 });
+

@@ -12,48 +12,50 @@
 <form id="signup-form" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="input-group">
-        <label for="username">ID</label>
-        <input type="text" id="username" name="username" required>
+        <label for="username">ID <span class="required">*</span></label>
+        <input type="text" id="username" name="username" placeholder="필수 항목입니다. 작성해주세요" required>
     </div>
     <div class="input-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required>
+        <label for="password">Password <span class="required">*</span></label>
+        <input type="password" id="password" name="password" placeholder="필수 항목입니다. 작성해주세요" required>
+        <small id="password-error" class="text-danger" style="display: none;"></small>
     </div>
     <div class="input-group">
-        <label for="check_password">Check Password</label>
-        <input type="password" id="check_password" name="checkpassword" required>
+        <label for="check_password">Check Password <span class="required">*</span></label>
+        <input type="password" id="check_password" name="checkpassword" placeholder="필수 항목입니다. 작성해주세요" required>
+        <small id="checkpassword-error" class="text-danger" style="display: none;"></small> <!-- 경고 메시지 -->
     </div>
     <div class="input-group">
-        <label for="nickname">Nickname</label>
-        <input type="text" id="nickname" name="nickname" required>
+        <label for="nickname">Nickname <span class="required">*</span></label>
+        <input type="text" id="nickname" name="nickname" placeholder="필수 항목입니다. 작성해주세요" required>
     </div>
     <div class="input-group">
-        <label for="name">Name</label>
-        <input type="text" id="name" name="name" required>
+        <label for="name">Name <span class="required">*</span></label>
+        <input type="text" id="name" name="name" placeholder="필수 항목입니다. 작성해주세요" required>
     </div>
     <div class="input-group">
-        <label for="birth">Birth</label>
+        <label for="birth">Birth <span class="required">*</span></label>
         <input type="date" id="birth" name="birth" required>
     </div>
     <div class="input-group">
-        <label for="email">E-mail</label>
-        <input type="email" id="email" name="email" required>
+        <label for="email">E-mail <span class="required">*</span></label>
+        <input type="email" id="email" name="email" placeholder="필수 항목입니다. 작성해주세요" required>
     </div>
     <div class="input-group">
-        <label for="image">Profile Image</label>
+        <label for="profile-image-input">Profile Image</label>
         <input type="file" id="profile-image-input" name="image" accept="image/*">
     </div>
     <div class="input-group">
-        <label for="sample6_postcode">Address</label>
-        <input type="text" id="sample6_postcode" name="postcode" placeholder="우편번호" readonly>
+        <label for="sample6_postcode">Address <span class="required">*</span></label>
+        <input type="text" id="sample6_postcode" name="postcode" placeholder="우편번호" readonly required>
         <input type="button" onclick="sample6_execDaumPostcode()" value="우편번호 찾기"><br>
-        <input type="text" id="sample6_address" name="mainaddress" placeholder="주소" readonly><br>
-        <input type="text" id="sample6_detailAddress" name="subaddress" placeholder="상세주소">
-        <input type="text" id="sample6_extraAddress" name="extraaddress" placeholder="참고항목" readonly>
+        <input type="text" id="sample6_address" name="mainaddress" placeholder="주소" readonly required><br>
+        <input type="text" id="sample6_detailAddress" name="subaddress" placeholder="상세 주소" required>
+        <input type="text" id="sample6_extraAddress" name="extraaddress" placeholder="참고 항목" readonly>
     </div>
     <div class="input-group">
         <label for="introduce">Introduce</label>
-        <input type="text" id="introduce" name="introduce" required>
+        <input type="text" id="introduce" name="introduce" placeholder="자기소개를 입력해주세요 (선택사항)">
     </div>
     <button type="submit">회원가입</button>
 </form>
