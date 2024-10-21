@@ -335,10 +335,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // 페이지 로드 후 10초마다 새 메시지 체크 (비동기적, 로그인 상태 확인)
+    // 페이지 로드 후 1초마다 새 메시지 체크 (비동기적, 로그인 상태 확인)
     setInterval(() => {
         if (getAccessToken()) {
             updateChatAlertBadge();
         }
-    }, 10000);
+    }, 1000);
 });
