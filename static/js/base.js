@@ -306,17 +306,23 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // 알림 배지를 업데이트하는 함수
+    // 새 메시지 알림 배지를 업데이트하는 함수
     async function updateChatAlertBadge() {
         try {
             const response = await fetchWithAuth("/api/products/chatroom/new_messages/");
             if (!response.ok) throw new Error("새 메시지 확인 실패");
 
             const data = await response.json();
-            const newMessagesCount = data.new_messages_count;
+            const newMessagesCount = data.new_messages.reduce((acc, msg) => acc + msg.unread_count, 0);  // 새 메시지 수 계산
 
             const chatLink = document.getElementById("chat-link");
 
+            if (!chatLink) {
+                console.error("채팅방 링크 요소를 찾을 수 없습니다.");
+                return;
+            }
+
+            // 새 메시지가 있으면 배지 추가, 없으면 제거
             if (newMessagesCount > 0) {
                 chatLink.classList.add("new-message-alert");
                 chatLink.innerHTML = `내 채팅방 <span class="badge bg-danger">${newMessagesCount}</span>`;
