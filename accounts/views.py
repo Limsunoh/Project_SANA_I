@@ -20,6 +20,8 @@ from .serializers import (
     UserChangeSerializer,
     ChangePasswordSerializer,
 )
+from django.shortcuts import redirect
+from django.utils.translation import gettext_lazy as _
 from .models import User
 from products.models import Product
 from .permissions import IsOwnerOrReadOnly
@@ -189,6 +191,19 @@ class UserFollowerListAPIView(APIView):
 # [커스텀 토큰 생성] 사용자 이름을 포함한 JWT 토큰 생성
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+    
+    def post(self, request, *args, **kwargs):
+    # 사용자가 입력한 username으로 사용자 객체를 가져옴
+        user = get_object_or_404(User, username=request.data.get('username'))
+        username = request.data.get('username')
+        password = request.data.get('password')
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return Response({"detail": "아이디나 비밀번호를 확인해주세요."}, status=401)
+        if not user.is_active:
+            return Response({"detail": "이메일 인증을 완료해 주세요."}, status=403)
+        return super().post(request, *args, **kwargs)
 
 
 # [찜한 상품 목록 조회 API] 사용자가 찜한 상품 목록 반환

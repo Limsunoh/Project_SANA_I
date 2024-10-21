@@ -8,24 +8,36 @@
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
 {% endblock %}
 
+{% csrf_token %}
+
 {% block content %}
 <h2>로그인</h2>
 <form id="login-form">
     {% csrf_token %}
     <div class="input-group">
         <label for="username">ID</label>
-        <input type="text" id="username" name="username" required>
+        <input type="text" id="username" name="username" required autocomplete="username">
     </div>
     <div class="input-group">
         <label for="password">Password</label>
-        <input type="password" id="password" name="password" required>
+        <input type="password" id="password" name="password" required autocomplete="current-password">
     </div>
     <button type="submit">로그인</button>
     <div id="message"></div>
 </form>
 
+{% if messages %}
+    <ul>
+    {% for message in messages %}
+        <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+<!-- is_active 값을 저장하는 숨겨진 필드 추가 -->
+<input type="hidden" id="is-active" value="{{ user.is_authenticated|yesno:'true,false' }}">
+
 {% block scripts %}
-<script src="{% static 'js/login.js' %}"></script>
+<script type= "module" src="{% static 'js/login.js' %}"></script>
 {% endblock %}
 
 {% endblock %}

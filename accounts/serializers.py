@@ -125,7 +125,13 @@ class UserSerializer(serializers.ModelSerializer):
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     # [JWT 토큰 생성] 사용자 이름 포함 토큰 생성.
     def validate(self, attrs):
-        data = super().validate(attrs)  # 기본 토큰 생성 로직 호출
+        data = super().validate(attrs) 
+        
+        # 이메일 인증 확인
+        if not self.user.is_active:
+            raise serializers.ValidationError(
+                {"detail": "이메일 인증이 완료되지 않은 계정입니다."}, code="not_verified"
+            )
         data["username"] = self.user.username
         return data
 

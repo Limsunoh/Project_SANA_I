@@ -37,6 +37,8 @@ ALLOWED_HOSTS = [
     "sbmarket.kro.kr",
     ]
 
+CORS_ALLOW_ALL_ORIGINS = True
+
 
 # Application definition
 
