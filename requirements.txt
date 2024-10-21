@@ -8,7 +8,7 @@ click==8.1.7
 colorama==0.4.6
 cryptography==43.0.1
 distro==1.9.0
-Django==4.2
+Django==4.2.16
 django-filter==24.3
 django-multiselectfield==0.1.13
 django-seed==0.3.1
