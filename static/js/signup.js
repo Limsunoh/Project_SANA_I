@@ -77,11 +77,31 @@ function checkProfileImageSize(file) {
     return true;
 }
 
+
 document.addEventListener('DOMContentLoaded', function() {
     const passwordInput = document.getElementById('password');
     const checkPasswordInput = document.getElementById('check_password');
+    const birthInput = document.getElementById('birth');
     const passwordError = document.getElementById('password-error');
     const checkPasswordError = document.getElementById('checkpassword-error');
+
+    // 생일이 미래일 경우 경고 메시지 출력
+    function validateBirthdate() {
+        const birthdate = new Date(birthInput.value);
+        const today = new Date();
+        if (birthdate > today) {
+            alert("미래 날짜로 생일을 설정할 수 없습니다. 다시 입력해주세요.");
+            return false;
+        }
+        return true;
+    }
+
+    // 생일 필드 변경 시 바로 유효성 검사
+    birthInput.addEventListener('change', function() {
+        if (!validateBirthdate()) {
+            birthInput.value = '';  // 미래 날짜일 경우 선택을 초기화
+        }
+    });
 
     // 비밀번호 입력 시 검증
     passwordInput.addEventListener('input', function() {
@@ -160,7 +180,7 @@ document.getElementById('signup-form').onsubmit = async function (event) {
     // 프로필 사진 파일 가져오기
     const profileImage = profileImageInput ? profileImageInput.files[0] : null; 
     if (profileImage && !checkProfileImageSize(profileImage)) {
-        return; // 용량 초과 시, 폼 제출 중단
+        return;
     }
 
     const response = await fetch('/api/accounts/signup/', {
@@ -173,7 +193,7 @@ document.getElementById('signup-form').onsubmit = async function (event) {
 
     if (response.ok) {
         alert('회원가입이 완료되었습니다. 이메일 인증을 진행해주세요.');
-        window.location.href = '/api/accounts/login-page/';  // 가입 후, 로그인 페이지로 이동
+        window.location.href = '/api/accounts/login-page/';
     } else {
         const errorData = await response.json();
     
@@ -187,6 +207,9 @@ document.getElementById('signup-form').onsubmit = async function (event) {
         }
         if (errorData.subaddress) {
             errorMessage += " - 상세 주소는 필수 항목입니다.\n";
+        }
+        if (errorData.username) {
+            errorMessage += " 중복된 아이디 입니다.\n";
         }
         alert(errorMessage);
     }
