@@ -3,8 +3,8 @@ document.addEventListener('DOMContentLoaded', function () {
     loadChatRooms();
     updateChatAlertBadge(); // 새 메시지 확인
 
-    // 10초마다 새 메시지 확인
-    setInterval(updateChatAlertBadge, 10000);
+    // 3초마다 새 메시지 확인
+    setInterval(updateChatAlertBadge, 3000);
 });
 
 async function loadChatRooms() {

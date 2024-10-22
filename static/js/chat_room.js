@@ -246,9 +246,9 @@ document.addEventListener('DOMContentLoaded', function () {
     $(document).ready(function () {
         loadMessages(true);
         checkTransactionStatus();
-        // 5초마다 새로운 메시지 확인 (롱 폴링 구현)
+        // 1초마다 새로운 메시지 확인 (롱 폴링 구현)
         setInterval(function () {
             loadMessages(false);
-        }, 3000);
+        }, 1000);
     });
 });
