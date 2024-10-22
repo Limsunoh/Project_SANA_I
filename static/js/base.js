@@ -3,7 +3,7 @@ function getAccessToken() {
 }
 
 function getRefreshToken() {
-    return localStorage.getItem("refreshToken");
+    return localStorage.getItem("refresh_token");
 }
 
 function setAccessToken(token) {
@@ -11,12 +11,12 @@ function setAccessToken(token) {
 }
 
 function setRefreshToken(token) {
-    localStorage.setItem("refreshToken", token);
+    localStorage.setItem("refresh_token", token);
 }
 
 function removeTokens() {
     localStorage.removeItem("access_token");
-    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("refresh_token");
 }
 
 // 인증이 필요한 fetch 함수
