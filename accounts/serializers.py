@@ -109,7 +109,7 @@ class UserSerializer(serializers.ModelSerializer):
                 "token": tokens["access"],
             },
         )
-        mail_subject = "[SBmarket] 회원가입 인증 메일입니다"
+        mail_subject = "[딸기마켓] 회원가입 인증 메일입니다"
         to_email = user.email
         from_email = settings.DEFAULT_FROM_EMAIL
 
