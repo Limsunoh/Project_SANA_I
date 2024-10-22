@@ -22,13 +22,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const editProfileBtn = document.getElementById("edit-profile-btn");
     const editPasswordBtn = document.getElementById("edit-password-btn");
-    
-    
+
+
     let isFollowing = false;
 
     // URL에서 특정 profile username을 가져옴
     const profileUsername = decodeURI(window.location.pathname.split('/').filter(Boolean).pop());
-    
+
     if (!profileUsername || !accessToken) {
         alert("잘못된 접근입니다. 로그인 후 다시 시도해주세요.");
         window.location.href = "/api/accounts/login-page/";
@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
     .then(response => response.json())
     .then(followData => {
         isFollowing = followData.is_following;
-        if (followButton) updateFollowButton(); 
+        if (followButton) updateFollowButton();
     })
     .catch(error => {
         console.error("팔로우 여부 확인 중 오류 발생:", error);
@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 return response.text();
             })
             .then(result => {
-                
+
                 if (result === "\"follow했습니다.\"") {
                     isFollowing = true;
                     if (followersCountDisplay) followersCountDisplay.textContent = (parseInt(followersCountDisplay.textContent) + 1).toString();
@@ -236,7 +236,7 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("작성한 후기 정보를 불러올 수 없습니다.");
         });
     }
-    // 구매 내역 
+    // 구매 내역
     if (document.getElementById("purchase-history")) {
         fetch(`/api/accounts/user/${profileUsername}/purchase-history/`, {
             headers: { "Authorization": `Bearer ${accessToken}` },
@@ -299,7 +299,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (mannerScoreDisplay) {
             mannerScoreDisplay.addEventListener("click", () => {
-                window.location.href = `/api/accounts/user/${username}/received-reviews`; 
+                window.location.href = `/api/accounts/user/${username}/received-reviews`;
             });
         }
 
@@ -333,7 +333,7 @@ document.addEventListener("DOMContentLoaded", function () {
     editPasswordBtn.addEventListener("click", function() {
         window.location.href = `/api/accounts/profile/${profileUsername}/password-page/`;
     });
-    
+
     // 내가 작성한 상품 더보기 클릭 시
     const seeMoreProductsBtn = document.getElementById("see-more-products");
     if (seeMoreProductsBtn) {

@@ -30,7 +30,7 @@
         <br>
         <small class="form-text text-muted">리뷰작성을 하려면 판매자,구매자 각자의 채팅방에서 거래완료를 클릭해야 가능합니다. 좋은거래 하세요!</small>
     </div>
-    
+
 {% endblock %}
 
 {% block scripts %}
@@ -43,7 +43,7 @@
         // 리뷰 요청 버튼 클릭 시
         $('#request-review-btn').on('click', function() {
             var roomId = $('.chat-container').data('room-id');
-            
+
             $.ajax({
                 url: '/api/chat/' + roomId + '/request-review/', // 리뷰 요청 API 엔드포인트
                 type: 'POST',

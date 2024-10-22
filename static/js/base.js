@@ -43,7 +43,7 @@ async function fetchWithAuth(url, options = {}) {
         console.error("Initial fetch request failed:", error);
         return;
     }
-    
+
     // 만료된 토큰의 경우 처리
     if (response.status === 403) {
         try {
@@ -86,7 +86,7 @@ function fetchWithOptionalAuth(url, options = {}) {
     // 로그인한 사용자인 경우 fetchWithAuth 사용
     if (accessToken) {
         return fetchWithAuth(url, options);
-    } 
+    }
     // 비로그인 사용자라면 일반 fetch 사용
     else {
         return fetch(url, options);

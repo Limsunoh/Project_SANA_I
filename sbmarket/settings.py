@@ -10,12 +10,19 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from pathlib import Path
-from .config import SANAI_KEY, SENTRY_DSN, SANAI_PASSWORD, DBPASSWORD, DEBUG, ACCESS_TOKEN_TIME
 from datetime import timedelta
+from pathlib import Path
+
 import sentry_sdk
 
-
+from .config import (
+    ACCESS_TOKEN_TIME,
+    DBPASSWORD,
+    DEBUG,
+    SANAI_KEY,
+    SANAI_PASSWORD,
+    SENTRY_DSN,
+)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -35,7 +42,7 @@ ALLOWED_HOSTS = [
     "52.78.43.100",
     "127.0.0.1",
     "sbmarket.kro.kr",
-    ]
+]
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -49,14 +56,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     # Third Part
-    'rest_framework',
-    'rest_framework_simplejwt',
-    'rest_framework_simplejwt.token_blacklist',
-    'django_seed',
-    'django_filters',
-
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
+    "django_seed",
+    "django_filters",
     # Local
     "accounts",
     "products",
@@ -72,7 +77,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    'accounts.middleware.SentryUserContextMiddleware',
+    "accounts.middleware.SentryUserContextMiddleware",
 ]
 
 ROOT_URLCONF = "sbmarket.urls"
@@ -80,7 +85,9 @@ ROOT_URLCONF = "sbmarket.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / 'templates',],
+        "DIRS": [
+            BASE_DIR / "templates",
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -96,15 +103,15 @@ TEMPLATES = [
 WSGI_APPLICATION = "sbmarket.wsgi.application"
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
-    ]
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny",
+    ],
 }
 
 
@@ -112,13 +119,13 @@ REST_FRAMEWORK = {
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'sbmarket_db',  # 방금 생성한 데이터베이스 이름
-        'USER': 'sbmarket',  # MySQL 사용자 이름
-        'PASSWORD': DBPASSWORD,  # 설정한 비밀번호
-        'HOST': '52.78.43.100',  # MySQL 서버 호스트 (로컬 서버라면 'localhost')
-        'PORT': '3306',  # MySQL 포트 번호
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "sbmarket_db",  # 방금 생성한 데이터베이스 이름
+        "USER": "sbmarket",  # MySQL 사용자 이름
+        "PASSWORD": DBPASSWORD,  # 설정한 비밀번호
+        "HOST": "52.78.43.100",  # MySQL 서버 호스트 (로컬 서버라면 'localhost')
+        "PORT": "3306",  # MySQL 포트 번호
     }
 }
 
@@ -146,9 +153,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'ko-kr'
+LANGUAGE_CODE = "ko-kr"
 
-TIME_ZONE = 'Asia/Seoul'
+TIME_ZONE = "Asia/Seoul"
 
 USE_I18N = True
 
@@ -167,12 +174,12 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'sanai.sbmarket@gmail.com'
-#os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = "sanai.sbmarket@gmail.com"
+# os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = SANAI_PASSWORD
 SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
@@ -183,31 +190,31 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
-    'AUTH_HEADER_TYPES': ('Bearer',),
-    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
-    'TOKEN_TYPE_CLAIM': 'token_type',
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+    "TOKEN_TYPE_CLAIM": "token_type",
 }
 
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
         },
     },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'WARNING',  # Django 기본 로그는 WARNING 이상만 표시
-            'propagate': True,
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "WARNING",  # Django 기본 로그는 WARNING 이상만 표시
+            "propagate": True,
         },
-        'products': {  # 해당 앱에서만 로그 표시 (앱 이름을 'products'로 가정)
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': True,
+        "products": {  # 해당 앱에서만 로그 표시 (앱 이름을 'products'로 가정)
+            "handlers": ["console"],
+            "level": "DEBUG",
+            "propagate": True,
         },
     },
 }

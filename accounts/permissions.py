@@ -1,5 +1,5 @@
 from rest_framework.permissions import BasePermission
-from django.db.models import Q
+
 
 # [소유자만 수정 가능] 객체의 소유자만 수정할 수 있고, 그 외 사용자는 읽기만 허용
 class IsOwnerOrReadOnly(BasePermission):
@@ -18,11 +18,7 @@ class IsSuperUser(BasePermission):
 
     def has_permission(self, request, view):
         # [권한 조건] 사용자가 인증된 상태이며, 관리자 또는 스태프인 경우 True 반환
-        return bool(
-            request.user
-            and request.user.is_authenticated
-            and (request.user.is_superuser or request.user.is_staff)
-        )
+        return bool(request.user and request.user.is_authenticated and (request.user.is_superuser or request.user.is_staff))
 
 
 # [발신자 또는 수신자만 접근 가능] PrivateComment 객체에서 발신자 또는 수신자만 접근 가능한 권한 (채팅 관련)

@@ -1,11 +1,13 @@
-from rest_framework import generics, serializers
-from .serializers import ReviewSerializer
-from products.models import Product
-from .models import Review
-from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404
+from django.views.generic import TemplateView
+from rest_framework import generics, serializers
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+
+from products.models import Product
 from reviews.models import CHECKLIST_OPTIONS
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+
+from .models import Review
+from .serializers import ReviewSerializer
 
 
 # 리뷰 목록 조회 및 생성
@@ -33,18 +35,12 @@ class ReviewListCreateView(generics.ListCreateAPIView):
 
             # 리뷰가 이미 작성되었는지 체크
             if hasattr(product, "reviewed_product"):
-                raise serializers.ValidationError(
-                    "이 상품에는 이미 리뷰가 작성되었습니다."
-                )
+                raise serializers.ValidationError("이 상품에는 이미 리뷰가 작성되었습니다.")
 
             # 거래 정보 확인
-            chat_room = product.chatrooms.filter(
-                buyer=self.request.user, status__is_sold=True
-            ).first()
+            chat_room = product.chatrooms.filter(buyer=self.request.user, status__is_sold=True).first()
             if not chat_room:
-                raise serializers.ValidationError(
-                    "리뷰는 해당 상품의 구매자만 작성할 수 있습니다."
-                )
+                raise serializers.ValidationError("리뷰는 해당 상품의 구매자만 작성할 수 있습니다.")
 
             # 리뷰 생성
             review = serializer.save(product=product, author=self.request.user)
@@ -64,8 +60,8 @@ class ReviewDetailView(generics.RetrieveDestroyAPIView):
 
     def perform_destroy(self, instance):
         if instance.is_score_assigned:
-            product_id = instance.product.id
-            product_title = instance.product.title
+            instance.product.id
+            instance.product.title
             instance.delete()  # 리뷰를 삭제해도 점수는 유지됨
 
 

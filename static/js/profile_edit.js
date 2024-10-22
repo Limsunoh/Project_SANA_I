@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const removeProfileImageButton = document.getElementById("remove-profile-image"); //프로필이미지 삭제버튼 추가
     const introduceInput = document.getElementById("introduce"); // introduce 요소 추가
 
-    const FILE_SIZE_LIMIT_MB = 10; 
+    const FILE_SIZE_LIMIT_MB = 10;
     const MAX_PROFILE_IMAGE_SIZE = FILE_SIZE_LIMIT_MB * 1024 * 1024; // MB 단위
     let removeProfileImage = false;  // 프로필 이미지 삭제 여부 플래그
 
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // formData에 값이 제대로 추가되었는지 확인
         for (var pair of formData.entries()) {
-            console.log(pair[0]+ ': ' + pair[1]); 
+            console.log(pair[0]+ ': ' + pair[1]);
         }
 
         // 이미지 파일 또는 이미지 삭제 플래그 전송

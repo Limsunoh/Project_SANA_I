@@ -1,7 +1,7 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db import models
 from django.templatetags.static import static
-from django.db.models import Sum
+
 
 # [사용자 모델] 기본 User 모델을 확장하여 사용자 정보를 정의
 class User(AbstractUser):
@@ -18,16 +18,12 @@ class User(AbstractUser):
     birth = models.DateField()
     email = models.EmailField(max_length=30, unique=False, null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)  # 생성 일자
-    image = models.ImageField(
-        upload_to="images/", blank=True, default="images/default_profile.jpg"
-    )
-    introduce = models.TextField(max_length=255,blank=True,null=True)
+    image = models.ImageField(upload_to="images/", blank=True, default="images/default_profile.jpg")
+    introduce = models.TextField(max_length=255, blank=True, null=True)
     total_score = models.FloatField(default=30)  # 매너점수 30점에서 시작
 
     # [팔로우 기능] 비대칭 관계를 가지는 사용자 간 팔로우 관계 정의
-    followings = models.ManyToManyField(
-        "self", symmetrical=False, related_name="followers", blank=True
-    )
+    followings = models.ManyToManyField("self", symmetrical=False, related_name="followers", blank=True)
 
     # [프로필 이미지 URL 반환] 프로필 이미지가 있는 경우 해당 URL을 반환, 없으면 기본 이미지 반환
     def get_profile_image_url(self):
@@ -35,4 +31,3 @@ class User(AbstractUser):
             return self.image.url
         else:  # 프로필 이미지가 없을 시 static 내 default_image 반환
             return static("images/default_profile.jpg")
-

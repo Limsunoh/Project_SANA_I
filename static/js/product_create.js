@@ -22,7 +22,7 @@ function previewImages(event) {
             const img = document.createElement('img');
             img.src = e.target.result;
             img.classList.add('img-thumbnail', 'me-2', 'mb-2');
-            img.style.width = '100px'; 
+            img.style.width = '100px';
             imagePreviewContainer.appendChild(img);
         };
 
@@ -80,11 +80,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const images = document.getElementById('image-upload').files;
         const maxFileSize = FileSizeNum * 1024 * 1024;
-        
+
         for (let i = 0; i < images.length; i++) {
             const image = images[i];
 
-            if (image.size > maxFileSize) { 
+            if (image.size > maxFileSize) {
                 alert(`${image.name} 파일의 크기가 용량을 초과했습니다. 다른 파일을 선택하세요.`);
                 return;
             }
@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.href = `/api/products/detail-page/${productPk}/`;
             } else {
                 const errorData = await response.json();
-                
+
                 if (errorData.ERROR && errorData.ERROR.includes('Image')) {
                     alert("이미지는 필수 항목입니다. 최소 한 개의 이미지를 선택해주세요.");
                 } else {

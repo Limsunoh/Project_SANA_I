@@ -1,7 +1,7 @@
 # 🍓StrawBerryMarket
 ![image]()
  https://sbmarket.kro.kr/
- 
+
 <br/>
 # 📝프로젝트 소개
   - 한 줄 정리 :  당근마켓을 오마주로 한 딸기마켓
@@ -15,7 +15,7 @@
 
 <br/>
 
-# 🧑‍💻팀 멤버 구성 
+# 🧑‍💻팀 멤버 구성
 
 <br/>
 

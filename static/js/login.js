@@ -24,7 +24,7 @@ loginForm.onsubmit = async function (event) {
 
         if (response.ok) {
             const data = await response.json();
-            
+
             // 액세스 토큰과 리프레시 토큰 저장
             setAccessToken(data.access);
             setRefreshToken(data.refresh);
@@ -52,7 +52,7 @@ loginForm.onsubmit = async function (event) {
             } else if (response.status === 404 && errorData.detail === "No User matches the given query.") {
                 showAlert("존재하지 않는 사용자입니다. 아이디를 다시 확인해 주세요.");
             } else {
-                
+
                 if (messageElement) {
                     messageElement.innerText = "아이디 혹은 비밀번호를 확인하세요???";
                 } else {
