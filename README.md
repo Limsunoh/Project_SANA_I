@@ -1,55 +1,88 @@
 # 🍓StrawBerryMarket
-![image]()
- https://sbmarket.kro.kr/
+<a href="https://sbmarket.kro.kr/" target="_blank">
+    <img width="300" src="https://sbmarket.kro.kr/static/images/banner.png" alt="sbmarket" title="딸기마캣">
+</a>
+
+[![ex_screenshot]()](https://sbmarket.kro.kr/)
+ 
 
 <br/>
-# 📝프로젝트 소개
-  - 한 줄 정리 :  당근마켓을 오마주로 한 딸기마켓
-  - 내용 :  중고거래를 핵심으로 하는 웹 앱  및 API
-- 프로젝트 핵심 기술
-    - AI 기술을 기반한 상품추천 및 다양한 커뮤니티 기술을 첨가한 이커머스
+
+## 📝프로젝트 소개
+<details>
+    <summary>
+당근마켓을 오마주 한 중고마캣 플랫폼 딸기마켓 <br>
+    </summary>
+    <div markdown="1">
+    </div>
+    
+### **기획 의도** </br>
+ 중고거래를 핵심으로 하는 웹 앱  및 API
+ 
+</details>
+    
+### 🔧**프로젝트 핵심 기술**
+    
+> **AI** </br>
+ 기술을 기반한 상품추천 및 다양한 커뮤니티 기술을 첨가한 이커머스
 <br/>
 
-# 🗓️개발 기간
+### 🗓️개발 기간
 - 24.09.23 ~ 24.10.24
-
 <br/>
 
-# 🧑‍💻팀 멤버 구성
-
+### 🎞️서비스 시연 영상
+[![시연영상]]()
 <br/>
 
-- 임선오 [@Limsunoh] (https://github.com/Limsunoh)
-- 이광열 [@kwang1215] (https://github.com/kwang1215)
-- 류홍규 [@YesYesMe0321[ (https://github.com/YesYesMe0321)
-- 이상현 [@sanghyun-Lee2002] (https://github.com/sanghyun-Lee2002)
 
-<br/>
+## 🧑‍💻팀 멤버 구성
+| naem columms | tag columns | profile columns |
+| :----------: | :---------- | :-------------- |
+| 임선오 | [@Limsunoh] | (https://github.com/Limsunoh) |
+| 이광열 | [@kwang1215] | (https://github.com/kwang1215) |
+| 류홍규 | [@YesYesMe0321] | (https://github.com/YesYesMe0321) |
+| 이상현 | [@sanghyun-Lee2002] | (https://github.com/sanghyun-Lee2002) |
+
 <br/>
 
 # 🏗️ 서비스 아키텍처
-![image]()
+![ex_screenshot]()
 
+<br/>
 
 # ⚙️사용 환경 설정
+1. **가상환경 생성&실행**
+    - Windows
+        ```bash
+        python -m venv venv
+        source venv/Scripts/activate
+        ```
+    - Mac
+        ```bash
+        python3 -m venv venv
+        source venv/bin/activate
+        ```
+<br>
+    
+2. **pip 설치**
+    - 패키지를 처음 설치하는 경우 
+        ```bash 
+        pip install -r requirements.txt
+        ```
+    - 패키지가 설치되어 있는 경우 
+        ```bash
+        pip install --force-reinstall -r requirements.txt
+        ```
+<br>
 
-1. 가상환경 실행
-2. node_modeules 설치
-   `npm install`
-3. `npm start` 서버 실행
-
-
-
-1. 가상환경 실행
-2. pip 설치
-   1. 패키지를 처음 설치하는 경우 `pip install -r requirements.txt`
-   2. 패키지가 설치되어 있는 경우 `pip install --force-reinstall -r requirements.txt`
-3. .env 세팅
-4. `python manage.py makemigrations` 실행
-5. `python manage.py migrate` 실행
-6. `python manage.py runserver` 서버 실행
-
-
+3. **.env 세팅**
+    ```bash
+    python manage.py makemigrations
+    python manage.py migrate
+    python manage.py runserver
+    ```
+<br>
 <br/>
 
 # 🖥️개발 환경

@@ -86,13 +86,13 @@ class AiAskView(APIView):
         notifications = Notification.objects.all().values("title", "content")
         notification_list = list(notifications)
 
-        # manager/tos.txt의 내용을 불러와서 리스트에 추가
-        tos_file_path = os.path.join("manager", "tos.txt")
-        with open(tos_file_path, "r", encoding="utf-8") as file:
-            tos_content = file.read()
+        # manager/SBstipulation.txt의 내용을 불러와서 리스트에 추가
+        SBstipulation_file_path = os.path.join("manager", "SBstipulation.txt")
+        with open(SBstipulation_file_path, "r", encoding="utf-8") as file:
+            SBstipulation_content = file.read()
 
         # 'info' 리스트 생성
-        info = {"notifications": notification_list, "tos": tos_content.split("\n")}
+        info = {"notifications": notification_list, "SBstipulation": SBstipulation_content.split("\n")}
 
         # AI 에게 전달할 프롬프트 생성
         prompt = f"""
