@@ -55,7 +55,7 @@
 | Role | Name | Profile | Part |
 | :---: | :---: | :--- | :-- |
 | 리더 | 임선오 | [@Limsunoh](https://github.com/Limsunoh) |  |
- 부리더 | 이광열 | [@kwang1215](https://github.com/kwang1215) ||  |
+| 부리더 | 이광열 | [@kwang1215](https://github.com/kwang1215) |  |
 | 서기 | 류홍규 | [@YesYesMe0321](https://github.com/YesYesMe0321) |  |
 | 서기 | 이상현 | [@sanghyun-Lee2002](https://github.com/sanghyun-Lee2002) |  |
 
@@ -198,6 +198,8 @@
 
 
 # ⚙️사용 환경 설정
+
+### Development Environment
 `annotated-types==0.7.0`
 `anyio==4.6.0`
 `asgiref==3.8.1`
@@ -247,7 +249,7 @@
 </br>
 
 
-1. **가상환경 생성&실행**
+### 1️⃣가상환경 생성&실행
     - Windows
         ```bash
         python -m venv venv
@@ -259,7 +261,7 @@
         source venv/bin/activate
         ```
 
-2. **pip 설치**
+### 2️⃣패키지 설치
     - 패키지를 처음 설치하는 경우 
         ```bash 
         pip install -r requirements.txt
@@ -269,7 +271,12 @@
         pip install --force-reinstall -r requirements.txt
         ```
 
-3. **.env 세팅**
+### 3️⃣슈퍼유저 생성 (관리자 계정)
+   ```bash
+   python manage.py createsuperuser
+   ```
+
+### 4️⃣.env Setting
     ```bash
     python manage.py makemigrations
     python manage.py migrate
@@ -280,7 +287,7 @@
 
 # 🖥️Technologies & Tools
 
-## 📝FrontEnd
+### 📝FrontEnd
 ![HTML5](https://img.shields.io/badge/html-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/css-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
 <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=white">
@@ -291,14 +298,13 @@
 <!-- <img src="https://img.shields.io/badge/Wireframe-lightgrey?style=for-the-badge&logo=wire&logoColor=white"> -->
 
 
-## 📝BackEnd
+### 📝BackEnd
 <img src="https://img.shields.io/badge/python 3.10-3776AB?style=for-the-badge&logo=python&logoColor=white"> 
 <img src="https://img.shields.io/badge/django 4.2-092E20?style=for-the-badge&logo=django&logoColor=white"> 
 <img src="https://img.shields.io/badge/django rest framework 3.15.2-092E20?style=for-the-badge&logo=django&logoColor=white"> 
 
 
-
-## 📝Server
+### 📝Server
 <img src="https://img.shields.io/badge/AMAZON EC2-FFE900?style=for-the-badge&logo=amazon&logoColor=black"> 
 <img src="https://img.shields.io/badge/GUNICORN-2BB530?style=for-the-badge&logo=gunicorn&logoColor=white"> 
 <img src="https://img.shields.io/badge/NGINX-2F9624?style=for-the-badge&logo=nginx&logoColor=white">  
@@ -309,26 +315,27 @@
 <img src="https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=Ubuntu&logoColor=white"/>
 
 
-## 📝DataBase
+### 📝DataBase
 </summary>
 <div markdown="1"></div>
 
 <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white">
 
 
-## 📝Management
+### 📝Management
 <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"> 
 <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white"> 
 <!--
 <img src="https://img.shields.io/badge/github action-3399FF?style=for-the-badge&logo=github&logoColor=white"> 
 -->
 
-</br>
-
 
 ### 💬Communication
 <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white"/>
 <img src="https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white"/>
+
+</br>
+
 
 <!-- 
 <details>
