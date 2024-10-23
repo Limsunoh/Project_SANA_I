@@ -42,10 +42,10 @@
 
 ### 🎞️서비스 시연 영상
 <div style="text-align: center;">
-  <video width="560" height="315" controls>
-    <source src="static/videos/시연영상_B07팀(딸기마켓).mp4" type="video/mp4">
-    static/videos/시연영상_B07팀(딸기마켓).mp4
-  </video>
+   <video width="560" height="315" controls>
+      <source src="static/videos/시연영상_B07팀(딸기마켓).mp4" type="video/mp4" title="static/videos/시연영상_B07팀(딸기마켓)"> </source>
+   static/videos/시연영상_B07팀(딸기마켓).mp4
+   </video>
 </div>
 
 </br>
