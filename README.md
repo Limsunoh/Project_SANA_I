@@ -53,10 +53,10 @@
 ## 🧑‍💻팀원 구성
 | Role | Name | Profile | Part |
 | :---: | :---: | :--- | --- |
-| 리더 | 임선오 | [@Limsunoh](https://github.com/Limsunoh) |  |
-| 부리더 | 이광열 | [@kwang1215](https://github.com/kwang1215) |  |
-| 서기 | 류홍규 | [@YesYesMe0321](https://github.com/YesYesMe0321) |  |
-| 서기 | 이상현 | [@sanghyun-Lee2002](https://github.com/sanghyun-Lee2002) |  |
+| 리더 | 임선오 | [@Limsunoh](https://github.com/Limsunoh) | 회원구현 지도api 팔로우 채팅 |
+| 부리더 | 이광열 | [@kwang1215](https://github.com/kwang1215) | 상품CRUD 채팅 태그 |
+| 서기 | 류홍규 | [@YesYesMe0321](https://github.com/YesYesMe0321) | 회원구현 챗봇 AI상품추천 시드 |
+| 서기 | 이상현 | [@sanghyun-Lee2002](https://github.com/sanghyun-Lee2002) | 태그 리뷰 |
 
 </br>
 
@@ -315,19 +315,18 @@
 
 
 ### 📝Server
-<img src="https://img.shields.io/badge/AMAZON EC2-FFE900?style=for-the-badge&logo=amazon&logoColor=black"> 
-<img src="https://img.shields.io/badge/GUNICORN-2BB530?style=for-the-badge&logo=gunicorn&logoColor=white"> 
-<img src="https://img.shields.io/badge/NGINX-2F9624?style=for-the-badge&logo=nginx&logoColor=white">  
+<img src="https://img.shields.io/badge/AMAZON EC2-FFE900?style=for-the-badge&logo=amazon&logoColor=black">
+<img src="https://img.shields.io/badge/GUNICORN-2BB530?style=for-the-badge&logo=gunicorn&logoColor=white">
+<img src="https://img.shields.io/badge/NGINX-2F9624?style=for-the-badge&logo=nginx&logoColor=white">
+<img src="https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=Ubuntu&logoColor=white"/>
 <a href="https://xn--220b31d95hq8o.xn--3e0b707e/" target="_blank">
   <img src="https://img.shields.io/badge/내도메인.한국-003366?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgdmlld0JveD0iMCAwIDI1NiAyNTYiPjxnIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTEyOCwwIEM1Ny42NzQsMCwwLDU3LjY3NCwwLDEyOEMwLDE5OC4zMjYsNTcuNjc0LDI1NiwxMjgsMjU2YzcwLjMyNiwwLDEyOC01Ny42NzQsMTI4LTEyOEMyNTYsNTcuNjc0LDE5OC4zMjYsMCwxMjgsMCIgZmlsbD0iI0ZGMDAwMCIvPjxwYXRoIGQ9Ik0xMjgsMjU2YzcwLjMyNiwwLDEyOC01Ny42NzQsMTI4LTEyOGMwLTcwLjMyNi01Ny42NzQtMTI4LTEyOC0xMjhWMTI4IEMwLDE5OC4zMjYsNTcuNjc0LDI1NiwxMjgsMjU2eiIgZmlsbD0iIzAwMjQ2NiIvPjwvZz48L3N2Zz4=" alt="내도메인.한국" logoWidth="30">
 </a>
-<img src="https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=Ubuntu&logoColor=white"/>
 
 
 ### 📝DataBase
 </summary>
 <div markdown="1"></div>
-
 <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white">
 
 
