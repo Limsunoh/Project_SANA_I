@@ -124,7 +124,7 @@
       🔍︎서비스 이미지 보기
       </summary>
 
-   
+   [![reviews](/static/images/README/리뷰작성화면.JPG)](/static/images/README/리뷰작성화면.JPG)
 
    </details></br>
       
@@ -283,12 +283,7 @@
         pip install --force-reinstall -r requirements.txt
         ```
 
-### 3️⃣슈퍼유저 생성 (관리자 계정)
-   ```bash
-   python manage.py createsuperuser
-   ```
-
-### 4️⃣.env Setting
+### 3️⃣.env Setting
     ```bash
     python manage.py makemigrations
     python manage.py migrate
@@ -303,7 +298,6 @@
 ![HTML5](https://img.shields.io/badge/html-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/css-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
 <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=white">
-<img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white"/>
 <img src="https://img.shields.io/badge/AJAX-007FFF?style=for-the-badge&logo=javascript&logoColor=white">
 <img src="https://img.shields.io/badge/Fetch_API-4285F4?style=for-the-badge&logo=javascript&logoColor=white">
 
@@ -323,7 +317,6 @@
 <a href="https://xn--220b31d95hq8o.xn--3e0b707e/" target="_blank">
   <img src="https://img.shields.io/badge/내도메인.한국-003366?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgdmlld0JveD0iMCAwIDI1NiAyNTYiPjxnIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTEyOCwwIEM1Ny42NzQsMCwwLDU3LjY3NCwwLDEyOEMwLDE5OC4zMjYsNTcuNjc0LDI1NiwxMjgsMjU2YzcwLjMyNiwwLDEyOC01Ny42NzQsMTI4LTEyOEMyNTYsNTcuNjc0LDE5OC4zMjYsMCwxMjgsMCIgZmlsbD0iI0ZGMDAwMCIvPjxwYXRoIGQ9Ik0xMjgsMjU2YzcwLjMyNiwwLDEyOC01Ny42NzQsMTI4LTEyOGMwLTcwLjMyNi01Ny42NzQtMTI4LTEyOC0xMjhWMTI4IEMwLDE5OC4zMjYsNTcuNjc0LDI1NiwxMjgsMjU2eiIgZmlsbD0iIzAwMjQ2NiIvPjwvZz48L3N2Zz4=" alt="내도메인.한국" logoWidth="30">
 </a>
-<img src="https://img.shields.io/badge/Sentry-362D59?style=for-the-badge&logo=sentry&logoColor=white"/>
 <img src="https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=Ubuntu&logoColor=white"/>
 
 
