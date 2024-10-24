@@ -38,16 +38,16 @@
 
 
 ### 🎞️서비스 시연 영상
-<div style="text-align: center;">
+<!-- <div style="text-align: center;">
    <video width="560" height="315" controls>
       <source src="static/videos/시연영상_B07팀(딸기마켓).mp4" type="video/mp4" title="static/videos/시연영상_B07팀(딸기마켓)"> </source>
    static/videos/시연영상_B07팀(딸기마켓).mp4
    </video>
 </div>
 
-<video controls src="https://file.notion.so/f/f/83c75a39-3aba-4ba4-a792-7aefe4b07895/28742437-c2f4-431d-9bf6-b0052c69e869/%EC%8B%9C%EC%97%B0%EC%98%81%EC%83%81_B07%ED%8C%80(%EB%94%B8%EA%B8%B0%EB%A7%88%EC%BC%93).mp4?table=block&id=124a5311-410f-4417-a7b8-a5502d055e85&spaceId=83c75a39-3aba-4ba4-a792-7aefe4b07895&expirationTimestamp=1729828800000&signature=79idbd6TdijHLPpL88NqYQt7v_WaNRwnnvkOQA7GmZU&downloadName=%EC%8B%9C%EC%97%B0%EC%98%81%EC%83%81_B07%ED%8C%80%28%EB%94%B8%EA%B8%B0%EB%A7%88%EC%BC%93%29.mp4" title="시연영상_B07팀(딸기마켓).mp4"></video>
+<video controls src="https://file.notion.so/f/f/83c75a39-3aba-4ba4-a792-7aefe4b07895/28742437-c2f4-431d-9bf6-b0052c69e869/%EC%8B%9C%EC%97%B0%EC%98%81%EC%83%81_B07%ED%8C%80(%EB%94%B8%EA%B8%B0%EB%A7%88%EC%BC%93).mp4?table=block&id=124a5311-410f-4417-a7b8-a5502d055e85&spaceId=83c75a39-3aba-4ba4-a792-7aefe4b07895&expirationTimestamp=1729828800000&signature=79idbd6TdijHLPpL88NqYQt7v_WaNRwnnvkOQA7GmZU&downloadName=%EC%8B%9C%EC%97%B0%EC%98%81%EC%83%81_B07%ED%8C%80%28%EB%94%B8%EA%B8%B0%EB%A7%88%EC%BC%93%29.mp4" title="시연영상_B07팀(딸기마켓).mp4"></video> -->
 
-[시연영상](https://file.notion.so/f/f/83c75a39-3aba-4ba4-a792-7aefe4b07895/28742437-c2f4-431d-9bf6-b0052c69e869/%EC%8B%9C%EC%97%B0%EC%98%81%EC%83%81_B07%ED%8C%80(%EB%94%B8%EA%B8%B0%EB%A7%88%EC%BC%93).mp4?table=block&id=124a5311-410f-4417-a7b8-a5502d055e85&spaceId=83c75a39-3aba-4ba4-a792-7aefe4b07895&expirationTimestamp=1729828800000&signature=79idbd6TdijHLPpL88NqYQt7v_WaNRwnnvkOQA7GmZU&downloadName=%EC%8B%9C%EC%97%B0%EC%98%81%EC%83%81_B07%ED%8C%80%28%EB%94%B8%EA%B8%B0%EB%A7%88%EC%BC%93%29.mp4)
+[![시연영상](/static/images/README/)](https://file.notion.so/f/f/83c75a39-3aba-4ba4-a792-7aefe4b07895/28742437-c2f4-431d-9bf6-b0052c69e869/%EC%8B%9C%EC%97%B0%EC%98%81%EC%83%81_B07%ED%8C%80(%EB%94%B8%EA%B8%B0%EB%A7%88%EC%BC%93).mp4?table=block&id=124a5311-410f-4417-a7b8-a5502d055e85&spaceId=83c75a39-3aba-4ba4-a792-7aefe4b07895&expirationTimestamp=1729828800000&signature=79idbd6TdijHLPpL88NqYQt7v_WaNRwnnvkOQA7GmZU&downloadName=%EC%8B%9C%EC%97%B0%EC%98%81%EC%83%81_B07%ED%8C%80%28%EB%94%B8%EA%B8%B0%EB%A7%88%EC%BC%93%29.mp4)
 
 
 </br>
@@ -55,7 +55,7 @@
 
 ## 🧑‍💻팀원 구성
 | Role | Name | Profile | Part |
-| :---: | :---: | :--- | --- |
+| :---: | :---: | --- | --- |
 | 리더 | 임선오 | [@Limsunoh](https://github.com/Limsunoh) | 회원구현 지도api 팔로우 채팅 |
 | 부리더 | 이광열 | [@kwang1215](https://github.com/kwang1215) | 상품CRUD 채팅 태그 |
 | 서기 | 류홍규 | [@YesYesMe0321](https://github.com/YesYesMe0321) | 회원구현 챗봇 AI상품추천 시드 |
@@ -81,8 +81,8 @@
 
  </br>
 
-
 - - -
+
 
 <details> 
    <summary style="font-weight:bold; font-size:150%;" title="프로젝트-기능"> 
@@ -119,7 +119,7 @@
    </details></br>
 
 
-   ### 리뷰 기능
+   ### ✔️리뷰 기능
    > - MultiSelectField를 기능 채택
    > - 선택한 리뷰가 매너 점수에 영향을 미침
    > - 각 항목에 따라 점수를 각기 다르게 설정
@@ -151,6 +151,7 @@
    ### 💬실시간 채팅
    > - long-poling방식을 채택
    > - 게시물 단위 채팅방 형성
+   > - 이미지 첨부 용량 10MB제한
 
    <details> 
       <summary style="color: gray; font-size:75%;">
