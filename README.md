@@ -12,7 +12,7 @@
 
 
 ## 📖목차
-1. [프로젝트 소개]
+1. [프로젝트 소개](#프로젝트-소개)
 2. [기획 의도](#기획-의도)
 3. [팀소개](#팀원-구성)
 4. [프로젝트 핵심 기술 & 기능](#프로젝트-핵심-기술--기능)
@@ -45,18 +45,18 @@
    </video>
 </div>
 
-https://vscode.dev/github/Limsunoh/Project_SANA_I/blob/dev/static/videos/%EC%8B%9C%EC%97%B0%EC%98%81%EC%83%81_B07%ED%8C%80(%EB%94%B8%EA%B8%B0%EB%A7%88%EC%BC%93).mp4
+[시연영상](https://vscode.dev/github/Limsunoh/Project_SANA_I/blob/dev/static/videos/%EC%8B%9C%EC%97%B0%EC%98%81%EC%83%81_B07%ED%8C%80(%EB%94%B8%EA%B8%B0%EB%A7%88%EC%BC%93).mp4)
 
 </br>
 
 
 ## 🧑‍💻팀원 구성
-| Role | Name | Profile | Part |
-| :---: | :---: | :--- | --- |
-| 리더 | 임선오 | [@Limsunoh](https://github.com/Limsunoh) |  |
-| 부리더 | 이광열 | [@kwang1215](https://github.com/kwang1215) |  |
-| 서기 | 류홍규 | [@YesYesMe0321](https://github.com/YesYesMe0321) |  |
-| 서기 | 이상현 | [@sanghyun-Lee2002](https://github.com/sanghyun-Lee2002) |  |
+| Role | Name | Profile | 
+| :---: | :---: | :--- | 
+| 리더 | 임선오 | [@Limsunoh](https://github.com/Limsunoh) |
+| 부리더 | 이광열 | [@kwang1215](https://github.com/kwang1215) |
+| 서기 | 류홍규 | [@YesYesMe0321](https://github.com/YesYesMe0321) |
+| 서기 | 이상현 | [@sanghyun-Lee2002](https://github.com/sanghyun-Lee2002) |  
 
 </br>
 
