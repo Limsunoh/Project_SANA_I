@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/4eaf4f81-60cb-4bee-8605-8daf2599d917)# 🍓StrawBerryMarket
+# 🍓StrawBerryMarket
 <a href="https://sbmarket.kro.kr/" target="_blank">
     <img 
     width="1000" 
