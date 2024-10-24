@@ -305,7 +305,7 @@
 # 🖥️Technologies & Tools
 
 ### 📝FrontEnd
-![HTML5](https://img.shields.io/badge/html-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
+![HTML5](https://img.shields.io/badge/html-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white) 
 ![CSS3](https://img.shields.io/badge/css-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
 <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=white">
 <img src="https://img.shields.io/badge/AJAX-007FFF?style=for-the-badge&logo=javascript&logoColor=white">
@@ -315,38 +315,27 @@
 
 
 ### 📝BackEnd
-<img src="https://img.shields.io/badge/python 3.10-3776AB?style=for-the-badge&logo=python&logoColor=white"> 
-<img src="https://img.shields.io/badge/django 4.2-092E20?style=for-the-badge&logo=django&logoColor=white"> 
-<img src="https://img.shields.io/badge/django rest framework 3.15.2-092E20?style=for-the-badge&logo=django&logoColor=white"> 
+<img src="https://img.shields.io/badge/python 3.10-3776AB?style=for-the-badge&logo=python&logoColor=white"> <img src="https://img.shields.io/badge/django 4.2-092E20?style=for-the-badge&logo=django&logoColor=white"> <img src="https://img.shields.io/badge/django rest framework 3.15.2-092E20?style=for-the-badge&logo=django&logoColor=white"> 
 
 
 ### 📝Server
-<img src="https://img.shields.io/badge/AMAZON EC2-FFE900?style=for-the-badge&logo=amazon&logoColor=black">
-<img src="https://img.shields.io/badge/GUNICORN-2BB530?style=for-the-badge&logo=gunicorn&logoColor=white">
-<img src="https://img.shields.io/badge/NGINX-2F9624?style=for-the-badge&logo=nginx&logoColor=white">
-<img src="https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=Ubuntu&logoColor=white"/>
-<a href="https://xn--220b31d95hq8o.xn--3e0b707e/" target="_blank">
-  <img src="https://img.shields.io/badge/내도메인.한국-003366?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgdmlld0JveD0iMCAwIDI1NiAyNTYiPjxnIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTEyOCwwIEM1Ny42NzQsMCwwLDU3LjY3NCwwLDEyOEMwLDE5OC4zMjYsNTcuNjc0LDI1NiwxMjgsMjU2YzcwLjMyNiwwLDEyOC01Ny42NzQsMTI4LTEyOEMyNTYsNTcuNjc0LDE5OC4zMjYsMCwxMjgsMCIgZmlsbD0iI0ZGMDAwMCIvPjxwYXRoIGQ9Ik0xMjgsMjU2YzcwLjMyNiwwLDEyOC01Ny42NzQsMTI4LTEyOGMwLTcwLjMyNi01Ny42NzQtMTI4LTEyOC0xMjhWMTI4IEMwLDE5OC4zMjYsNTcuNjc0LDI1NiwxMjgsMjU2eiIgZmlsbD0iIzAwMjQ2NiIvPjwvZz48L3N2Zz4=" alt="내도메인.한국" logoWidth="30">
+<img src="https://img.shields.io/badge/AMAZON EC2-FFE900?style=for-the-badge&logo=amazon&logoColor=black"> <img src="https://img.shields.io/badge/GUNICORN-2BB530?style=for-the-badge&logo=gunicorn&logoColor=white"><img src="https://img.shields.io/badge/NGINX-2F9624?style=for-the-badge&logo=nginx&logoColor=white"> <img src="https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=Ubuntu&logoColor=white"/> <a href="https://xn--220b31d95hq8o.xn--3e0b707e/" target="_blank"> <img src="https://img.shields.io/badge/내도메인.한국-003366?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgdmlld0JveD0iMCAwIDI1NiAyNTYiPjxnIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTEyOCwwIEM1Ny42NzQsMCwwLDU3LjY3NCwwLDEyOEMwLDE5OC4zMjYsNTcuNjc0LDI1NiwxMjgsMjU2YzcwLjMyNiwwLDEyOC01Ny42NzQsMTI4LTEyOEMyNTYsNTcuNjc0LDE5OC4zMjYsMCwxMjgsMCIgZmlsbD0iI0ZGMDAwMCIvPjxwYXRoIGQ9Ik0xMjgsMjU2YzcwLjMyNiwwLDEyOC01Ny42NzQsMTI4LTEyOGMwLTcwLjMyNi01Ny42NzQtMTI4LTEyOC0xMjhWMTI4IEMwLDE5OC4zMjYsNTcuNjc0LDI1NiwxMjgsMjU2eiIgZmlsbD0iIzAwMjQ2NiIvPjwvZz48L3N2Zz4=" alt="내도메인.한국" logoWidth="30">
 </a>
 
 
 ### 📝DataBase
-</summary>
-<div markdown="1"></div>
 <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white">
 
 
 ### 📝Management
-<img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"> 
-<img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white"> 
+<img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"> <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white"> 
 <!--
 <img src="https://img.shields.io/badge/github action-3399FF?style=for-the-badge&logo=github&logoColor=white"> 
 -->
 
 
 ### 💬Communication
-<img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white"/>
-<img src="https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white"/>
+<img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white"/> <img src="https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white"/>
 
 </br>
 
