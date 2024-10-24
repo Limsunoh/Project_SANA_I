@@ -14,16 +14,13 @@
 ## 📖목차
 1. [프로젝트 소개]
 2. [기획 의도](#기획-의도)
-3. [팀소개]
-4. [프로젝트 핵심 기술 & 기능]()
-5. [프로젝트 기능]
-6. [개발기간]
-7. [서비스 구조]()
-8. [와이어프레임]
-9. [API명세서]
-10. [ERD]
-11. [트러블 슈팅] 
-12. [사용 환경 설정]
+3. [팀소개](#팀원-구성)
+4. [프로젝트 핵심 기술 & 기능](#프로젝트-핵심-기술--기능)
+5. [개발기간](#️개발-기간)
+6. [와이어프레임](#️wireframe)
+7. [API명세서](#api명세서)
+8. [ERD](#erd-diagram)
+9. [사용 환경 설정](#development-environment)
 
 <!--여기에 목차 -->
 
@@ -48,12 +45,14 @@
    </video>
 </div>
 
+https://vscode.dev/github/Limsunoh/Project_SANA_I/blob/dev/static/videos/%EC%8B%9C%EC%97%B0%EC%98%81%EC%83%81_B07%ED%8C%80(%EB%94%B8%EA%B8%B0%EB%A7%88%EC%BC%93).mp4
+
 </br>
 
 
 ## 🧑‍💻팀원 구성
 | Role | Name | Profile | Part |
-| :---: | :---: | :--- | :-- |
+| :---: | :---: | :--- | --- |
 | 리더 | 임선오 | [@Limsunoh](https://github.com/Limsunoh) |  |
 | 부리더 | 이광열 | [@kwang1215](https://github.com/kwang1215) |  |
 | 서기 | 류홍규 | [@YesYesMe0321](https://github.com/YesYesMe0321) |  |
@@ -81,64 +80,87 @@
 
 
 <details> 
-<summary style="font-weight:bold; font-size:150%;"> 
-🔧프로젝트 기능
-</summary>
-<div markdown="1"></div>
+   <summary style="font-weight:bold; font-size:150%;" title="프로젝트-기능"> 
+   🔧프로젝트 기능
+   </summary>
+   <div markdown="1"></div>
 
-### 👤유저와 연관 된 게시물, 리뷰 등등의 기능 집합 서비스, 내 상점(프로필)
- > - 구매자들이 작성 한 리뷰들로 `점수`를 수집하며, <br>페이지에서 표기되는 점수를 클릭하여 받은 `리뷰`들을 볼 수 있습니다.
- > - 
- > - 
- > - 
-
-   <details> 
-      <summary style="color: gray; font-size:75%;">
-      🔍︎서비스 이미지 보기
-      </summary>
-      <img scr=>
-   </details>
-
-### 💬long-poling방식을 이용한 실시간 채팅
- > - 
- > - 
- > - 
+   ### 👤사용자 로그인 및 회원가입
+   > - 사용자는 이메일과 비밀번호로 회원가입을 하거나, 기존 계정으로 로그인 할 수 있습니다.
+   > - 회원 가입 과정에서 이메일 인증과 주소 입력을 같이 할 수 있습니다.
 
    <details> 
       <summary style="color: gray; font-size:75%;">
       🔍︎서비스 이미지 보기
       </summary>
 
-   </details> 
+   [![accounts/signup](/static/images/README/회원가입%20화면.png)](/static/images/README/회원가입%20화면.png)
+
+   </details></br>
    
-### 🤖정확한 검색어가 아닌 편한 문장이나 단어로 검색 할 수 있는 AI상품 추천
- > - 
- > - 
- > - 
+
+   ### 👤회원 중심 서비스, 내 상점(프로필)
+   > - 구매자들이 작성 한 리뷰들로 `점수`를 수집하며, <br>페이지에서 표기되는 점수를 클릭하여 받은 `리뷰`들을 볼 수 있습니다.
+   > - 
+   > - 
+   > - 
 
    <details> 
       <summary style="color: gray; font-size:75%;">
       🔍︎서비스 이미지 보기
       </summary>
 
-   </details> 
+   [![user profile](/static/images/README/sbmartket_profile.JPG)](/static/images/README/sbmartket_profile.JPG)
 
-### 
- > - 
- > - 
- > - 
+   </details></br>
+
+
+   ### 리뷰 기능
+   > - MultiSelectField를 기능 채택
+   > - 선택한 리뷰가 매너 점수에 영향을 미침
+   > - 각 항목에 따라 점수를 각기 다르게 설정
 
    <details> 
       <summary style="color: gray; font-size:75%;">
       🔍︎서비스 이미지 보기
       </summary>
 
-   </details>
+   
 
-### 
- > - 
- > - 
- > - 
+   </details></br>
+      
+
+   ### 🤖자연어 검색 AI상품 추천
+   > - 정확한 검색어가 아닌 편한 문장이나 단어로 검색
+   > - 주요 키워드나 의미와 연관된 상품을 최대 12개까지 추천
+
+   <details> 
+      <summary style="color: gray; font-size:75%;">
+      🔍︎서비스 이미지 보기
+      </summary>
+
+   </details></br>
+
+
+   ### 💬실시간 채팅
+   > - long-poling방식을 채택
+   > - 게시물 단위 채팅방 형성
+
+   <details> 
+      <summary style="color: gray; font-size:75%;">
+      🔍︎서비스 이미지 보기
+      </summary>
+
+   [![chatlist](/static/images/README/채팅방%20목록%20화면.png)](/static/images/README/채팅방%20목록%20화면.png)
+   [![chat](/static/images/README/채팅방%20화면.png)](/static/images/README/채팅방%20화면.png)
+
+   </details></br>
+
+
+   ### AI 상담 봇
+   > - 1:1 채팅 구조
+   > - 공지 DB, SBstipulation.txt를 참고하여 답변 창출
+   > - 서비스 이용방법 안내
 
    <details> 
       <summary style="color: gray; font-size:75%;">
@@ -156,23 +178,14 @@
 
 
 ## 🕸️Wireframe
-
-<a href="" target="_blank">
-   <img 
-   width="1000" 
-   src="" 
-   alt="sbmarket_ERD" 
-   title="ERD" 
-   style="display: block; margin: auto;"> 
-   </img>
-</a>
+[Wireframe](https://www.figma.com/design/Cbcv0Y9tKUdg1ZQguguAsz/%EB%94%B8%EA%B8%B0-%EB%A7%88%EC%BC%93-%EC%99%80%EC%9D%B4%EC%96%B4%ED%94%84%EB%A0%88%EC%9E%84?node-id=0-1&node-type=canvas&t=Whd7d3tqGhCgJISC-0)
 
 </br>
 
 
 ## API명세서
 <!-- API 명세서 참조 할 것.-->
-
+[api명세서](https://www.notion.so/teamsparta/fff2dc3ef5148131b9a1f18cf8368f0e?v=fff2dc3ef51481b0a2f0000c904bd99d&pvs=4)
 </br>
 
 
@@ -191,10 +204,10 @@
 </br>
 
 
-## 🚨트러블슈팅
+<!-- ## 🚨트러블슈팅
 
 
-</br>
+</br> -->
 
 
 # ⚙️사용 환경 설정
