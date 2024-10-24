@@ -47,7 +47,7 @@
 
 <video controls src="https://file.notion.so/f/f/83c75a39-3aba-4ba4-a792-7aefe4b07895/28742437-c2f4-431d-9bf6-b0052c69e869/%EC%8B%9C%EC%97%B0%EC%98%81%EC%83%81_B07%ED%8C%80(%EB%94%B8%EA%B8%B0%EB%A7%88%EC%BC%93).mp4?table=block&id=124a5311-410f-4417-a7b8-a5502d055e85&spaceId=83c75a39-3aba-4ba4-a792-7aefe4b07895&expirationTimestamp=1729828800000&signature=79idbd6TdijHLPpL88NqYQt7v_WaNRwnnvkOQA7GmZU&downloadName=%EC%8B%9C%EC%97%B0%EC%98%81%EC%83%81_B07%ED%8C%80%28%EB%94%B8%EA%B8%B0%EB%A7%88%EC%BC%93%29.mp4" title="시연영상_B07팀(딸기마켓).mp4"></video> -->
 
-[![시연영상](https://file.notion.so/f/f/83c75a39-3aba-4ba4-a792-7aefe4b07895/7f124b5f-944d-4d9a-b1a1-3ddbbe209877/image.png?table=block&id=8cb7c850-f4bd-4081-a1d6-18ad49e543ce&spaceId=83c75a39-3aba-4ba4-a792-7aefe4b07895&expirationTimestamp=1729828800000&signature=ADUBUjeGfYuFy2tvST5Z0NbR-L8OqvbZ01pWWui7gBQ&downloadName=image.png)](https://file.notion.so/f/f/83c75a39-3aba-4ba4-a792-7aefe4b07895/28742437-c2f4-431d-9bf6-b0052c69e869/%EC%8B%9C%EC%97%B0%EC%98%81%EC%83%81_B07%ED%8C%80(%EB%94%B8%EA%B8%B0%EB%A7%88%EC%BC%93).mp4?table=block&id=124a5311-410f-4417-a7b8-a5502d055e85&spaceId=83c75a39-3aba-4ba4-a792-7aefe4b07895&expirationTimestamp=1729828800000&signature=79idbd6TdijHLPpL88NqYQt7v_WaNRwnnvkOQA7GmZU&downloadName=%EC%8B%9C%EC%97%B0%EC%98%81%EC%83%81_B07%ED%8C%80%28%EB%94%B8%EA%B8%B0%EB%A7%88%EC%BC%93%29.mp4)
+[![시연영상](https://file.notion.so/f/f/83c75a39-3aba-4ba4-a792-7aefe4b07895/7f124b5f-944d-4d9a-b1a1-3ddbbe209877/image.png?table=block&id=8cb7c850-f4bd-4081-a1d6-18ad49e543ce&spaceId=83c75a39-3aba-4ba4-a792-7aefe4b07895&expirationTimestamp=1729828800000&signature=ADUBUjeGfYuFy2tvST5Z0NbR-L8OqvbZ01pWWui7gBQ&downloadName=image.png)](https://youtu.be/TpSQN9IQvWw)
 
 
 </br>
