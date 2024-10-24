@@ -45,7 +45,7 @@
    </video>
 </div>
 
-[시연영상](https://vscode.dev/github/Limsunoh/Project_SANA_I/blob/dev/static/videos/%EC%8B%9C%EC%97%B0%EC%98%81%EC%83%81_B07%ED%8C%80(%EB%94%B8%EA%B8%B0%EB%A7%88%EC%BC%93).mp4)
+[시연영상](/static/videos/시연영상_B07팀(딸기마켓).mp4)
 
 </br>
 
@@ -138,6 +138,8 @@
       🔍︎서비스 이미지 보기
       </summary>
 
+   [![상품추천AI](/static/images/README/상품추천봇.JPG)](/static/images/README/상품추천봇.JPG)
+
    </details></br>
 
 
@@ -165,6 +167,8 @@
       <summary style="color: gray; font-size:75%;">
       🔍︎서비스 이미지 보기
       </summary>
+
+   [![상담봇](/static/images/README/상담봇.png)](/static/images/README/상담봇.png)
 
    </details>
 </details> </br>
