@@ -3,13 +3,13 @@ import logging
 import os
 
 import openai
+from accounts.permissions import IsSuperUser
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from accounts.permissions import IsSuperUser
 from sbmarket.config import OPENAI_API_KEY
 
 from .models import Notification
@@ -34,11 +34,17 @@ class NotificationListView(APIView):
 
         if not title or not content:
             logger.warning("제목과 내용이 비어 있음")
-            return Response({"error": "제목과 내용을 입력해주세요."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "제목과 내용을 입력해주세요."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         notification = Notification.objects.create(title=title, content=content)
         logger.info("공지사항 생성 완료")
-        return Response({"id": notification.id, "message": "공지사항이 성공적으로 생성되었습니다."}, status=status.HTTP_201_CREATED)
+        return Response(
+            {"id": notification.id, "message": "공지사항이 성공적으로 생성되었습니다."},
+            status=status.HTTP_201_CREATED,
+        )
 
 
 # 공지사항 상세 정보 및 수정/삭제
@@ -51,10 +57,14 @@ class NotificationDetailView(APIView):
     # PUT 요청: IsSuperUser 권한을 요구
     def put(self, request, pk):
         if not IsSuperUser().has_permission(request, self):
-            return Response({"error": "권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"error": "권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN
+            )
 
         notification = get_object_or_404(Notification, pk=pk)
-        serializer = NotificationSerializer(notification, data=request.data, partial=True)
+        serializer = NotificationSerializer(
+            notification, data=request.data, partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -63,7 +73,9 @@ class NotificationDetailView(APIView):
     # DELETE 요청: IsSuperUser 권한을 요구
     def delete(self, request, pk):
         if not IsSuperUser().has_permission(request, self):
-            return Response({"error": "권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN)
+            return Response(
+                {"error": "권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN
+            )
 
         notification = get_object_or_404(Notification, pk=pk)
         notification.delete()
@@ -77,7 +89,9 @@ class AiAskView(APIView):
         data = request.data
         question = data.get("question")
         if not question:
-            return Response({"error": "질문이 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "질문이 필요합니다."}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         # OpenAI API 키 설정
         openai.api_key = OPENAI_API_KEY
@@ -86,13 +100,16 @@ class AiAskView(APIView):
         notifications = Notification.objects.all().values("title", "content")
         notification_list = list(notifications)
 
-        # manager/tos.txt의 내용을 불러와서 리스트에 추가
-        tos_file_path = os.path.join("manager", "tos.txt")
-        with open(tos_file_path, "r", encoding="utf-8") as file:
-            tos_content = file.read()
+        # manager/SBstipulation.txt의 내용을 불러와서 리스트에 추가
+        SBstipulation_file_path = os.path.join("manager", "SBstipulation.txt")
+        with open(SBstipulation_file_path, "r", encoding="utf-8") as file:
+            SBstipulation_content = file.read()
 
         # 'info' 리스트 생성
-        info = {"notifications": notification_list, "tos": tos_content.split("\n")}
+        info = {
+            "notifications": notification_list,
+            "SBstipulation": SBstipulation_content.split("\n"),
+        }
 
         # AI 에게 전달할 프롬프트 생성
         prompt = f"""
@@ -111,7 +128,10 @@ class AiAskView(APIView):
             response = openai.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[
-                    {"role": "system", "content": "당신은 서비스에 대한 질문에 답변해주는 AI 챗봇입니다."},
+                    {
+                        "role": "system",
+                        "content": "당신은 서비스에 대한 질문에 답변해주는 AI 챗봇입니다.",
+                    },
                     {"role": "user", "content": prompt},
                 ],
                 temperature=0.4,
@@ -124,7 +144,9 @@ class AiAskView(APIView):
             ai_response = ai_response.replace("**", "")
 
         except openai.OpenAIError as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(
+                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
         # 최종 응답 반환
         return Response({"response": ai_response}, status=200)
