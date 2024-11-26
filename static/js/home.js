@@ -17,7 +17,7 @@ function checkAIRecommendationStatus() {
 async function loadProductList(order_by = '', search = '', page = 1) {
     checkAIRecommendationStatus(); // AI 상태 체크
     const productListContainer = document.getElementById('product-list-grid');
-    
+
 
     try {
         let apiUrl = `/api/products/?search=${search}&order_by=${order_by}&page=${page}`;
@@ -41,7 +41,7 @@ async function loadProductList(order_by = '', search = '', page = 1) {
             productCard.onclick = function () {
                 window.location.href = `/api/products/detail-page/${product.id}/`;
             };
-            
+
             const productImage = document.createElement('div');
             productImage.classList.add('product-image');
             const img = document.createElement('img');
@@ -192,7 +192,7 @@ window.onload = function () {
     // URL에 ai_search 파라미터가 있으면 AI 추천 결과를 표시
     const urlParams = new URLSearchParams(window.location.search);
     const aiSearchQuery = urlParams.get('ai_search');
-    
+
     if (aiSearchQuery) {
         // AI 검색 쿼리가 있으면 해당 결과를 복원
         isAIRecommendationActive = true;

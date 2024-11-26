@@ -1,15 +1,10 @@
 from rest_framework import serializers
+
 from accounts.models import User
-from .models import (
-    Product,
-    Image,
-    Hashtag,
-    ChatRoom,
-    ChatMessage,
-    TransactionStatus,
-)
-from reviews.serializers import ReviewSerializer
 from reviews.models import Review
+from reviews.serializers import ReviewSerializer
+
+from .models import ChatMessage, ChatRoom, Hashtag, Image, Product, TransactionStatus
 
 
 # [작성자 정보 시리얼라이저] 작성자의 닉네임 + 프로필 이미지 URL 반환
@@ -111,9 +106,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     author = serializers.StringRelatedField()
     author_total_score = serializers.SerializerMethodField()
     author_profile_image_url = serializers.SerializerMethodField()
-    mainaddress = serializers.CharField(
-        source="author.mainaddress", read_only=True
-    )
+    mainaddress = serializers.CharField(source="author.mainaddress", read_only=True)
     likes_count = serializers.SerializerMethodField()
     reviews = serializers.SerializerMethodField()
 
@@ -141,7 +134,7 @@ class ProductDetailSerializer(serializers.ModelSerializer):
     def get_likes_count(self, obj):
         # [좋아요 수 반환] 상품의 좋아요 수 반환
         return obj.likes.count()
-    
+
     def get_author_total_score(self, obj):
         # [작성자의 total_score를 반환]
         return obj.author.total_score
@@ -200,7 +193,7 @@ class ChatRoomSerializer(serializers.ModelSerializer):
     buyer_username = serializers.ReadOnlyField(source="buyer.username")
     product_title = serializers.ReadOnlyField(source="product.title")
     product_id = serializers.ReadOnlyField(source="product.id")
-    last_message = serializers.SerializerMethodField(read_only=True) # 마지막 메시지
+    last_message = serializers.SerializerMethodField(read_only=True)  # 마지막 메시지
 
     class Meta:
         model = ChatRoom
@@ -233,29 +226,29 @@ class ChatRoomSerializer(serializers.ModelSerializer):
 
 # [거래 상태 시리얼라이저] 거래 상태 정보 반환
 class TransactionStatusSerializer(serializers.ModelSerializer):
-    seller = serializers.CharField(source='room.seller.username', read_only=True)
-    buyer = serializers.CharField(source='room.buyer.username', read_only=True)
+    seller = serializers.CharField(source="room.seller.username", read_only=True)
+    buyer = serializers.CharField(source="room.buyer.username", read_only=True)
 
     class Meta:
         model = TransactionStatus
-        fields = ['id', 'room', 'is_sold', 'is_completed', 'updated_at', 'seller', 'buyer']
-    
+        fields = ["id", "room", "is_sold", "is_completed", "updated_at", "seller", "buyer"]
+
     def update(self, instance, validated_data):
-        request = self.context['request']  # 요청 객체 가져오기
+        request = self.context["request"]  # 요청 객체 가져오기
         room = instance.room
-        
+
         # 판매자 또는 구매자에 따라 거래 상태 업데이트
         if request.user == room.seller:
-            instance.is_completed = validated_data.get('is_completed', instance.is_completed)
+            instance.is_completed = validated_data.get("is_completed", instance.is_completed)
         elif request.user == room.buyer:
-            instance.is_sold = validated_data.get('is_sold', instance.is_sold)
+            instance.is_sold = validated_data.get("is_sold", instance.is_sold)
 
         instance.save()
 
         # 판매자와 구매자가 모두 거래 완료를 누른 경우 제품 상태를 complete로 변경
         if instance.is_sold and instance.is_completed:
             product = instance.room.product  # 연결된 채팅방의 제품 가져오기
-            product.status = 'complete'  # 제품 상태를 'complete'로 변경
-            product.save(update_fields=['status'])  # 변경된 상태 저장
+            product.status = "complete"  # 제품 상태를 'complete'로 변경
+            product.save(update_fields=["status"])  # 변경된 상태 저장
 
         return instance

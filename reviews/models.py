@@ -1,5 +1,4 @@
 from django.db import models
-from sbmarket import settings
 from multiselectfield import MultiSelectField
 
 # 한글로 된 체크리스트 옵션
@@ -16,19 +15,20 @@ CHECKLIST_OPTIONS = (
     ("시간을 안 지켜요", "시간을 안 지켜요"),
 )
 
+
 class Review(models.Model):
-    author = models.ForeignKey('accounts.User', related_name="reviews", on_delete=models.CASCADE)
-    product = models.OneToOneField('products.Product', related_name="reviewed_product", on_delete=models.CASCADE)
+    author = models.ForeignKey("accounts.User", related_name="reviews", on_delete=models.CASCADE)
+    product = models.OneToOneField("products.Product", related_name="reviewed_product", on_delete=models.CASCADE)
     checklist = MultiSelectField(choices=CHECKLIST_OPTIONS)  # 다중 선택 필드
     additional_comments = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     score = models.FloatField(default=0)  # 총점 계산
-    
+
     # 리뷰 삭제 여부(리뷰 삭제 이후 재작성 불가하게끔 하기 위한 설정)
-    is_deleted = models.BooleanField(default=False)  
+    is_deleted = models.BooleanField(default=False)
     # 리뷰 삭제시 점수 유지(삭제 이후에도 점수가 변경되지않도록 하기 위한 설정)
-    is_score_assigned = models.BooleanField(default=False) 
-    
+    is_score_assigned = models.BooleanField(default=False)
+
     def total_score(self):
         # 한글 키에 맞춰 score_mapping 업데이트
         score_mapping = {
@@ -59,7 +59,7 @@ class Review(models.Model):
             seller.save()
             self.is_score_assigned = True
         super().save(*args, **kwargs)
-        
+
     def delete(self, *args, **kwargs):
         self.is_deleted = True
         self.save()

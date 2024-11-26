@@ -1,4 +1,4 @@
-const FILE_SIZE_LIMIT_MB = 10; 
+const FILE_SIZE_LIMIT_MB = 10;
 const MAX_PROFILE_IMAGE_SIZE = FILE_SIZE_LIMIT_MB * 1024 * 1024; // MB 단위
 
 // 이미지 미리보기 및 용량 제한 함수
@@ -133,4 +133,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 });
-

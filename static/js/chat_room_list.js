@@ -51,13 +51,13 @@ function displayChatRooms(chatRooms, newMessages = []) {
     chatRooms.forEach(room => {
         const roomElement = document.createElement('li');
         let newMessageBadge = '';
-    
+
         // 새 메시지 배지
         const newMessage = newMessages.find(msg => msg.room_id === room.id);
         if (newMessage && newMessage.unread_count > 0) {
             newMessageBadge = `<span class="badge bg-danger">${newMessage.unread_count}개의 새 메시지</span>`;
         }
-    
+
         // 채팅방 항목 HTML 구조
         roomElement.innerHTML = `
             <div class="chat-room-item">

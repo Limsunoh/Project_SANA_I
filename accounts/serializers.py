@@ -1,19 +1,20 @@
+from django.conf import settings
 from django.contrib.auth.password_validation import validate_password
+from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_str
-from django.templatetags.static import static
-from django.core.mail import EmailMultiAlternatives
 from django.utils.http import urlsafe_base64_encode
-from django.conf import settings
-from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+
 from products.models import Product
-from products.serializers import ProductListSerializer, ChatRoomSerializer
+from products.serializers import ProductListSerializer
 from reviews.models import Review
 from reviews.serializers import ReviewSerializer
-from .validata import passwordValidation
+
 from .models import User
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from .validata import passwordValidation
 
 
 # [JWT 토큰 생성 함수] 사용자에 대한 access 및 refresh 토큰을 생성
@@ -76,7 +77,7 @@ class UserSerializer(serializers.ModelSerializer):
         validated_data.pop("checkpassword")
         image = validated_data.get("image")
         if not image:
-            image = "images/default_profile.jpg" # 이미지 필드에 추가한 프로필 이미지가 없을 경우 default_profile 로 설정
+            image = "images/default_profile.jpg"  # 이미지 필드에 추가한 프로필 이미지가 없을 경우 default_profile 로 설정
 
         user = User(
             username=validated_data["username"],
@@ -95,7 +96,7 @@ class UserSerializer(serializers.ModelSerializer):
         user.total_score = 30  # 기본 점수 설정
         # 이메일 인증 후 계정 사용 가능하게 처리 (is_active = True)
 
-        user.save() # 상태 저장
+        user.save()  # 상태 저장
 
         tokens = get_tokens_for_user(user)
 
@@ -120,18 +121,14 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-
-
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     # [JWT 토큰 생성] 사용자 이름 포함 토큰 생성.
     def validate(self, attrs):
-        data = super().validate(attrs) 
-        
+        data = super().validate(attrs)
+
         # 이메일 인증 확인
         if not self.user.is_active:
-            raise serializers.ValidationError(
-                {"detail": "이메일 인증이 완료되지 않은 계정입니다."}, code="not_verified"
-            )
+            raise serializers.ValidationError({"detail": "이메일 인증이 완료되지 않은 계정입니다."}, code="not_verified")
         data["username"] = self.user.username
         return data
 
@@ -216,7 +213,6 @@ class UserProfileSerializer(serializers.ModelSerializer):
         return total_score
 
 
-
 class UserChangeSerializer(serializers.ModelSerializer):
     profile_image = serializers.SerializerMethodField()
 
@@ -258,9 +254,7 @@ class ChangePasswordSerializer(serializers.Serializer):
         if data["new_password"] != data["password_check"]:
             raise serializers.ValidationError("새 비밀번호가 일치하지 않습니다.")
         if not passwordValidation(data["new_password"]):
-            raise serializers.ValidationError(
-                "비밀번호는 8자 이상이며, 숫자와 특수 문자를 포함해야 합니다."
-            )
+            raise serializers.ValidationError("비밀번호는 8자 이상이며, 숫자와 특수 문자를 포함해야 합니다.")
         return data
 
     def update(self, instance, validated_data):

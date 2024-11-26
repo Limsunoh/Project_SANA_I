@@ -1,4 +1,4 @@
-const FileSizeNum = 10; 
+const FileSizeNum = 10;
 const MAX_PROFILE_IMAGE_SIZE = FileSizeNum * 1024 * 1024; // MB 단위
 const profileImageInput = document.getElementById('profile-image-input');
 
@@ -10,7 +10,7 @@ if (profileImageInput) {
 
         if (file && !checkProfileImageSize(file)) {
             // 용량 초과 시 파일 선택 초기화
-            event.target.value = ''; 
+            event.target.value = '';
         }
     });
 } else {
@@ -176,9 +176,9 @@ document.getElementById('signup-form').onsubmit = async function (event) {
     event.preventDefault();
 
     const formData = new FormData(event.target);
-    
+
     // 프로필 사진 파일 가져오기
-    const profileImage = profileImageInput ? profileImageInput.files[0] : null; 
+    const profileImage = profileImageInput ? profileImageInput.files[0] : null;
     if (profileImage && !checkProfileImageSize(profileImage)) {
         return;
     }
@@ -196,7 +196,7 @@ document.getElementById('signup-form').onsubmit = async function (event) {
         window.location.href = '/api/accounts/login-page/';
     } else {
         const errorData = await response.json();
-    
+
         // 에러 메시지를 필드별로 정리
         let errorMessage = "회원가입 실패:\n";
         if (errorData.postcode) {
@@ -214,4 +214,3 @@ document.getElementById('signup-form').onsubmit = async function (event) {
         alert(errorMessage);
     }
 };
-

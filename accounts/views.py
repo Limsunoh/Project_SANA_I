@@ -1,37 +1,38 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.generics import (CreateAPIView, 
-                                    RetrieveUpdateDestroyAPIView, 
-                                    ListAPIView,
-                                    )
-from rest_framework_simplejwt.tokens import AccessToken
-from rest_framework.permissions import (
-    IsAuthenticatedOrReadOnly,
-    IsAuthenticated,
-    AllowAny,
-)
-from django.shortcuts import HttpResponse, get_object_or_404
-from django.utils.http import urlsafe_base64_decode
-from django.utils.encoding import force_str
 from django.http import HttpResponse
-from .serializers import (
-    UserSerializer,
-    UserProfileSerializer,
-    UserChangeSerializer,
-    ChangePasswordSerializer,
-)
-from django.shortcuts import redirect
-from django.utils.translation import gettext_lazy as _
-from .models import User
-from products.models import Product
-from .permissions import IsOwnerOrReadOnly
+from django.shortcuts import get_object_or_404
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
 from django.views.generic import TemplateView
+from rest_framework.generics import (
+    CreateAPIView,
+    ListAPIView,
+    RetrieveUpdateDestroyAPIView,
+)
+from rest_framework.permissions import (
+    AllowAny,
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
+)
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import CustomTokenObtainPairSerializer, UserListSerializer
-from products.serializers import ProductListSerializer
-from reviews.serializers import ReviewSerializer, PurchaseSerializer
 
+from products.models import Product
+from products.serializers import ProductListSerializer
 from reviews.models import Review
+from reviews.serializers import PurchaseSerializer, ReviewSerializer
+
+from .models import User
+from .permissions import IsOwnerOrReadOnly
+from .serializers import (
+    ChangePasswordSerializer,
+    CustomTokenObtainPairSerializer,
+    UserChangeSerializer,
+    UserListSerializer,
+    UserProfileSerializer,
+    UserSerializer,
+)
 
 
 # [사용자 생성 뷰] 새로운 사용자 계정을 생성
@@ -86,7 +87,7 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
         # [READ] 프로필 정보 조회 = GET
         if self.request.method == "GET":
             return UserProfileSerializer
-        
+
         # [UPDATE] 프로필 업데이트 = PATCH or PUT
         elif self.request.method in ["PATCH", "PUT"]:
             return UserChangeSerializer
@@ -95,7 +96,7 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         # [사용자 정보 조회] 모든 사용자 목록을 리턴
         return User.objects.all()
-    
+
     def update(self, request, *args, **kwargs):
         user = self.get_object()
         serializer = self.get_serializer(user, data=request.data, partial=True)
@@ -105,13 +106,13 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
         print("Request Data:", request.data)  # 서버 로그에 request 데이터를 출력
 
         # [프로필 이미지 삭제] remove_image 플래그 처리
-        if request.data.get('remove_image') == 'true':
+        if request.data.get("remove_image") == "true":
             if user.image:
                 user.image.delete()
 
         # [프로필 이미지 업데이트] 새로운 이미지가 업로드 되었을 경우
-        if 'image' in request.FILES:
-            user.image = request.FILES['image']
+        if "image" in request.FILES:
+            user.image = request.FILES["image"]
 
         serializer.save()
         return Response(serializer.data)
@@ -134,10 +135,8 @@ class ChangePasswordView(APIView):
 
     def patch(self, request, username):
         # [사용자 조회] 비밀번호를 변경할 사용자 조회
-        user = get_object_or_404(User, username=username)
-        serializer = ChangePasswordSerializer(
-            data=request.data, context={"request": request}
-        )
+        get_object_or_404(User, username=username)
+        serializer = ChangePasswordSerializer(data=request.data, context={"request": request})
 
         if serializer.is_valid():
             serializer.update(request.user, serializer.validated_data)
@@ -148,12 +147,12 @@ class ChangePasswordView(APIView):
 # [팔로우 기능] 팔로우 및 언팔로우 처리
 class FollowView(APIView):
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request, username):
         # [팔로우 상태 확인] 요청자가 해당 사용자를 팔로우 중인지 확인
         user = User.objects.get(username=username)
         is_following = request.user in user.followers.all()
-        return Response({'is_following': is_following}, status=200)
+        return Response({"is_following": is_following}, status=200)
 
     def post(self, request, username):
         # [팔로우/언팔로우 처리] 요청자의 팔로우 상태를 변경
@@ -191,12 +190,12 @@ class UserFollowerListAPIView(APIView):
 # [커스텀 토큰 생성] 사용자 이름을 포함한 JWT 토큰 생성
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
-    
+
     def post(self, request, *args, **kwargs):
-    # 사용자가 입력한 username으로 사용자 객체를 가져옴
-        user = get_object_or_404(User, username=request.data.get('username'))
-        username = request.data.get('username')
-        password = request.data.get('password')
+        # 사용자가 입력한 username으로 사용자 객체를 가져옴
+        user = get_object_or_404(User, username=request.data.get("username"))
+        username = request.data.get("username")
+        request.data.get("password")
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
@@ -244,7 +243,7 @@ class UserReviewListView(ListAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
-        username = self.kwargs.get('username')
+        username = self.kwargs.get("username")
         user = get_object_or_404(User, username=username)
         return Review.objects.filter(author=user, is_deleted=False)
 
@@ -255,14 +254,14 @@ class ReceivedReviewListView(ListAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
-        username = self.kwargs.get('username')
+        username = self.kwargs.get("username")
         user = get_object_or_404(User, username=username)
         return Review.objects.filter(product__author=user, is_deleted=False)
 
 
-
 # ------------------------------------------------------------------------------
-# Template View 
+# Template View
+
 
 # [회원가입 페이지] 회원가입 template
 class SignupPageView(TemplateView):
@@ -296,10 +295,10 @@ class FollowingsPageView(TemplateView):
     def get_context_data(self, **kwargs):
         # [팔로잉 정보 조회] 팔로잉 목록과 사용자 정보 추가
         context = super().get_context_data(**kwargs)
-        username = self.kwargs.get('username')
+        username = self.kwargs.get("username")
         profile_user = get_object_or_404(User, username=username)
-        context['profile_user'] = profile_user
-        context['followings'] = profile_user.followings.all()
+        context["profile_user"] = profile_user
+        context["followings"] = profile_user.followings.all()
         return context
 
 
@@ -310,10 +309,10 @@ class FollowersPageView(TemplateView):
     def get_context_data(self, **kwargs):
         # [팔로워 정보 조회] 팔로워 목록과 사용자 정보 추가
         context = super().get_context_data(**kwargs)
-        username = self.kwargs.get('username')
+        username = self.kwargs.get("username")
         profile_user = get_object_or_404(User, username=username)
-        context['profile_user'] = profile_user
-        context['followers'] = profile_user.followers.all()
+        context["profile_user"] = profile_user
+        context["followers"] = profile_user.followers.all()
         return context
 
 
@@ -336,9 +335,7 @@ class UserProductsListPageView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         username = self.kwargs.get("username")  # URL에서 username 가져오기
-        profile_user = get_object_or_404(
-            User, username=username
-        )  # username으로 사용자 객체 가져오기
+        profile_user = get_object_or_404(User, username=username)  # username으로 사용자 객체 가져오기
         context["profile_user"] = profile_user  # 템플릿에 profile_user 추가
         return context
 
@@ -350,9 +347,7 @@ class PurchaseHistoryListViewTemplate(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         username = self.kwargs.get("username")  # URL에서 username 가져오기
-        profile_user = get_object_or_404(
-            User, username=username
-        )  # username으로 사용자 객체 가져오기
+        profile_user = get_object_or_404(User, username=username)  # username으로 사용자 객체 가져오기
         context["profile_user"] = profile_user  # 템플릿에 profile_user 추가
         return context
 
@@ -364,9 +359,7 @@ class UserReviewListViewTemplate(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         username = self.kwargs.get("username")  # URL에서 username 가져오기
-        profile_user = get_object_or_404(
-            User, username=username
-        )  # username으로 사용자 객체 가져오기
+        profile_user = get_object_or_404(User, username=username)  # username으로 사용자 객체 가져오기
         context["profile_user"] = profile_user  # 템플릿에 profile_user 추가
         return context
 
@@ -378,8 +371,6 @@ class ReceivedReviewListViewTemplate(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         username = self.kwargs.get("username")  # URL에서 username 가져오기
-        profile_user = get_object_or_404(
-            User, username=username
-        )  # username으로 사용자 객체 가져오기
+        profile_user = get_object_or_404(User, username=username)  # username으로 사용자 객체 가져오기
         context["profile_user"] = profile_user  # 템플릿에 profile_user 추가
         return context

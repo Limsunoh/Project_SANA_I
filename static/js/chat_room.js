@@ -1,4 +1,4 @@
-const FILE_SIZE_LIMIT_MB = 10; 
+const FILE_SIZE_LIMIT_MB = 10;
 const MAX_PROFILE_IMAGE_SIZE = FILE_SIZE_LIMIT_MB * 1024 * 1024; // MB 단위
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const writeReviewBtn = document.getElementById('write-review-btn');
     let transactionStatus = { is_sold: false, is_completed: false };
 
-    
+
     // 거래 상태를 확인하는 함수
     function checkTransactionStatus() {
         $.ajax({
@@ -49,15 +49,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 "Authorization": `Bearer ${token}`
             },
             success: function (response) {
-    
+
                 const currentUser = localStorage.getItem('current_username');
-    
+
                 const isBuyer = response.buyer === currentUser;
                 const isSeller = response.seller === currentUser;
-                    
+
                 // 전역 변수 transactionStatus 업데이트
                 transactionStatus = response;
-                
+
                 if (isSeller) {
                     // 판매자는 리뷰 작성 버튼을 숨김
                     if (writeReviewBtn) {
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 writeReviewBtn.addEventListener('click', function () {
                     window.location.href = `/api/reviews/products/${productId}/create/`;
                 });
-    
+
                 // 판매자와 구매자를 기준으로 버튼 텍스트 설정
                 if (isSeller) {
                     completeTransactionBtn.textContent = response.is_completed ? "판매 완료 취소" : "판매 완료";
@@ -87,15 +87,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error("거래 상태 불러오기 실패:", status, error);
             }
         });
-        
+
     }
 
     // 거래 완료 버튼 클릭 이벤트 (판매자와 구매자 역할에 따라 다르게 처리)
     completeTransactionBtn.addEventListener('click', function () {
-        const buttonText = completeTransactionBtn.textContent;    
+        const buttonText = completeTransactionBtn.textContent;
         const isBuyer = buttonText.includes("거래");
         const isSeller = buttonText.includes("판매");
-    
+
         // 현재 거래 상태를 기반으로 상태 반전
         let data = {};
         if (isSeller) {
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } else if (isBuyer) {
             data = { is_sold: !transactionStatus.is_sold };
         }
-        
+
         $.ajax({
             url: transactionStatusUrl,
             type: "POST",
@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const profileImgUrl = msg.sender_image ? msg.sender_image : '/static/images/default_profile.jpg';
                     const messageClass = msg.sender_username === localStorage.getItem('current_username') ? 'my-message' : '';
                     const timestamp = msg.created_at ? new Date(msg.created_at).toLocaleString('ko-KR', { hour12: false }) : "알 수 없음";
-                    
+
                     let imageElement = '';
                     if (msg.image) {
                         imageElement = `<img src="${msg.image}" class="message-image" alt="Image">`;
@@ -188,39 +188,39 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault();
         sendMessage();
     });
-    
+
     // 엔터키로 메시지 전송
     if (messageInput) {
         messageInput.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();  
+                e.preventDefault();
                 sendMessage();
             }
         });
     }
-    
+
     function sendMessage() {
         const messageContent = $('#message-content').val().trim();
         const messageImage = $('#message-image')[0].files[0];
-    
+
         if (messageContent === "" && !messageImage) {
             alert("메시지나 이미지를 입력하세요.");
             return;
         }
-    
+
         // 이미지 파일 크기 체크
         if (messageImage && messageImage.size > MAX_PROFILE_IMAGE_SIZE) {
             alert(`${messageImage.name}파일 크기가 ${FILE_SIZE_LIMIT_MB}MB를 초과했습니다.`);
             return;
         }
-    
+
         // FormData 객체를 사용해 메시지와 이미지를 함께 전송
         const formData = new FormData();
         formData.append('content', messageContent);
         if (messageImage) {
             formData.append('image', messageImage);
         }
-    
+
         $.ajax({
             url: apiUrl,
             type: "POST",
@@ -240,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
-    
+
 
     // 페이지 로드 시 초기 메시지 목록을 불러옴
     $(document).ready(function () {

@@ -12,7 +12,7 @@
         <input type="file" class="form-control" id="image-upload" name="images" multiple accept="image/*" onchange="previewImages(event)">
         <div id="imagePreview" class="d-flex flex-wrap mb-3"></div>
     </div>
-    
+
     <form id="product-create-form" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="mb-3">

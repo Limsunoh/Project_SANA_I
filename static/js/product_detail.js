@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 });
             });
-            
+
                 // 작성자와 현재 사용자가 다를 경우 수정 및 삭제 버튼 숨기기
                 if (!currentUserNickname || currentUserNickname.trim() !== data.author.trim()) {
                     editButton.style.display = 'none';
