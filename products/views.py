@@ -4,10 +4,7 @@ import time
 
 # [AI 서비스 관련 임포트] OpenAI 관련 라이브러리
 import openai
-<<<<<<< HEAD
 from accounts.permissions import IsOwnerOrReadOnly
-=======
->>>>>>> d43ba67140c121542dda84277b2d7799f1793c2a
 from django.core.cache import cache
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
@@ -24,10 +21,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-<<<<<<< HEAD
-=======
 from accounts.permissions import IsOwnerOrReadOnly
->>>>>>> d43ba67140c121542dda84277b2d7799f1793c2a
 from sbmarket.config import OPENAI_API_KEY  # GPT 키는 config 로 이전
 
 from .models import (
@@ -171,13 +165,9 @@ class ProductDetailAPIView(UpdateAPIView):
 
         # 비로그인 사용자의 조회수 증가를 위해 쿠키 설정
         if not user:
-<<<<<<< HEAD
             response.set_cookie(
                 "viewed_products", ",".join(viewed_products), max_age=60 * 60 * 24
             )
-=======
-            response.set_cookie("viewed_products", ",".join(viewed_products), max_age=60 * 60 * 24)
->>>>>>> d43ba67140c121542dda84277b2d7799f1793c2a
 
         return response
 
@@ -321,15 +311,11 @@ class ChatMessageCreateAPIView(APIView):
         new_messages = []
         while (time.time() - start_time) < timeout:
             # 새 메시지 확인
-<<<<<<< HEAD
             new_messages = ChatMessage.objects.filter(
                 room=room, id__gt=last_message_id
             ).order_by(
                 "created_at"
             )  # 새 메시지만 가져옴
-=======
-            new_messages = ChatMessage.objects.filter(room=room, id__gt=last_message_id).order_by("created_at")  # 새 메시지만 가져옴
->>>>>>> d43ba67140c121542dda84277b2d7799f1793c2a
 
             if new_messages.exists():
                 logger.info("새 메시지가 존재합니다.")
@@ -427,16 +413,12 @@ class TransactionStatusUpdateAPIView(APIView):
         product_status, created = TransactionStatus.objects.get_or_create(room=room)
 
         # 시리얼라이저를 통해 상태 업데이트 처리
-<<<<<<< HEAD
         serializer = TransactionStatusSerializer(
             product_status,
             data=request.data,
             partial=True,
             context={"request": request},
         )
-=======
-        serializer = TransactionStatusSerializer(product_status, data=request.data, partial=True, context={"request": request})
->>>>>>> d43ba67140c121542dda84277b2d7799f1793c2a
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -463,13 +445,9 @@ class NewMessageAlertAPIView(APIView):
 
         try:
             # 해당 유저가 참여 중인 채팅방 중 읽지 않은 메시지가 있는 방을 찾습니다.
-<<<<<<< HEAD
             unread_messages = ChatMessage.objects.filter(
                 Q(room__buyer=user) | Q(room__seller=user), is_read=False
             ).exclude(sender=user)
-=======
-            unread_messages = ChatMessage.objects.filter(Q(room__buyer=user) | Q(room__seller=user), is_read=False).exclude(sender=user)
->>>>>>> d43ba67140c121542dda84277b2d7799f1793c2a
 
             # 각 채팅방 별로 읽지 않은 메시지 수를 집계합니다.
             unread_rooms = {}
@@ -480,14 +458,10 @@ class NewMessageAlertAPIView(APIView):
                 unread_rooms[room_id] += 1
 
             # 각 채팅방별 새 메시지 개수를 응답에 포함합니다.
-<<<<<<< HEAD
             new_messages = [
                 {"room_id": room_id, "unread_count": count}
                 for room_id, count in unread_rooms.items()
             ]
-=======
-            new_messages = [{"room_id": room_id, "unread_count": count} for room_id, count in unread_rooms.items()]
->>>>>>> d43ba67140c121542dda84277b2d7799f1793c2a
 
             return Response({"new_messages": new_messages}, status=200)
         except Exception as e:

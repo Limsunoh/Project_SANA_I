@@ -68,7 +68,6 @@ async function fetchWithAuth(url, options = {}) {
             } else {
                 console.error("Failed to refresh token, removing tokens and redirecting to login page");
                 removeTokens();
-                // window.location.href = "/api/accounts/login-page/";
                 return;
             }
         } catch (error) {
