@@ -8,10 +8,10 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from products.models import Product
-from products.serializers import ProductListSerializer
-from reviews.models import Review
-from reviews.serializers import ReviewSerializer
+from back.products.models import Product
+from back.products.serializers import ProductListSerializer
+from back.reviews.models import Review
+from back.reviews.serializers import ReviewSerializer
 
 from .models import User
 from .validata import passwordValidation

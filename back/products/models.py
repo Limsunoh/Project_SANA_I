@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from accounts.models import User
+from back.accounts.models import User
 
 
 # [해시태그 모델] 해시태그 정보를 저장

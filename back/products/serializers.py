@@ -1,8 +1,8 @@
 from rest_framework import serializers
 
-from accounts.models import User
-from reviews.models import Review
-from reviews.serializers import ReviewSerializer
+from back.accounts.models import User
+from back.reviews.models import Review
+from back.reviews.serializers import ReviewSerializer
 
 from .models import ChatMessage, ChatRoom, Hashtag, Image, Product, TransactionStatus
 

@@ -4,7 +4,7 @@ import time
 
 # [AI 서비스 관련 임포트] OpenAI 관련 라이브러리
 import openai
-from accounts.permissions import IsOwnerOrReadOnly
+from back.accounts.permissions import IsOwnerOrReadOnly
 from django.core.cache import cache
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
@@ -21,7 +21,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from accounts.permissions import IsOwnerOrReadOnly
+from back.accounts.permissions import IsOwnerOrReadOnly
 from sbmarket.config import OPENAI_API_KEY  # GPT 키는 config 로 이전
 
 from .models import (

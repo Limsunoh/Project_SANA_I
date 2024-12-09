@@ -9,8 +9,8 @@ from django.core.files import File
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
-from accounts.models import User
-from products.models import Hashtag, Image, Product
+from back.accounts.models import User
+from back.products.models import Hashtag, Image, Product
 
 
 class Command(BaseCommand):
