@@ -3,5 +3,5 @@ from django.apps import AppConfig
 
 class ProductsConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "back.products"
-    label = "backend_products"
+    name = "front.products"
+    label = "frontend_products"

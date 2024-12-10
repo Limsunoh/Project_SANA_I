@@ -55,7 +55,7 @@ class PurchaseSerializer(ModelSerializer):
     class Meta:
         # Product 모델을 가져오기 위해 apps.get_model 사용
         # 순환 import->2중으로 가져오려고 할때 자주 발생->가장 흔한 방법이 apps.get_model()사용하기
-        model = apps.get_model("products", "Product")
+        model = apps.get_model("backend_products", "Product")
         fields = [
             "id",
             "title",

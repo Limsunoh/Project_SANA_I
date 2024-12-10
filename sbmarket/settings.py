@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     "back.accounts",
     "front.accounts",
     "back.products",
+    "front.products",
     "back.reviews",
     "back.manager",
 ]

@@ -3,8 +3,8 @@ from django.views.generic import TemplateView
 from rest_framework import generics, serializers
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
-from products.models import Product
-from reviews.models import CHECKLIST_OPTIONS
+from back.products.models import Product
+from back.reviews.models import CHECKLIST_OPTIONS
 
 from .models import Review
 from .serializers import ReviewSerializer
