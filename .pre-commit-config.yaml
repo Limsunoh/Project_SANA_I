@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v5.0.0
     hooks:
       - id: check-yaml
       - id: end-of-file-fixer
@@ -15,13 +15,13 @@ repos:
       args: ['--max-line-length', '150', '--extend-ignore', 'E203']
 
   - repo: https://github.com/ambv/black
-    rev: 24.8.0
+    rev: 24.10.0
     hooks:
     - id: black
       args: ['-l', '150', '-t', 'py311']
 
   - repo: https://github.com/myint/autoflake
-    rev: 2.3.1
+    rev: v2.3.1
     hooks:
       - id: autoflake
         args:
