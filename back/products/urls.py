@@ -2,7 +2,6 @@ from django.urls import path
 
 from . import views
 
-# app_name = "products"     # products/app.py 에 명시됨
 
 urlpatterns = [
     path("", views.ProductListAPIView.as_view(), name="product_list"),

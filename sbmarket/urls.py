@@ -7,12 +7,13 @@ from django.urls import include, path
 urlpatterns = [
     path("", HomePageView.as_view(), name="home-page"),
     path("admin/", admin.site.urls),
-    path("api/products/", include("back.products.urls")),
-    path("products/", include("front.products.urls")),
     path("api/accounts/", include("back.accounts.urls")),
     path("accounts/", include("front.accounts.urls")),
+    path("api/products/", include("back.products.urls")),
+    path("products/", include("front.products.urls")),
     path("api/reviews/", include("back.reviews.urls")),
     path("reviews/", include("front.reviews.urls")),
     path("api/manager/", include("manager.urls")),
+    
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
