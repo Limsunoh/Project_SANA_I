@@ -14,6 +14,5 @@ urlpatterns = [
     path("api/reviews/", include("back.reviews.urls")),
     path("reviews/", include("front.reviews.urls")),
     path("api/manager/", include("manager.urls")),
-    
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
