@@ -4,11 +4,9 @@ import time
 
 # [AI 서비스 관련 임포트] OpenAI 관련 라이브러리
 import openai
-from back.accounts.permissions import IsOwnerOrReadOnly
 from django.core.cache import cache
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404
-from django.views.generic import DetailView, TemplateView
 from rest_framework import serializers, status
 from rest_framework.exceptions import AuthenticationFailed, ValidationError
 from rest_framework.generics import ListCreateAPIView, UpdateAPIView
@@ -142,12 +140,8 @@ class ProductDetailAPIView(UpdateAPIView):
                 product.hits += 1
                 product.save(update_fields=["hits"])
                 viewed_products.append(pk)
-                cache.set(
-                    viewed_products_key, viewed_products, timeout=60 * 60 * 24
-                )  # 24시간 동안 저장
-                print(
-                    f"조회수 증가. 사용자 {user.username}의 조회 목록에 추가된 상품 ID: {pk}, 총 조회수: {product.hits}"
-                )
+                cache.set(viewed_products_key, viewed_products, timeout=60 * 60 * 24)  # 24시간 동안 저장
+                print(f"조회수 증가. 사용자 {user.username}의 조회 목록에 추가된 상품 ID: {pk}, 총 조회수: {product.hits}")
             else:
                 print("이미 조회한 상품입니다. 조회수 증가 없음.")
         else:
@@ -165,9 +159,7 @@ class ProductDetailAPIView(UpdateAPIView):
 
         # 비로그인 사용자의 조회수 증가를 위해 쿠키 설정
         if not user:
-            response.set_cookie(
-                "viewed_products", ",".join(viewed_products), max_age=60 * 60 * 24
-            )
+            response.set_cookie("viewed_products", ",".join(viewed_products), max_age=60 * 60 * 24)
 
         return response
 
@@ -293,9 +285,7 @@ class ChatMessageCreateAPIView(APIView):
         last_message_id = request.query_params.get("last_message_id", None)
 
         # 채팅방 입장 시, 해당 방의 모든 읽지 않은 메시지를 읽음 처리
-        unread_messages = ChatMessage.objects.filter(room=room, is_read=False).exclude(
-            sender=user
-        )
+        unread_messages = ChatMessage.objects.filter(room=room, is_read=False).exclude(sender=user)
         unread_messages.update(is_read=True)
 
         # 최초 조회 시 전체 메시지 반환
@@ -311,11 +301,7 @@ class ChatMessageCreateAPIView(APIView):
         new_messages = []
         while (time.time() - start_time) < timeout:
             # 새 메시지 확인
-            new_messages = ChatMessage.objects.filter(
-                room=room, id__gt=last_message_id
-            ).order_by(
-                "created_at"
-            )  # 새 메시지만 가져옴
+            new_messages = ChatMessage.objects.filter(room=room, id__gt=last_message_id).order_by("created_at")  # 새 메시지만 가져옴
 
             if new_messages.exists():
                 logger.info("새 메시지가 존재합니다.")
@@ -445,9 +431,7 @@ class NewMessageAlertAPIView(APIView):
 
         try:
             # 해당 유저가 참여 중인 채팅방 중 읽지 않은 메시지가 있는 방을 찾습니다.
-            unread_messages = ChatMessage.objects.filter(
-                Q(room__buyer=user) | Q(room__seller=user), is_read=False
-            ).exclude(sender=user)
+            unread_messages = ChatMessage.objects.filter(Q(room__buyer=user) | Q(room__seller=user), is_read=False).exclude(sender=user)
 
             # 각 채팅방 별로 읽지 않은 메시지 수를 집계합니다.
             unread_rooms = {}
@@ -458,10 +442,7 @@ class NewMessageAlertAPIView(APIView):
                 unread_rooms[room_id] += 1
 
             # 각 채팅방별 새 메시지 개수를 응답에 포함합니다.
-            new_messages = [
-                {"room_id": room_id, "unread_count": count}
-                for room_id, count in unread_rooms.items()
-            ]
+            new_messages = [{"room_id": room_id, "unread_count": count} for room_id, count in unread_rooms.items()]
 
             return Response({"new_messages": new_messages}, status=200)
         except Exception as e:
@@ -548,9 +529,7 @@ class AISearchAPIView(APIView):
 
         # 필터링된 상품 리스트가 없을 경우, 기본 상품 목록을 사용
         if not filtered_products.exists():
-            filtered_products = Product.objects.filter(
-                status__in=["sell", "reservation"]
-            ).order_by("-created_at")[:50]
+            filtered_products = Product.objects.filter(status__in=["sell", "reservation"]).order_by("-created_at")[:50]
 
         product_list = []
 
@@ -623,60 +602,3 @@ class AISearchAPIView(APIView):
 
         # AI의 응답을 그대로 반환
         return Response({"response": ai_response}, status=200)
-
-
-# ------------------------------------------------------------------------------
-# Html TemplateView
-
-
-# 상품 목록 template
-class HomePageView(TemplateView):
-    template_name = "home.html"
-
-
-# 상품 세부 template
-class ProductDetailPageView(DetailView):
-    model = Product
-    template_name = "product_detail.html"
-    context_object_name = "product"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["images"] = self.object.images.all()  # 여러 이미지를 가져옴
-        return context
-
-
-# 상품 작성 template
-class ProductCreateView(TemplateView):
-    template_name = "product_create.html"
-
-
-# 상품 수정 template
-class ProductEditPageView(TemplateView):
-    template_name = "product_edit.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        product = get_object_or_404(Product, pk=self.kwargs["pk"])
-        context["product"] = product
-        return context
-
-
-# 채팅방 리스트 template
-class ChatRoomListHTMLView(TemplateView):
-    template_name = "chat_room_list.html"
-
-
-# 채팅화면 template
-class ChatRoomDetailHTMLView(TemplateView):
-    template_name = "chat_room.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        product = get_object_or_404(Product, id=self.kwargs["product_id"])
-        context["room_id"] = self.kwargs["room_id"]  # URL에서 room_id를 가져와서 전달
-        context["product_id"] = self.kwargs[
-            "product_id"
-        ]  # URL에서 product_id를 가져와서 전달
-        context["product_title"] = product.title
-        return context

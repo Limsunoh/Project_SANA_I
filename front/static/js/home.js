@@ -39,7 +39,7 @@ async function loadProductList(order_by = '', search = '', page = 1) {
             const productCard = document.createElement('div');
             productCard.classList.add('product-item');
             productCard.onclick = function () {
-                window.location.href = `/api/products/detail-page/${product.id}/`;
+                window.location.href = `/products/detail-page/${product.id}/`;
             };
 
             const productImage = document.createElement('div');
@@ -310,7 +310,7 @@ function displayProductRecommendations(products) {
         productItem.classList.add('product-item');
         productItem.style.cursor = 'pointer';
         productItem.addEventListener('click', () => {
-            window.location.href = `/api/products/detail-page/${product.id}/`;
+            window.location.href = `/products/detail-page/${product.id}/`;
         });
 
         const productImage = document.createElement('div');

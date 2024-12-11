@@ -3,7 +3,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
-from back.products.views import HomePageView
+from front.products.views import HomePageView
 
 urlpatterns = [
     path("", HomePageView.as_view(), name="home-page"),
