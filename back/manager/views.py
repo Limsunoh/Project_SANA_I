@@ -3,13 +3,13 @@ import logging
 import os
 
 import openai
-from accounts.permissions import IsSuperUser
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from back.accounts.permissions import IsSuperUser
 from sbmarket.config import OPENAI_API_KEY
 
 from .models import Notification
@@ -57,14 +57,10 @@ class NotificationDetailView(APIView):
     # PUT 요청: IsSuperUser 권한을 요구
     def put(self, request, pk):
         if not IsSuperUser().has_permission(request, self):
-            return Response(
-                {"error": "권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN
-            )
+            return Response({"error": "권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN)
 
         notification = get_object_or_404(Notification, pk=pk)
-        serializer = NotificationSerializer(
-            notification, data=request.data, partial=True
-        )
+        serializer = NotificationSerializer(notification, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -73,9 +69,7 @@ class NotificationDetailView(APIView):
     # DELETE 요청: IsSuperUser 권한을 요구
     def delete(self, request, pk):
         if not IsSuperUser().has_permission(request, self):
-            return Response(
-                {"error": "권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN
-            )
+            return Response({"error": "권한이 없습니다."}, status=status.HTTP_403_FORBIDDEN)
 
         notification = get_object_or_404(Notification, pk=pk)
         notification.delete()
@@ -89,9 +83,7 @@ class AiAskView(APIView):
         data = request.data
         question = data.get("question")
         if not question:
-            return Response(
-                {"error": "질문이 필요합니다."}, status=status.HTTP_400_BAD_REQUEST
-            )
+            return Response({"error": "질문이 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
 
         # OpenAI API 키 설정
         openai.api_key = OPENAI_API_KEY
@@ -144,9 +136,7 @@ class AiAskView(APIView):
             ai_response = ai_response.replace("**", "")
 
         except openai.OpenAIError as e:
-            return Response(
-                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         # 최종 응답 반환
         return Response({"response": ai_response}, status=200)

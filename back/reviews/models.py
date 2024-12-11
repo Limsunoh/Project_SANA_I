@@ -17,8 +17,8 @@ CHECKLIST_OPTIONS = (
 
 
 class Review(models.Model):
-    author = models.ForeignKey("accounts.User", related_name="reviews", on_delete=models.CASCADE)
-    product = models.OneToOneField("products.Product", related_name="reviewed_product", on_delete=models.CASCADE)
+    author = models.ForeignKey("backend_accounts.User", related_name="reviews", on_delete=models.CASCADE)
+    product = models.OneToOneField("backend_products.Product", related_name="reviewed_product", on_delete=models.CASCADE)
     checklist = MultiSelectField(choices=CHECKLIST_OPTIONS)  # 다중 선택 필드
     additional_comments = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
