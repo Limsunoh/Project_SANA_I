@@ -15,14 +15,7 @@ from pathlib import Path
 
 import sentry_sdk
 
-from .config import (
-    ACCESS_TOKEN_TIME,
-    DBPASSWORD,
-    DEBUG,
-    SANAI_KEY,
-    SANAI_PASSWORD,
-    SENTRY_DSN,
-)
+from .config import ACCESS_TOKEN_TIME, DEBUG, SANAI_KEY, SANAI_PASSWORD, SENTRY_DSN
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -68,6 +61,7 @@ INSTALLED_APPS = [
     "back.products",
     "front.products",
     "back.reviews",
+    "front.reviews",
     "back.manager",
 ]
 
@@ -123,7 +117,7 @@ REST_FRAMEWORK = {
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME":  BASE_DIR / 'db.sqlite3',
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
