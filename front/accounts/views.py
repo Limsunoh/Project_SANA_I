@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 
 # [회원가입 페이지] 회원가입 template
 class SignupPageView(TemplateView):
-    template_name = "signup.html"
+    template_name = "front.template.accounts.signup.html"
 
 
 # [로그인 페이지] 로그인 template
