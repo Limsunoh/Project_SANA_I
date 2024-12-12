@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+프로필 수정 - 딸기 마켓
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile_edit.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="profile-edit-container">
+    <h2 class="text-center">프로필 수정</h2>
+    <form id="profile-form">
+        <div class="form-group" style="visibility: hidden; height: 0;">
+            <label for="username">아이디</label>
+            <input type="text" id="username" name="username" class="form-control" readonly>
+        </div>
+
+        <div class="profile-image-wrapper">
+            <img id="profile_image_preview" src="{% static 'images/default_profile.jpg' %}" alt="프로필 이미지">
+        </div>
+
+        <div class="form-group">
+            <label for="image">프로필 이미지 변경</label>
+            <input type="file" id="image" name="profile-image-input" class="form-control">
+            <button type="button" id="remove-profile-image" class="btn btn-danger mt-2">프로필 이미지 삭제</button> <!-- 이미지 삭제 버튼 추가 -->
+        </div>
+
+        <div class="form-group">
+            <label for="nickname">닉네임</label>
+            <input type="text" id="nickname" name="nickname" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="name">이름</label>
+            <input type="text" id="name" name="name" class="form-control">
+        </div>
+
+        <!-- 주소 입력 필드들 -->
+        <div class="form-group">
+            <label for="postcode">우편번호</label>
+            <div class="input-group">
+                <input type="text" id="postcode" name="postcode" class="form-control" placeholder="우편번호">
+                <button type="button" id="address-search-btn" class="btn btn-outline-secondary">우편번호 찾기</button>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="mainaddress">기본 주소</label>
+            <input type="text" id="mainaddress" name="mainaddress" class="form-control" placeholder="기본 주소를 입력하세요">
+        </div>
+        <div class="form-group">
+            <label for="subaddress">상세 주소</label>
+            <input type="text" id="subaddress" name="subaddress" class="form-control" placeholder="상세 주소를 입력하세요">
+        </div>
+        <div class="form-group">
+            <label for="extraaddress">참고 주소</label>
+            <input type="text" id="extraaddress" name="extraaddress" class="form-control" placeholder="참고 주소를 입력하세요">
+        </div>
+
+        <div class="form-group">
+            <label for="birth">생년월일</label>
+            <input type="date" id="birth" name="birth" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="email">이메일</label>
+            <input type="email" id="email" name="email" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="introduce">자기소개</label>
+            <textarea id="introduce" name="introduce" class="form-control"></textarea>
+        </div>
+
+        <button type="button" id="save-btn" class="btn btn-custom">저장</button>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script src="{% static 'js/profile_edit.js' %}"></script>
+{% endblock %}

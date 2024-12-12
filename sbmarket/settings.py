@@ -15,14 +15,7 @@ from pathlib import Path
 
 import sentry_sdk
 
-from .config import (
-    ACCESS_TOKEN_TIME,
-    DBPASSWORD,
-    DEBUG,
-    SANAI_KEY,
-    SANAI_PASSWORD,
-    SENTRY_DSN,
-)
+from .config import ACCESS_TOKEN_TIME, DEBUG, SANAI_KEY, SANAI_PASSWORD, SENTRY_DSN
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -63,10 +56,13 @@ INSTALLED_APPS = [
     "django_seed",
     "django_filters",
     # Local
-    "accounts",
-    "products",
-    "reviews",
-    "manager",
+    "back.accounts",
+    "front.accounts",
+    "back.products",
+    "front.products",
+    "back.reviews",
+    "front.reviews",
+    "back.manager",
 ]
 
 MIDDLEWARE = [
@@ -77,7 +73,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "accounts.middleware.SentryUserContextMiddleware",
+    "back.accounts.middleware.SentryUserContextMiddleware",
 ]
 
 ROOT_URLCONF = "sbmarket.urls"
@@ -120,16 +116,12 @@ REST_FRAMEWORK = {
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "NAME": "sbmarket_db",  # 방금 생성한 데이터베이스 이름
-        "USER": "sbmarket",  # MySQL 사용자 이름
-        "PASSWORD": DBPASSWORD,  # 설정한 비밀번호
-        "HOST": "52.78.43.100",  # MySQL 서버 호스트 (로컬 서버라면 'localhost')
-        "PORT": "3306",  # MySQL 포트 번호
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
-AUTH_USER_MODEL = "accounts.User"
+AUTH_USER_MODEL = "backend_accounts.User"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -166,8 +158,8 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 
-STATIC_URL = "static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_URL = "front/static/"
+STATICFILES_DIRS = [BASE_DIR / "front/static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 # Media files
 MEDIA_URL = "/media/"
