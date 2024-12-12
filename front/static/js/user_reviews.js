@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             <div class="card-body">
                                 <h5 class="card-title">${review.product_title}</h5>
                                 <p class="card-text">리뷰 작성일: ${new Date(review.created_at).toLocaleDateString("ko-KR")}</p>
-                                <a href="/api/products/detail-page/${review.product_id}/" class="btn btn-primary">자세히 보기</a>
+                                <a href="/products/detail-page/${review.product_id}/" class="btn btn-primary">자세히 보기</a>
                             </div>
                         </div>
                     `;

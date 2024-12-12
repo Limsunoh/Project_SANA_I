@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 alert("제품이 성공적으로 수정되었습니다.");
-                window.location.href = `/api/products/detail-page/${productId}/`;
+                window.location.href = `/products/detail-page/${productId}/`;
             } else {
                 const errorData = await response.json();
                 alert("제품 수정에 실패했습니다: " + JSON.stringify(errorData));

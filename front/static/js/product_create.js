@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const responseData = await response.json();
                 const productPk = responseData.id;
                 alert("제품이 성공적으로 등록되었습니다.");
-                window.location.href = `/api/products/detail-page/${productPk}/`;
+                window.location.href = `/products/detail-page/${productPk}/`;
             } else {
                 const errorData = await response.json();
 

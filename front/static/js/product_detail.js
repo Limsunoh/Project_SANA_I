@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(data => {
             if (data.id) {
                 // 기존 채팅방이 있는 경우, 해당 채팅방으로 이동
-                window.location.href = `/api/products/${productId}/chatrooms/${data.id}/`;
+                window.location.href = `/products/${productId}/chatrooms/${data.id}/`;
             } else {
                 // 채팅방이 존재하지 않을 경우 새로 생성
                 createChatRoom();
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 if (data.id) {
                     // 새 채팅방이 생성된 경우, 해당 채팅방으로 이동
-                    window.location.href = `/api/products/${productId}/chatrooms/${data.id}/`;
+                    window.location.href = `/products/${productId}/chatrooms/${data.id}/`;
                 }
             })
             .catch(error => {
@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 게시글 수정 페이지로 이동
     editButton.addEventListener('click', function () {
-        window.location.href = `/api/products/edit-page/${productId}/`;  // 수정 페이지로 이동
+        window.location.href = `/products/edit-page/${productId}/`;  // 수정 페이지로 이동
     });
 
     // 삭제 버튼 클릭 시 모달 띄우기
