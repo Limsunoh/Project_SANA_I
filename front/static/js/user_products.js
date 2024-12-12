@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             <div class="card-body">
                                 <h5 class="card-title">${product.title}</h5>
                                 <p class="card-text">가격: ${product.price}원</p>
-                                <a href="/api/products/detail-page/${product.id}/" class="btn btn-primary">자세히 보기</a>
+                                <a href="/products/detail-page/${product.id}/" class="btn btn-primary">자세히 보기</a>
                             </div>
                         </div>
                     `;

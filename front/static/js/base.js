@@ -175,7 +175,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            window.location.href = `/api/products/1on1-chat/${currentUsername}/`;
+            window.location.href = `/products/1on1-chat/${currentUsername}/`;
         });
     }
 
@@ -203,7 +203,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // 상품 등록 버튼 클릭 이벤트
     if (productRegisterButton) {
         productRegisterButton.addEventListener("click", function () {
-            window.location.href = "/api/products/create/";
+            window.location.href = "/products/create/";
         });
     }
 

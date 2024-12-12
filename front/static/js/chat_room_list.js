@@ -64,7 +64,7 @@ function displayChatRooms(chatRooms, newMessages = []) {
                 <div class="product-title">${newMessageBadge}${room.product_title}</div>
                 <div class="user-info">판매자: ${room.seller_username}, 구매자: ${room.buyer_username}</div>
                 <div class="chat-room-actions">
-                    <a href="/api/products/${room.product_id}/chatrooms/${room.id}/" class="chat-link">채팅방으로 이동</a>
+                    <a href="/products/${room.product_id}/chatrooms/${room.id}/" class="chat-link">채팅방으로 이동</a>
                     <button class="leave-chatroom-btn" data-room-id="${room.id}">채팅방 나가기</button>
                 </div>
             </div>

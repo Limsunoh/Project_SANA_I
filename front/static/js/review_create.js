@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 alert("리뷰가 성공적으로 작성되었습니다.");
-                window.location.href = `/api/products/detail-page/${productId}/`;  // 성공 시 상세 페이지로 리다이렉트
+                window.location.href = `/products/detail-page/${productId}/`;  // 성공 시 상세 페이지로 리다이렉트
             } catch (error) {
                 alert(error.message);
                 console.error("리뷰 작성 실패:", error);

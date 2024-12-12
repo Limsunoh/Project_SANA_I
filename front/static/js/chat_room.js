@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 writeReviewBtn.addEventListener('click', function () {
-                    window.location.href = `/api/reviews/products/${productId}/create/`;
+                    window.location.href = `/reviews/products/${productId}/create/`;
                 });
 
                 // 판매자와 구매자를 기준으로 버튼 텍스트 설정

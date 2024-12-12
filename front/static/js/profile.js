@@ -1,5 +1,5 @@
 function products_detailpage(pk) {
-    window.location.href = "/api/products/detail-page/" + pk + "/"
+    window.location.href = "/products/detail-page/" + pk + "/"
 }
 
 const deleteProfileBtn = document.getElementById("delete-profile-btn");
@@ -217,7 +217,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     reviewDate.textContent = `리뷰 작성일: ${new Date(review.created_at).toLocaleDateString("ko-KR")}`;
 
                     const detailLink = document.createElement("a");
-                    detailLink.href = `/api/products/detail-page/${review.product_id}/`;
+                    detailLink.href = `/products/detail-page/${review.product_id}/`;
                     detailLink.classList.add("btn", "btn-primary");
                     detailLink.textContent = "자세히 보기";
 
@@ -267,7 +267,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     purchasePrice.textContent = `가격: ${purchase.price}원`;
 
                     const detailLink = document.createElement("a");
-                    detailLink.href = `/api/products/detail-page/${purchase.id}/`;
+                    detailLink.href = `/products/detail-page/${purchase.id}/`;
                     detailLink.classList.add("btn", "btn-primary");
                     detailLink.textContent = "자세히 보기";
 
