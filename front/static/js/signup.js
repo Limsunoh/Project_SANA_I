@@ -193,7 +193,7 @@ document.getElementById('signup-form').onsubmit = async function (event) {
 
     if (response.ok) {
         alert('회원가입이 완료되었습니다. 이메일 인증을 진행해주세요.');
-        window.location.href = '/api/accounts/login-page/';
+        window.location.href = '/accounts/login-page/';
     } else {
         const errorData = await response.json();
 

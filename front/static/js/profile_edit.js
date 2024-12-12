@@ -51,11 +51,11 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => {
                 console.error("사용자 정보를 가져오는 중 오류 발생:", error);
                 alert("로그인된 사용자의 정보를 찾을 수 없습니다.");
-                window.location.href = "/api/accounts/login-page/";
+                window.location.href = "/accounts/login-page/";
             });
         } else {
             alert("로그인된 사용자의 정보를 찾을 수 없습니다. 로그인 페이지로 이동합니다.");
-            window.location.href = "/api/accounts/login-page/";
+            window.location.href = "/accounts/login-page/";
             return;
         }
     }
@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (response.ok) {
             alert("프로필이 성공적으로 수정되었습니다.");
             // 프로필 페이지로 리다이렉트
-            window.location.href = `/api/accounts/profile-page/${username}/`;
+            window.location.href = `/accounts/profile-page/${username}/`;
         } else {
             const errorData = await response.json();
             alert(`프로필 수정에 실패했습니다: ${errorData.detail}`);

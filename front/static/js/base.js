@@ -26,7 +26,7 @@ async function fetchWithAuth(url, options = {}) {
     // 토큰이 없는 경우 처리
     if (!access_token) {
         console.error("Access token not found, redirecting to login page");
-        window.location.href = "/api/accounts/login-page/";
+        window.location.href = "/accounts/login-page/";
         return;
     }
 
@@ -93,8 +93,8 @@ function fetchWithOptionalAuth(url, options = {}) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    const signupLink = document.querySelector("a[href='/api/accounts/signup-page/']");
-    const loginLink = document.querySelector("a[href='/api/accounts/login-page/']");
+    const signupLink = document.querySelector("a[href='/accounts/signup-page/']");
+    const loginLink = document.querySelector("a[href='/accounts/login-page/']");
     const logoutForm = document.querySelector(".logout-form");
     const mypageLink = document.getElementById("mypage-link");
     const chatLink = document.getElementById("chat-link");
@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", function () {
             removeTokens();
             localStorage.removeItem('current_username');
             alert("로그아웃되었습니다.");
-            window.location.href = "/api/accounts/login-page/";
+            window.location.href = "/accounts/login-page/";
             updateButtonDisplay();
         });
     }
@@ -153,10 +153,10 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!accessToken || !currentUsername) {  // 로그아웃 상태나 사용자 이름이 없는 경우
                 event.preventDefault();
                 alert("로그인 후 이용할 수 있습니다.");
-                window.location.href = "/api/accounts/login-page/";
+                window.location.href = "/accounts/login-page/";
             } else {
                 // current_username 값이 있을 때만 href 설정
-                mypageLink.href = `/api/accounts/profile-page/${currentUsername}/`;
+                mypageLink.href = `/accounts/profile-page/${currentUsername}/`;
             }
         });
     }
@@ -171,7 +171,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (!accessToken || !currentUsername) {
                 alert("로그인 후 이용할 수 있습니다.");
-                window.location.href = "/api/accounts/login-page/";
+                window.location.href = "/accounts/login-page/";
                 return;
             }
 

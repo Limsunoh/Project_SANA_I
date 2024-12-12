@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (!profileUsername || !accessToken) {
         alert("잘못된 접근입니다. 로그인 후 다시 시도해주세요.");
-        window.location.href = "/api/accounts/login-page/";
+        window.location.href = "/accounts/login-page/";
         return;
     }
 
@@ -299,25 +299,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (mannerScoreDisplay) {
             mannerScoreDisplay.addEventListener("click", () => {
-                window.location.href = `/api/accounts/user/${username}/received-reviews`;
+                window.location.href = `/accounts/user/${username}/received-reviews-page`;
             });
         }
 
         if (followingsCountDisplay) {
             followingsCountDisplay.addEventListener("click", () => {
-                window.location.href = `/api/accounts/profile/${username}/followings`;
+                window.location.href = `/accounts/profile/${username}/followings`;
             });
         }
 
         if (followersCountDisplay) {
             followersCountDisplay.addEventListener("click", () => {
-                window.location.href = `/api/accounts/profile/${username}/followers`;
+                window.location.href = `/accounts/profile/${username}/followers`;
             });
         }
 
         if (likeProductsCountDisplay) {
             likeProductsCountDisplay.addEventListener("click", () => {
-                window.location.href = `/api/accounts/user/${username}/like-products/`;
+                window.location.href = `/accounts/user/${username}/like-products/`;
             });
         }
     }
@@ -325,20 +325,20 @@ document.addEventListener("DOMContentLoaded", function () {
     // 프로필 수정 페이지로 이동
     if (editProfileBtn) {
         editProfileBtn.addEventListener("click", () => {
-            window.location.href = `/api/accounts/profile_edit-page/${profileUsername}`;
+            window.location.href = `/accounts/profile_edit-page/${profileUsername}`;
         });
     }
 
     // 비밀번호 수정 페이지로 이동
     editPasswordBtn.addEventListener("click", function() {
-        window.location.href = `/api/accounts/profile/${profileUsername}/password-page/`;
+        window.location.href = `/accounts/profile/${profileUsername}/password-page/`;
     });
 
     // 내가 작성한 상품 더보기 클릭 시
     const seeMoreProductsBtn = document.getElementById("see-more-products");
     if (seeMoreProductsBtn) {
         seeMoreProductsBtn.addEventListener("click", () => {
-            window.location.href = `/api/accounts/user-products-page/${profileUsername}`;
+            window.location.href = `/accounts/user-products-page/${profileUsername}`;
         });
     }
 
@@ -346,7 +346,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const seeMoreReviewsBtn = document.getElementById("see-more-reviews");
     if (seeMoreReviewsBtn) {
         seeMoreReviewsBtn.addEventListener("click", () => {
-            window.location.href = `/api/accounts/user/${profileUsername}/reviews-page/`;
+            window.location.href = `/accounts/user/${profileUsername}/reviews-page/`;
         });
     }
 
@@ -354,14 +354,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const seeMorePurchaseBtn = document.getElementById("see-more-purchase");
     if (seeMorePurchaseBtn) {
         seeMorePurchaseBtn.addEventListener("click", () => {
-            window.location.href = `/api/accounts/user/${profileUsername}/purchase-history-page/`;
+            window.location.href = `/accounts/user/${profileUsername}/purchase-history-page/`;
         });
     }
 
     // 매너 점수 클릭 시 받은 후기 목록으로 이동
     if (mannerScoreDisplay) {
         mannerScoreDisplay.addEventListener("click", () => {
-            window.location.href = `/api/accounts/user/${profileUsername}/received-reviews-page/`;
+            window.location.href = `/accounts/user/${profileUsername}/received-reviews-page/`;
         });
     }
 });

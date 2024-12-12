@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         const authorUsername = link.dataset.author;
 
                     if (authorUsername) {
-                        window.location.href = `/api/accounts/profile-page/${authorUsername}/`;
+                        window.location.href = `/accounts/profile-page/${authorUsername}/`;
                     }
                 });
             });

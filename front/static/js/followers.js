@@ -28,7 +28,7 @@ async function loadFollowerList(username) {
                     <img src="${user.profile_image}" class="card-img-top" alt="${user.username}">
                     <div class="card-body">
                         <h5 class="card-title">${user.nickname} (@${user.username})</h5>
-                        <a href="/api/accounts/profile-page/${user.username}/" class="btn btn-primary">프로필 보기</a>
+                        <a href="/accounts/profile-page/${user.username}/" class="btn btn-primary">프로필 보기</a>
                     </div>
                 </div>
             `;
