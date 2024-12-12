@@ -83,26 +83,20 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_serializer_class(self):
-        # [READ] 프로필 정보 조회 = GET
         if self.request.method == "GET":
             return UserProfileSerializer
 
-        # [UPDATE] 프로필 업데이트 = PATCH or PUT
         elif self.request.method in ["PATCH", "PUT"]:
             return UserChangeSerializer
         return super().get_serializer_class()
 
     def get_queryset(self):
-        # [사용자 정보 조회] 모든 사용자 목록을 리턴
         return User.objects.all()
 
     def update(self, request, *args, **kwargs):
         user = self.get_object()
         serializer = self.get_serializer(user, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-
-        # form 데이터가 올바르게 전달되었는지 확인
-        print("Request Data:", request.data)  # 서버 로그에 request 데이터를 출력
 
         # [프로필 이미지 삭제] remove_image 플래그 처리
         if request.data.get("remove_image") == "true":
@@ -117,7 +111,6 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
         return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
-        # [사용자 삭제] 계정 비활성화 + 해당 사용자가 등록한 상품 게시글 삭제
         user = get_object_or_404(User, username=kwargs.get("username"))
         if user == request.user:
             user.is_active = False  # 계정 비활성화
@@ -256,4 +249,3 @@ class ReceivedReviewListView(ListAPIView):
         username = self.kwargs.get("username")
         user = get_object_or_404(User, username=username)
         return Review.objects.filter(product__author=user, is_deleted=False)
-

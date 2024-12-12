@@ -240,7 +240,7 @@ class Command(BaseCommand):
             product.tags.set(tags)
 
             # 이미지 추가
-            image_path = "media/images/default_image.jpg"
+            image_path = "static/images/default_image.jpg"
             with open(image_path, "rb") as img_file:
                 image = Image()
                 image.product = product

@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
             createdAtDisplay.textContent = "가입일 정보가 없습니다.";
         }
 
-        if (profileImage) profileImage.src = profileData.profile_image || "/static/images/default_profile.jpg";
+
         if (mannerScoreDisplay) mannerScoreDisplay.textContent = profileData.total_score ? profileData.total_score.toFixed(1) : "0.0";
         if (followingsCountDisplay) followingsCountDisplay.textContent = profileData.followings ? profileData.followings.length : "0";
         if (followersCountDisplay) followersCountDisplay.textContent = profileData.followers ? profileData.followers.length : "0";

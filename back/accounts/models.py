@@ -18,7 +18,7 @@ class User(AbstractUser):
     birth = models.DateField()
     email = models.EmailField(max_length=30, unique=False, null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)  # 생성 일자
-    image = models.ImageField(upload_to="images/", blank=True, default="images/default_profile.jpg")
+    image = models.ImageField(upload_to="images/", blank=True, default="static/images/default_profile.jpg")
     introduce = models.TextField(max_length=255, blank=True, null=True)
     total_score = models.FloatField(default=30)  # 매너점수 30점에서 시작
 
