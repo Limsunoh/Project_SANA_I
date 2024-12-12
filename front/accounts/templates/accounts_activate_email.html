@@ -9,13 +9,13 @@
     <p>아래 링크를 클릭하여 이메일 인증을 완료해 주세요:</p>
 
     <p>
-        <a href="https://{{ domain }}/accounts/users/activate/{{ pk }}/{{ token }}">
+        <a href="{{ domain }}/api/accounts/users/activate/{{ pk }}/{{ token }}">
             이메일 인증 링크
         </a>
     </p><br><br>
 
     <p>링크가 작동하지 않는 경우, 아래 URL을 복사하여 브라우저 주소창에 붙여 넣어주세요:</p>
-    <p>http://{{ domain }}/accounts/users/activate/{{ pk }}/{{ token }}</p>
+    <p>{{ domain }}/api/accounts/users/activate/{{ pk }}/{{ token }}</p>
 
     <br>
 

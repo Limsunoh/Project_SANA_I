@@ -13,7 +13,7 @@ loginForm.onsubmit = async function (event) {
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
     try {
-        const response = await fetch("/accounts/login/", {  // URL 수정
+        const response = await fetch("/api/accounts/login/", {  // URL 수정
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

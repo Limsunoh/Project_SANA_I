@@ -3,12 +3,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const messageDiv = document.getElementById("message");
 
     const profileUsername = window.location.pathname.split('/').filter(Boolean)[3];
-    document.getElementById("username").value = profileUsername;
+    document.getElementById("current_username").value = profileUsername;
 
     changePasswordForm.addEventListener("submit", async function (event) {
         event.preventDefault();
 
-        const username = document.getElementById("username").value;
+        const username = document.getElementById("current_username").value;
         const currentPassword = document.getElementById("current_password").value;
         const newPassword = document.getElementById("new_password").value;
         const passwordCheck = document.getElementById("password_check").value;
@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     password_check: passwordCheck
                 }),
             });
+            console.log(profileUsername)
 
             const result = await response.json();
 

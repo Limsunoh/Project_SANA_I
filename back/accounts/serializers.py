@@ -102,10 +102,10 @@ class UserSerializer(serializers.ModelSerializer):
 
         # [이메일 전송] 사용자에게 계정 활성화를 위한 이메일 발송.
         html_message = render_to_string(
-            "front/templates/accounts_activate_email.html",
+            "accounts_activate_email.html",
             {
                 "user": user,
-                "domain": "sbmarket.kro.kr",
+                "domain": "http://127.0.0.1:8000",
                 "pk": force_str(urlsafe_base64_encode(force_bytes(user.pk))),
                 "token": tokens["access"],
             },

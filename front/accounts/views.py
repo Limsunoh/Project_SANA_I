@@ -1,10 +1,12 @@
-from back.accounts.models import User
 from django.shortcuts import get_object_or_404
 from django.views.generic import TemplateView
 
+from back.accounts.models import User
+
+
 # [회원가입 페이지] 회원가입 template
 class SignupPageView(TemplateView):
-    template_name = "front.template.accounts.signup.html"
+    template_name = "signup.html"
 
 
 # [로그인 페이지] 로그인 template
@@ -74,9 +76,7 @@ class UserProductsListPageView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         username = self.kwargs.get("username")  # URL에서 username 가져오기
-        profile_user = get_object_or_404(
-            User, username=username
-        )  # username으로 사용자 객체 가져오기
+        profile_user = get_object_or_404(User, username=username)  # username으로 사용자 객체 가져오기
         context["profile_user"] = profile_user  # 템플릿에 profile_user 추가
         return context
 
@@ -88,9 +88,7 @@ class PurchaseHistoryListViewTemplate(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         username = self.kwargs.get("username")  # URL에서 username 가져오기
-        profile_user = get_object_or_404(
-            User, username=username
-        )  # username으로 사용자 객체 가져오기
+        profile_user = get_object_or_404(User, username=username)  # username으로 사용자 객체 가져오기
         context["profile_user"] = profile_user  # 템플릿에 profile_user 추가
         return context
 
@@ -102,9 +100,7 @@ class UserReviewListViewTemplate(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         username = self.kwargs.get("username")  # URL에서 username 가져오기
-        profile_user = get_object_or_404(
-            User, username=username
-        )  # username으로 사용자 객체 가져오기
+        profile_user = get_object_or_404(User, username=username)  # username으로 사용자 객체 가져오기
         context["profile_user"] = profile_user  # 템플릿에 profile_user 추가
         return context
 
@@ -116,8 +112,6 @@ class ReceivedReviewListViewTemplate(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         username = self.kwargs.get("username")  # URL에서 username 가져오기
-        profile_user = get_object_or_404(
-            User, username=username
-        )  # username으로 사용자 객체 가져오기
+        profile_user = get_object_or_404(User, username=username)  # username으로 사용자 객체 가져오기
         context["profile_user"] = profile_user  # 템플릿에 profile_user 추가
         return context

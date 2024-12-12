@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     // 이미지 삭제 버튼 클릭 이벤트
     removeProfileImageButton.addEventListener("click", function () {
-        profileImagePreview.src = "/static/images/default_image.jpg";  // 기본 이미지로 변경
+        profileImagePreview.src = "/static/images/default_profile.jpg";  // 기본 이미지로 변경
         removeProfileImage = true;  // 이미지 삭제 플래그 설정
         imageInput.value = "";  // 파일 선택 초기화
         alert("프로필 이미지가 삭제되었습니다.");  // 알림 메시지 띄우기
@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (file.size > MAX_PROFILE_IMAGE_SIZE) {
                 alert(`프로필 사진 용량은 ${FILE_SIZE_LIMIT_MB}MB 이하로 제한됩니다.`);
                 imageInput.value = ""; // 파일 선택 초기화
-                profileImagePreview.src = "/static/images/default_image.jpg"; // 기본 이미지로 설정
+                profileImagePreview.src = "/static/images/default_profile.jpg"; // 기본 이미지로 설정
                 return;
             }
             const reader = new FileReader();
@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 birthInput.value = data.birth || "";
                 emailInput.value = data.email || "";
                 introduceInput.value = data.introduce || "";
-                profileImagePreview.src = data.profile_image || "/static/images/default_image.jpg"; // 이미지 미리보기 설정
+                profileImagePreview.src = data.profile_image || "/static/images/default_profile.jpg"; // 이미지 미리보기 설정
             } else {
                 console.error("프로필 정보를 불러오는 데 실패했습니다:", await response.json());
                 alert("프로필 정보를 불러올 수 없습니다.");
