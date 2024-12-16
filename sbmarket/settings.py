@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from datetime import timedelta
 from pathlib import Path
 
@@ -116,8 +117,12 @@ REST_FRAMEWORK = {
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("POSTGRES_DB", "sanai_db"),
+        "USER": os.getenv("POSTGRES_USER", "sanai_user"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "sanai_password"),
+        "HOST": os.getenv("POSTGRES_HOST", "db"),  # Docker Compose의 서비스 이름
+        "PORT": "5432",
     }
 }
 
