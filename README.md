@@ -17,7 +17,7 @@ style="display: block; margin: auto;">
 5. [개발기간](#️개발-기간)
 6. [와이어프레임](#️wireframe)
 7. [API명세서](#api명세서)
-8. [시스템 아키텍처](#시스템-아키텍처)
+8. [시스템 아키텍처](#️시스템-아키텍처)
 9. [ERD](#erd-diagram)
 10. [사용 환경 설정](#development-environment)
 
