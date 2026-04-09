@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: postgres_db
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_USER: sanai_user
+      POSTGRES_PASSWORD: sanai_password
+      POSTGRES_DB: sanai_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    container_name: django_web
+    build:
+      context: ./  # 현재 디렉토리의 Dockerfile 사용
+      dockerfile: Dockerfile
+    command: >
+      sh -c "python manage.py makemigrations &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    environment:
+      DJANGO_ENV: development
+      POSTGRES_USER: sanai_user
+      POSTGRES_PASSWORD: sanai_password
+      POSTGRES_DB: sanai_db
+      POSTGRES_HOST: db
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app  # 로컬 프로젝트 디렉토리와 컨테이너 동기화
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
