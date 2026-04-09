@@ -201,7 +201,7 @@ style="display: block; margin: auto;">
 
 <img
 width="1000"
-src="front/static/images/README/sbmarket_architecture.png"
+src="front/static/images/README/sbmarket_시스템_아키텍처.png"
 alt="sbmarket_system_architecture"
 title="System Architecture"
 style="display: block; margin: auto;">
