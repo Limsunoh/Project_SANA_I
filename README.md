@@ -17,8 +17,9 @@ style="display: block; margin: auto;">
 5. [개발기간](#️개발-기간)
 6. [와이어프레임](#️wireframe)
 7. [API명세서](#api명세서)
-8. [ERD](#erd-diagram)
-9. [사용 환경 설정](#development-environment)
+8. [시스템 아키텍처](#️시스템-아키텍처)
+9. [ERD](#erd-diagram)
+10. [사용 환경 설정](#development-environment)
 
 <!--여기에 목차 -->
 
@@ -193,6 +194,18 @@ style="display: block; margin: auto;">
 ## API명세서
 <!-- API 명세서 참조 할 것.-->
 [api명세서](https://www.notion.so/teamsparta/fff2dc3ef5148131b9a1f18cf8368f0e?v=fff2dc3ef51481b0a2f0000c904bd99d&pvs=4)
+</br>
+
+
+## 🏗️시스템 아키텍처
+
+<img
+width="1000"
+src="front/static/images/README/sbmarket_시스템_아키텍처.png"
+alt="sbmarket_system_architecture"
+title="System Architecture"
+style="display: block; margin: auto;">
+
 </br>
 
 
