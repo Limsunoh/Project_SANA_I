@@ -1,12 +1,10 @@
 # 🍓StrawBerryMarket
-<a href="https://sbmarket.kro.kr/" target="_blank">
-    <img 
-    width="1000" 
-    src="https://sbmarket.kro.kr/static/images/banner.png" 
-    alt="sbmarket" 
-    title="딸기마캣 접속하기"
-    style="display: block; margin: auto;">
-</a>
+<img
+width="1000"
+src="front/static/images/README/banner.png"
+alt="sbmarket"
+title="딸기마캣"
+style="display: block; margin: auto;">
 
 </br>
 
@@ -73,7 +71,7 @@
 
 > **💬 채팅** </br>
  구매자와 판매자 간의 `long-polling`방식의 1:1채팅 기능
- 
+
 </br>
 
 > **⭐️리뷰** </br>
@@ -84,8 +82,8 @@
 - - -
 
 
-<details> 
-   <summary style="font-weight:bold; font-size:150%;" title="프로젝트-기능"> 
+<details>
+   <summary style="font-weight:bold; font-size:150%;" title="프로젝트-기능">
    🔧프로젝트 기능
    </summary>
    <div markdown="1"></div>
@@ -94,27 +92,27 @@
    > - 사용자는 이메일과 비밀번호로 회원가입을 하거나, 기존 계정으로 로그인 할 수 있습니다.
    > - 회원 가입 과정에서 이메일 인증과 주소 입력을 같이 할 수 있습니다.
 
-   <details> 
+   <details>
       <summary style="color: gray; font-size:75%;">
       🔍︎서비스 이미지 보기
       </summary>
 
-   [![accounts/signup](/static/images/README/회원가입%20화면.png)](/static/images/README/회원가입%20화면.png)
+   [![accounts/signup](front/static/images/README/회원가입%20화면.png)](front/static/images/README/회원가입%20화면.png)
 
    </details></br>
-   
+
 
    ### 👤회원 중심 서비스, 내 상점(프로필)
    > - 구매자들이 작성 한 리뷰들로 `점수`를 수집하며, <br>페이지에서 표기되는 점수를 클릭하여 받은 `리뷰`들을 보기
    > - 사용자 프로필 수정 및 비밀번호 수정, 계정 삭제 가능
    > - 팔로워 및 상품 찜 수, (숫자를 눌러)리스트 확인
 
-   <details> 
+   <details>
       <summary style="color: gray; font-size:75%;">
       🔍︎서비스 이미지 보기
       </summary>
 
-   [![user profile](/static/images/README/sbmartket_profile.JPG)](/static/images/README/sbmartket_profile.JPG)
+   [![user profile](front/static/images/README/sbmartket_profile.JPG)](front/static/images/README/sbmartket_profile.JPG)
 
    </details></br>
 
@@ -124,26 +122,26 @@
    > - 선택한 리뷰가 매너 점수에 영향을 미침
    > - 각 항목에 따라 점수를 각기 다르게 설정
 
-   <details> 
+   <details>
       <summary style="color: gray; font-size:75%;">
       🔍︎서비스 이미지 보기
       </summary>
 
-   [![reviews](/static/images/README/리뷰작성화면.JPG)](/static/images/README/리뷰작성화면.JPG)
+   [![reviews](front/static/images/README/리뷰작성화면.JPG)](front/static/images/README/리뷰작성화면.JPG)
 
    </details></br>
-      
+
 
    ### 🤖자연어 검색 AI상품 추천
    > - 정확한 검색어가 아닌 편한 문장이나 단어로 검색
    > - 주요 키워드나 의미와 연관된 상품을 최대 12개까지 추천
 
-   <details> 
+   <details>
       <summary style="color: gray; font-size:75%;">
       🔍︎서비스 이미지 보기
       </summary>
 
-   [![상품추천AI](/static/images/README/상품추천봇.JPG)](/static/images/README/상품추천봇.JPG)
+   [![상품추천AI](front/static/images/README/상품추천봇.JPG)](front/static/images/README/상품추천봇.JPG)
 
    </details></br>
 
@@ -153,13 +151,13 @@
    > - 게시물 단위 채팅방 형성
    > - 이미지 첨부 용량 10MB제한
 
-   <details> 
+   <details>
       <summary style="color: gray; font-size:75%;">
       🔍︎서비스 이미지 보기
       </summary>
 
-   [![chatlist](/static/images/README/채팅방%20목록%20화면.png)](/static/images/README/채팅방%20목록%20화면.png)
-   [![chat](/static/images/README/채팅방%20화면.png)](/static/images/README/채팅방%20화면.png)
+   [![chatlist](front/static/images/README/채팅방%20목록%20화면.png)](front/static/images/README/채팅방%20목록%20화면.png)
+   [![chat](front/static/images/README/채팅방%20화면.png)](front/static/images/README/채팅방%20화면.png)
 
    </details></br>
 
@@ -169,12 +167,12 @@
    > - 공지 DB, SBstipulation.txt를 참고하여 답변 창출
    > - 서비스 이용방법 안내
 
-   <details> 
+   <details>
       <summary style="color: gray; font-size:75%;">
       🔍︎서비스 이미지 보기
       </summary>
 
-   [![상담봇](/static/images/README/상담봇.png)](/static/images/README/상담봇.png)
+   [![상담봇](front/static/images/README/상담봇.png)](front/static/images/README/상담봇.png)
 
    </details>
 </details> </br>
@@ -200,15 +198,12 @@
 
 ## 🔌ERD Diagram
 
-<a href="static/images/README/sbmarket_ERD.png" target="_blank">
-   <img 
-   width="1000" 
-   src="static/images/README/sbmarket_ERD.png" 
-   alt="sbmarket_ERD" 
-   title="ERD" 
-   style="display: block; margin: auto;"> 
-   </img>
-</a>
+<img
+width="1000"
+src="front/static/images/README/sbmarket_ERD.png"
+alt="sbmarket_ERD"
+title="ERD"
+style="display: block; margin: auto;">
 
 </br>
 
@@ -284,11 +279,11 @@
         ```
 
 ### 2️⃣패키지 설치
-    - 패키지를 처음 설치하는 경우 
-        ```bash 
+    - 패키지를 처음 설치하는 경우
+        ```bash
         pip install -r requirements.txt
         ```
-    - 패키지가 설치되어 있는 경우 
+    - 패키지가 설치되어 있는 경우
         ```bash
         pip install --force-reinstall -r requirements.txt
         ```
@@ -305,7 +300,7 @@
 # 🖥️Technologies & Tools
 
 ### 📝FrontEnd
-![HTML5](https://img.shields.io/badge/html-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white) 
+![HTML5](https://img.shields.io/badge/html-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/css-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
 <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=white">
 <img src="https://img.shields.io/badge/AJAX-007FFF?style=for-the-badge&logo=javascript&logoColor=white">
@@ -315,7 +310,7 @@
 
 
 ### 📝BackEnd
-<img src="https://img.shields.io/badge/python 3.10-3776AB?style=for-the-badge&logo=python&logoColor=white"> <img src="https://img.shields.io/badge/django 4.2-092E20?style=for-the-badge&logo=django&logoColor=white"> <img src="https://img.shields.io/badge/django rest framework 3.15.2-092E20?style=for-the-badge&logo=django&logoColor=white"> 
+<img src="https://img.shields.io/badge/python 3.10-3776AB?style=for-the-badge&logo=python&logoColor=white"> <img src="https://img.shields.io/badge/django 4.2-092E20?style=for-the-badge&logo=django&logoColor=white"> <img src="https://img.shields.io/badge/django rest framework 3.15.2-092E20?style=for-the-badge&logo=django&logoColor=white">
 
 
 ### 📝Server
@@ -328,9 +323,9 @@
 
 
 ### 📝Management
-<img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"> <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white"> 
+<img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"> <img src="https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white">
 <!--
-<img src="https://img.shields.io/badge/github action-3399FF?style=for-the-badge&logo=github&logoColor=white"> 
+<img src="https://img.shields.io/badge/github action-3399FF?style=for-the-badge&logo=github&logoColor=white">
 -->
 
 
@@ -340,7 +335,7 @@
 </br>
 
 
-<!-- 
+<!--
 <details>
 <summary><h2>🌟 git commit 규칙</h2></summary>
 <div markdown="1">
